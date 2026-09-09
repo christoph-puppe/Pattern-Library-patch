@@ -1935,6 +1935,176 @@
     });
   }
 
+  /* --- the check axis: reference, description, or declared executable -----
+     The six questions put four constructs against the check question, and the
+     answers hold three kinds of thing. This block names the axis, tables it,
+     and puts the same rule from two corpora side by side, with the extracts
+     rendered the way they are everywhere else. Nothing here is typed: the
+     rows, the pairs and the figures come from data/check-carrier.json and the
+     figures are recomputed by the harness. */
+  function renderCheckCarrier(node) {
+    Promise.all([load("check-carrier.json"), load("six-questions.json")])
+      .then(function (both) {
+      var d = both[0], sq = both[1];
+      var byKey = {};
+      sq.approaches.forEach(function (a) { byKey[a.key] = a; });
+      var kindByKey = {};
+      d.kinds.forEach(function (k) { kindByKey[k.key] = k; });
+      node.textContent = "";
+
+      function approachName(key) {
+        var a = byKey[key] || {};
+        var link = el("a", "carrier__approach approach-" + key.replace("-first", ""),
+                      a.label || key);
+        link.href = "./" + key + ".html";
+        return link;
+      }
+      function kindBadge(key) {
+        var k = kindByKey[key] || { label: key };
+        return el("span", "carrier-kind carrier-kind--" + key, k.label);
+      }
+      function statusSnippet(id, approachKey) {
+        var det = document.createElement("details");
+        det.className = "snippet";
+        det.dataset.snippet = id;
+        var a = byKey[approachKey];
+        if (a && a.status_annotation) det.dataset.status = a.status_annotation;
+        renderSnippet(det);
+        return det;
+      }
+
+      (d.intro || []).forEach(function (p) {
+        node.appendChild(el("p", null, p));
+      });
+
+      /* The three kinds, once, before the table that uses them. */
+      var kinds = el("dl", "carrier-kinds");
+      d.kinds.forEach(function (k) {
+        var dt = el("dt");
+        dt.appendChild(kindBadge(k.key));
+        kinds.appendChild(dt);
+        kinds.appendChild(el("dd", null, k.meaning));
+      });
+      node.appendChild(kinds);
+
+      var wrap = el("div", "table-wrap");
+      var t = document.createElement("table");
+      t.className = "matrix carrier";
+      t.setAttribute("aria-label", d.title);
+      var thead = document.createElement("thead");
+      var hr = document.createElement("tr");
+      d.columns.forEach(function (c) {
+        var th = document.createElement("th");
+        th.scope = "col";
+        th.textContent = c;
+        hr.appendChild(th);
+      });
+      thead.appendChild(hr);
+      t.appendChild(thead);
+      var tb = document.createElement("tbody");
+      approachOrder(sq).forEach(function (ap) {
+        var r = d.rows.filter(function (x) { return x.approach === ap.key; })[0];
+        if (!r) return;
+        var tr = document.createElement("tr");
+        tr.dataset.approach = ap.key;
+        var th = document.createElement("th");
+        th.scope = "row";
+        th.appendChild(approachName(ap.key));
+        tr.appendChild(th);
+        var kd = document.createElement("td");
+        kd.setAttribute("data-label", d.columns[1]);
+        kd.appendChild(kindBadge(r.kind));
+        tr.appendChild(kd);
+        [["construct", 2], ["owner", 3], ["one_document", 4], ["needs", 5]]
+          .forEach(function (f) {
+            var td = document.createElement("td");
+            td.setAttribute("data-label", d.columns[f[1]]);
+            td.textContent = r[f[0]];
+            tr.appendChild(td);
+          });
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb);
+      wrap.appendChild(t);
+      node.appendChild(wrap);
+
+      /* The extracts each row rests on, under the table rather than in it: a
+         code block in a table cell is wider than the cell. */
+      var ex = el("div", "carrier-extracts");
+      approachOrder(sq).forEach(function (ap) {
+        var r = d.rows.filter(function (x) { return x.approach === ap.key; })[0];
+        if (!r || !(r.snippet_ids || []).length) return;
+        var grp = el("div", "carrier-extracts__group");
+        grp.dataset.approach = ap.key;
+        var lab = el("p", "carrier-extracts__label");
+        lab.appendChild(approachName(ap.key));
+        lab.appendChild(document.createTextNode(", what the row rests on"));
+        grp.appendChild(lab);
+        r.snippet_ids.forEach(function (id) {
+          grp.appendChild(statusSnippet(id, ap.key));
+        });
+        ex.appendChild(grp);
+      });
+      node.appendChild(ex);
+
+      /* The fusion: both kinds on one control. */
+      if (d.fusion) {
+        var fu = el("div", "carrier-fusion");
+        var fh = el("h3", null, d.fusion.label);
+        fu.appendChild(fh);
+        fu.appendChild(el("p", null, d.fusion.text));
+        (d.fusion.snippet_ids || []).forEach(function (id) {
+          fu.appendChild(statusSnippet(id, "profile-first"));
+        });
+        node.appendChild(fu);
+      }
+
+      /* The same rule, two corpora, side by side. */
+      (d.pairs || []).forEach(function (p) {
+        var sec = el("div", "carrier-pair");
+        sec.dataset.pair = p.key;
+        sec.appendChild(el("h3", null, p.title));
+        sec.appendChild(el("p", null, p.what));
+        var grid = el("div", "carrier-pair__sides");
+        [p.left, p.right].forEach(function (side) {
+          var box = el("div", "carrier-pair__side");
+          box.dataset.approach = side.approach;
+          var lab = el("p", "carrier-pair__label");
+          lab.appendChild(approachName(side.approach));
+          box.appendChild(lab);
+          box.appendChild(el("p", "carrier-pair__says", side.says));
+          box.appendChild(statusSnippet(side.snippet_id, side.approach));
+          grid.appendChild(box);
+        });
+        sec.appendChild(grid);
+        node.appendChild(sec);
+      });
+
+      if (d.figures && d.figures.text) {
+        var fig = el("p", "carrier-figures", d.figures.text);
+        node.appendChild(fig);
+      }
+
+      /* What follows from each kind. Consequences, stated once per kind, and
+         no kind is ranked above another. */
+      var cons = el("div", "carrier-consequences");
+      (d.consequences || []).forEach(function (c) {
+        var box = el("div", "carrier-consequences__kind");
+        box.dataset.kind = c.kind;
+        var lab = el("p", "carrier-consequences__label");
+        lab.appendChild(kindBadge(c.kind));
+        box.appendChild(lab);
+        var ul = el("ul");
+        c.follows.forEach(function (f) { ul.appendChild(el("li", null, f)); });
+        box.appendChild(ul);
+        cons.appendChild(box);
+      });
+      node.appendChild(cons);
+    }).catch(function (e) {
+      fail(node, "check-carrier: " + (e && e.message ? e.message : String(e)));
+    });
+  }
+
   function renderAnswersLegend(node) {
     load("six-questions.json").then(function (a) {
       /* Silence was the wrong failure mode. This used to be a bare `if`, so a
@@ -2077,6 +2247,7 @@
     document.querySelectorAll("[data-discussion2]").forEach(renderDiscussion2);
     document.querySelectorAll("[data-approach-cards]").forEach(renderApproachCards);
     document.querySelectorAll("[data-sources]").forEach(renderSources);
+    document.querySelectorAll("[data-check-carrier]").forEach(renderCheckCarrier);
     document.querySelectorAll("[data-answers-legend]").forEach(renderAnswersLegend);
     document.querySelectorAll(".tabs").forEach(initTabs);
     initGlossary();

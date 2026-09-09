@@ -1988,3 +1988,35 @@ figcaption {
    lists have to start level. */
 .card:has(.answers) { display: flex; flex-direction: column; }
 .card:has(.answers) .answers { margin-top: auto; }
+
+/* --- .carrier : the check axis on the start page ---------------------------
+   Three kinds of thing an OSCAL document carries about a check, tabled across
+   the four approaches, then the same rule from two corpora side by side. The
+   kind badges are outlined rather than filled so the three read as categories
+   and not as verdicts, and no kind takes an approach colour. */
+.carrier-kinds { display: grid; gap: var(--s2) var(--s4); grid-template-columns: max-content 1fr; margin-block: var(--s5); max-width: var(--measure-wide, 72rem); }
+.carrier-kinds dt { margin: 0; }
+.carrier-kinds dd { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); }
+.carrier-kind {
+  display: inline-block; border: 1px solid var(--border-strong); border-radius: var(--radius);
+  padding: 0 var(--s2); font-size: var(--fs-xs); font-weight: 650; white-space: nowrap;
+  color: var(--text); background: var(--bg);
+}
+.carrier-kind--executable { border-style: double; border-width: 3px; padding-block: 0; }
+.carrier-kind--description { border-style: dashed; }
+.carrier.matrix { min-width: 900px; }
+.carrier.matrix td { font-size: var(--fs-sm); }
+.carrier__approach { font-weight: 650; text-decoration: none; }
+.carrier__approach:hover, .carrier__approach:focus-visible { text-decoration: underline; }
+.carrier-extracts { display: grid; gap: var(--s4); grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-block: var(--s5); }
+.carrier-extracts__label, .carrier-pair__label, .carrier-consequences__label { margin: 0 0 var(--s2); font-size: var(--fs-sm); }
+.carrier-extracts .snippet, .carrier-pair .snippet, .carrier-fusion .snippet { margin-top: var(--s3); }
+.carrier-fusion, .carrier-pair { margin-block: var(--s7); }
+.carrier-fusion > p, .carrier-pair > p { max-width: var(--measure); }
+.carrier-pair__sides { display: grid; gap: var(--s4); grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-top: var(--s4); }
+.carrier-pair__side { border: 1px solid var(--border); border-radius: var(--radius); padding: var(--s4); background: var(--bg); min-width: 0; }
+.carrier-pair__says { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); }
+.carrier-figures { max-width: var(--measure); font-size: var(--fs-sm); color: var(--text-muted); }
+.carrier-consequences { display: grid; gap: var(--s4); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-block: var(--s5); }
+.carrier-consequences__kind ul { margin: 0; padding-left: 1.2em; font-size: var(--fs-sm); }
+.carrier-consequences__kind li + li { margin-top: var(--s2); }

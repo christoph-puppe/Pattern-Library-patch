@@ -19,6 +19,7 @@ Usage:
     python tools/verify.py --links      every internal href and anchor resolves
     python tools/verify.py --pages      run each page and inspect the result
     python tools/verify.py --corpus     the generated corpus, recomputed and checked
+    python tools/verify.py --carrier    the check axis: rows, pairs and figures, recomputed
 
 A later build phase adds --budget. The flag is registered here so the harness
 grows without restructuring.
@@ -5516,8 +5517,218 @@ def check_corpus() -> None:
     check("every control the mapping targets exists in the NIST Revision 5 catalog",
           targets <= nist_ids, str(sorted(targets - nist_ids)[:5]))
 
+
+# --------------------------------------------------------------------------- #
+# --carrier                                                                    #
+# --------------------------------------------------------------------------- #
+
+def check_carrier() -> None:
+    """The check axis: what each approach's OSCAL carries about the check.
+
+    Section 6 of the start page says the four approaches carry three kinds of
+    thing about a check, a reference, a description or a declared executable,
+    tables the four, and puts the same rule from two corpora side by side. Every
+    row is a claim about extracts, and every figure is a count over files this
+    repository holds, so both are checked here: the kind a row asserts has to be
+    visible in the extract it cites, both sides of a pair have to hold the same
+    rule, and the figures are recomputed from the CIS assessment plan under
+    examples/assessment-first and the generated catalog under
+    examples/profile-first.
+    """
+    print("\n[carrier] the check axis, recomputed")
+    d = json.load(open(os.path.join(DATA, "check-carrier.json"), encoding="utf-8"))
+    anat = json.load(open(os.path.join(DATA, "six-questions.json"), encoding="utf-8"))
+    approaches = [a["key"] for a in anat["approaches"]]
+
+    kinds = [k["key"] for k in d["kinds"]]
+    check("three kinds: reference, description, executable",
+          kinds == ["reference", "description", "executable"], str(kinds))
+    rows = {r["approach"]: r for r in d["rows"]}
+    check("one row per approach, no more", sorted(rows) == sorted(approaches)
+          and len(d["rows"]) == len(approaches), str(sorted(rows)))
+    check("every row carries a kind from the axis",
+          all(r["kind"] in kinds for r in d["rows"]))
+    check("every kind is used by at least one row",
+          set(kinds) == {r["kind"] for r in d["rows"]})
+    check("consequences are stated once per kind and for every kind",
+          [c["kind"] for c in d["consequences"]] == kinds
+          and all(len(c["follows"]) >= 2 for c in d["consequences"]))
+    check("every column the renderer reads is named", len(d["columns"]) == 6)
+
+    have = {os.path.splitext(os.path.basename(p))[0]
+            for p in glob.glob(os.path.join(SNIPPETS, "*.json"))}
+    cited = [sid for r in d["rows"] for sid in r["snippet_ids"]]
+    cited += d["fusion"]["snippet_ids"]
+    cited += [side["snippet_id"] for p in d["pairs"] for side in (p["left"], p["right"])]
+    check("every extract the axis cites exists", set(cited) <= have,
+          str(sorted(set(cited) - have)))
+    if not set(cited) <= have:
+        return
+
+    def content(sid: str) -> str:
+        return load_snippet(sid)["content"]
+
+    def props_in(sid: str) -> set:
+        found = set()
+
+        def walk(n):
+            if isinstance(n, dict):
+                if "name" in n and "value" in n and isinstance(n["name"], str):
+                    found.add(n["name"])
+                for v in n.values():
+                    walk(v)
+            elif isinstance(n, list):
+                for v in n:
+                    walk(v)
+        try:
+            walk(json.loads(content(sid)))
+        except ValueError:
+            pass
+        return found
+
+    #  The kind a row asserts has to be visible in the extract it cites. A
+    #  reference is an identifier prop and no script; a description holds text
+    #  and no evaluation rule; a declared executable carries the props the
+    #  note names, and one of the fourth approach's two extracts is allowed to
+    #  be a description, which is what the row says about the STIG.
+    for r in d["rows"]:
+        sids = r["snippet_ids"]
+        check(f"{r['approach']}: every extract it cites is that approach's",
+              all(load_snippet(s)["approach"] == r["approach"] for s in sids))
+        if r["kind"] == "reference":
+            ok = all(any(f'"{k}"' in content(s) for k in ("ConfigRuleId", "rule-id", "check-id"))
+                     and "```" not in content(s) for s in sids)
+            check(f"{r['approach']}: a reference, so the extract names a check by "
+                  f"identifier and carries no script", ok)
+        elif r["kind"] == "description":
+            ok = all("evaluation" not in props_in(s) and "pass-condition" not in props_in(s)
+                     for s in sids) and any('"description"' in content(s) for s in sids)
+            check(f"{r['approach']}: a description, so no extract declares how the "
+                  f"output is judged", ok)
+        else:
+            execs = [s for s in sids if {"language", "evaluation", "pass-condition",
+                                         "platform"} <= props_in(s)]
+            check(f"{r['approach']}: a declared executable, so an extract carries "
+                  f"platform, language, evaluation and pass condition", bool(execs))
+            check(f"{r['approach']}: the executable extract carries the script itself",
+                  any("```bash" in content(s) for s in execs))
+
+    fusion = d["fusion"]["snippet_ids"]
+    check("the fusion extract is one control carrying objective, method and remediation",
+          all(all(f'"name": "{n}"' in content(s) for n in
+                  ("assessment-objective", "assessment-method", "remediation"))
+              for s in fusion))
+
+    for p in d["pairs"]:
+        l, r = p["left"], p["right"]
+        check(f"pair {p['key']}: two approaches, and each side's extract is its own",
+              l["approach"] != r["approach"]
+              and load_snippet(l["snippet_id"])["approach"] == l["approach"]
+              and load_snippet(r["snippet_id"])["approach"] == r["approach"])
+        tok = p["shared_token"].lower()
+        check(f"pair {p['key']}: both sides hold the same rule, {p['shared_token']}",
+              tok in content(l["snippet_id"]).lower()
+              and tok in content(r["snippet_id"]).lower())
+
+    # --- the figures, recomputed from the files ---------------------------- #
+    plan_path = os.path.join(SITE_ROOT, "examples", "assessment-first",
+                             "Center for Internet Security",
+                             "CIS_Ubuntu_Linux_24_04_LTS_Benchmark_v2_OSCAL_AP.json")
+    stig_path = os.path.join(SITE_ROOT, "examples", "assessment-first", "DISA",
+                             "STIG_XCCDF to OSCAL Assessment Plans", "ubuntu24.json")
+    cat_path = os.path.join(SITE_ROOT, GENERATED_CORPUS,
+                            "cis-ubuntu-24-04-lts-benchmark-catalog.json")
+    stig_prof = os.path.join(SITE_ROOT, GENERATED_CORPUS,
+                             "nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json")
+    for path in (plan_path, stig_path, cat_path, stig_prof):
+        if not os.path.isfile(path):
+            check(f"the file the figures are recomputed from is held: "
+                  f"{os.path.relpath(path, SITE_ROOT)}", False)
+            return
+
+    fence = re.compile(r"```bash\n(.*?)```", re.S)
+
+    def norm(text: str) -> str:
+        return re.sub(r"\s+", " ", text).strip()
+
+    def scripts_in(text: str) -> list:
+        return [m for m in fence.findall(text or "") if m.startswith("#!")]
+
+    plan = json.load(open(plan_path, encoding="utf-8"))["assessment-plan"]
+    audit = [s for a in plan["local-definitions"]["activities"]
+             for s in a.get("steps", []) if s["title"].startswith("Audit")]
+    plan_scripts = {}
+    for st in audit:
+        rid = next(p["value"] for p in st["props"] if p["name"] == "cis-rule-id")
+        for sc in scripts_in(st.get("description")):
+            plan_scripts[rid] = norm(sc)
+
+    cat = json.load(open(cat_path, encoding="utf-8"))["catalog"]
+    cat_scripts, linking, without = {}, 0, 0
+
+    def walk(gs):
+        nonlocal linking, without
+        for g in gs:
+            for c in g.get("controls", []):
+                m = next(p for p in c["parts"] if p["name"] == "assessment-method")
+                found = scripts_in(m.get("prose"))
+                if found:
+                    cat_scripts[c["id"]] = norm(found[-1])
+                if any(ln["rel"] == "script" for ln in m.get("links", [])):
+                    linking += 1
+                if not found and not any(ln["rel"] == "script"
+                                         for ln in m.get("links", [])):
+                    without += 1
+            walk(g.get("groups", []))
+
+    walk(cat["groups"])
+    shared = set(plan_scripts) & set(cat_scripts)
+    same = {k for k in shared if plan_scripts[k] == cat_scripts[k]}
+    differ = shared - same
+    shorter = {k for k in differ if len(plan_scripts[k]) < len(cat_scripts[k])
+               and cat_scripts[k].count("<") > plan_scripts[k].count("<")}
+    stig = json.load(open(stig_path, encoding="utf-8"))["assessment-plan"]
+    prof = json.load(open(stig_prof, encoding="utf-8"))["profile"]
+    got = {
+        "cis_plan_audit_steps": len(audit),
+        "cis_plan_rules_with_script": len(plan_scripts),
+        "cis_catalog_methods_with_script": len(cat_scripts),
+        "cis_shared_rules_with_script": len(shared),
+        "cis_shared_identical": len(same),
+        "cis_shared_differ": len(differ),
+        "cis_shared_differ_shorter_in_plan": len(shorter),
+        "cis_catalog_methods_linking_script": linking,
+        "cis_catalog_methods_without_script": without,
+        "stig_plan_activities": len(stig["local-definitions"]["activities"]),
+        "stig_profile_objectives": sum(
+            1 for a in prof["modify"]["alters"] for ad in a["adds"]
+            for pt in ad.get("parts", []) if pt["name"] == "assessment-objective"),
+    }
+    fig = d["figures"]
+    for k, v in got.items():
+        check(f"figure {k} = {v}", fig.get(k) == v, f"data says {fig.get(k)}")
+    check("no STIG rule carries a script in either corpus",
+          not any(scripts_in(s.get("description")) for a in stig["local-definitions"]["activities"]
+                  for s in a.get("steps", []))
+          and not any(scripts_in(pt.get("prose")) for a in prof["modify"]["alters"]
+                      for ad in a["adds"] for pt in ad.get("parts", [])))
+    #  The sentence the page prints may cite only figures the file carries, so
+    #  a number typed into it cannot drift from the count behind it.
+    cited_numbers = {int(n) for n in re.findall(r"\b\d+\b", fig["text"])}
+    values = {v for k, v in fig.items() if isinstance(v, int)} | {1, 2, 3, 4, 800, 53, 5}
+    check("every number in the figures sentence is a figure the file carries",
+          cited_numbers <= values, str(sorted(cited_numbers - values)))
+
+    text = open(os.path.join(DATA, "check-carrier.json"), encoding="utf-8").read()
+    check("the axis uses no long dash", not LONG_DASH.search(text))
+    people = sorted({q["speaker"] for q in json.load(open(
+        os.path.join(DATA, "quotes.json"), encoding="utf-8"))["quotes"] if q.get("speaker")})
+    check("the axis names none of the people on the record",
+          not any(n in text for n in people))
+
 PHASES = {
     "corpus": check_corpus,
+    "carrier": check_carrier,
     "snippets": check_snippets,
     "schema": check_schema,
     "stats": check_stats,

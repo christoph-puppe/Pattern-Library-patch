@@ -1,0 +1,151 @@
+{
+  "note": "One axis across the four approaches: what the OSCAL carries about the check. The six questions ask where the rule is written and what check executes it; this file asks what kind of thing the answer to the check question is, because a reference, a description and a declared executable put different work on different parties. Rendered by renderCheckCarrier on the start page. Every row cites extracts by id, every figure is recomputed by tools/verify.py --carrier from the files under examples/, and the pairs put the same rule from two corpora side by side. The site takes no position on which kind is right; the consequences are stated and the reader weighs them.",
+  "title": "Rules, scripts, or both: what the OSCAL carries about the check",
+  "intro": [
+    "The six questions ask where the rule is written and what check executes it. Put across the four approaches, the answers to the check question are not four constructs holding the same thing. They hold three kinds of thing, and which kind decides who has to hold the rest.",
+    "A reference names a check an engine owns. A description carries text a person or a tool follows, and the text may contain a script. A declared executable carries the script, or a link to it, with what an executor needs to run it and judge what comes back. The published files show all three, and the corpus generated for the fourth approach shows the third beside the second on the same guidance."
+  ],
+  "kinds": [
+    {
+      "key": "reference",
+      "label": "A reference",
+      "meaning": "An identifier naming a check the engine owns. The OSCAL says which check; the executable is elsewhere and the identifier means something to one engine."
+    },
+    {
+      "key": "description",
+      "label": "A description",
+      "meaning": "Text a person or a tool follows. It may contain a script, and nothing in the OSCAL says what runs the script or what its output means."
+    },
+    {
+      "key": "executable",
+      "label": "A declared executable",
+      "meaning": "The script, or a link to it, with props that say which platform it applies to, what runs it, how the output is judged and what counts as a pass."
+    }
+  ],
+  "columns": [
+    "Approach",
+    "Carries",
+    "In which construct",
+    "Who owns the executable",
+    "Rule and check in one document",
+    "What an executor needs beyond the OSCAL"
+  ],
+  "rows": [
+    {
+      "approach": "catalog-first",
+      "kind": "reference",
+      "construct": "A prop on a check component naming a Config rule by identifier. The control names the check; the check names the rule the engine runs.",
+      "owner": "The cloud provider's rule engine.",
+      "one_document": "No. The rule is in the catalog and the check is in a component definition.",
+      "needs": "The engine, and the meaning of the identifier inside it.",
+      "snippet_ids": ["aws-acm-rsa-check-component"]
+    },
+    {
+      "approach": "component-first",
+      "kind": "reference",
+      "construct": "A check on a validation component, carrying a rule id and a check id in a proposed assembly.",
+      "owner": "The validation tool and its content: OpenSCAP or Ansible in the published files.",
+      "one_document": "No. The rule sits on the target component and the check on the validation component.",
+      "needs": "A schema that defines the assemblies, and the tool the check id belongs to.",
+      "snippet_ids": ["ibm-validation-ansible"]
+    },
+    {
+      "approach": "assessment-first",
+      "kind": "description",
+      "construct": "An activity step whose description holds the audit text, with a prop saying automated. For CIS the description holds the script; for the STIG it holds the check text; for CISA a prop holds a JSON string naming the check.",
+      "owner": "Whoever reads the description. Nothing names an engine.",
+      "one_document": "Yes. The rule is the activity and the check is its step.",
+      "needs": "A convention per publisher for where the script is in the text and how its output is judged.",
+      "snippet_ids": ["ez-cis-step-props", "ez-cisa-context-step"]
+    },
+    {
+      "approach": "profile-first",
+      "kind": "executable",
+      "construct": "An assessment-method part beside the objective, with the script in its prose or linked as a resource, and props for platform, language, evaluation and pass condition.",
+      "owner": "The publisher of the guidance on the catalog route; the party writing the profile otherwise.",
+      "one_document": "Yes. Objective and method are parts of one control, in the catalog or added to it by a profile.",
+      "needs": "An executor that reads the props, and a namespace with an owner. Where the publisher gives no script, as the STIG does not, the method carries a description.",
+      "snippet_ids": ["pf-cis-method-1-1-1-1", "pf-stig-method-sc-28"]
+    }
+  ],
+  "fusion": {
+    "label": "Both, on one control",
+    "text": "The generated CIS catalog is the case where the rule and the script sit together. The rule is an assessment objective part on the control, the check is an assessment method part beside it carrying the script, a remediation part follows, and the value the script reads is a parameter of the same control. A finding targets the objective, so nothing in the results model has to know the script exists. The same shape reached by a profile is the fourth approach's second route, and the same shape with a reference in place of the script is what the catalog approach's method part already does.",
+    "snippet_ids": ["pf-cis-objective-and-param"]
+  },
+  "pairs": [
+    {
+      "key": "cis-1-1-1-1",
+      "title": "One CIS recommendation, in two corpora",
+      "what": "Recommendation 1.1.1.1 of the Ubuntu benchmark, the cramfs kernel module, as the assessment-first corpus publishes it and as the generated profile-first corpus carries it. The audit script is the same text in both. What differs is what the OSCAL says about it.",
+      "shared_token": "cramfs",
+      "left": {
+        "approach": "assessment-first",
+        "snippet_id": "ez-cis-step-props",
+        "says": "A step. The script is inside the description, after the audit text, and the prop beside it says automated. Nothing says what runs it or what its output means."
+      },
+      "right": {
+        "approach": "profile-first",
+        "snippet_id": "pf-cis-method-1-1-1-1",
+        "says": "A method. The same script is the body, and four props say the platform, the language, that the output is matched against a pattern, and the pattern."
+      }
+    },
+    {
+      "key": "stig-v-270747",
+      "title": "One STIG rule, in two corpora",
+      "what": "Rule V-270747 of the Ubuntu STIG, data at rest, as an activity in the assessment-first corpus and as a method the generated profile adds to SC-28. DISA publishes the check as text, so neither corpus holds a script for it.",
+      "shared_token": "UBTU-24-600090",
+      "left": {
+        "approach": "assessment-first",
+        "snippet_id": "ez-stig-sc28-v270747",
+        "says": "An activity carrying the rule, with a check step holding DISA's text and a prop naming the method TEST."
+      },
+      "right": {
+        "approach": "profile-first",
+        "snippet_id": "pf-stig-method-sc-28",
+        "says": "A method beside an objective the profile added to SC-28, holding the same text. With no script to declare, no language, evaluation or pass condition can be set, and the construct carries a description."
+      }
+    }
+  ],
+  "figures": {
+    "note": "Recomputed by tools/verify.py --carrier from the CIS assessment plan under examples/assessment-first and the generated catalog under examples/profile-first. A fenced bash block whose first line is a shebang counts as a script.",
+    "cis_plan_audit_steps": 308,
+    "cis_plan_rules_with_script": 85,
+    "cis_catalog_methods_with_script": 84,
+    "cis_shared_rules_with_script": 83,
+    "cis_shared_identical": 42,
+    "cis_shared_differ": 41,
+    "cis_shared_differ_shorter_in_plan": 41,
+    "cis_catalog_methods_linking_script": 211,
+    "cis_catalog_methods_without_script": 93,
+    "stig_plan_activities": 194,
+    "stig_profile_objectives": 194,
+    "text": "The CIS assessment plan has 308 audit steps and 85 of them carry a script; the generated catalog has 84 methods carrying one, and 83 recommendations carry a script in both. In 42 of those the script is the same text. In 41 the plan's copy is shorter, and every one of the 41 lacks angle brackets the benchmark's script has. A further 211 catalog methods link to a script by name, and 93 carry no script at all. The STIG is 194 rules in both corpora, and none of them carries a script in either."
+  },
+  "consequences": [
+    {
+      "kind": "reference",
+      "follows": [
+        "The OSCAL stays small, and the executable is maintained where it runs.",
+        "A reader of the OSCAL alone cannot tell what the check does or judge whether it tests the rule.",
+        "The identifier means something to one engine, so a second engine needs a second identifier and a second document."
+      ]
+    },
+    {
+      "kind": "description",
+      "follows": [
+        "Everything the publisher wrote travels with the plan, script included, and a person can follow it.",
+        "A tool that wants to run the script has to find it in the text and decide for itself what the output means.",
+        "Two documents converted from the same guidance can differ in the script, and nothing in the model says which text is the script."
+      ]
+    },
+    {
+      "kind": "executable",
+      "follows": [
+        "The document says enough to run the check and judge the result without asking the publisher.",
+        "The publisher, or the profile's author, maintains the script, and the vocabulary of the props has to be agreed and owned.",
+        "A script in the document can be hashed and refused when the hash fails, and a linked script without a hash is the gap that shows."
+      ]
+    }
+  ]
+}

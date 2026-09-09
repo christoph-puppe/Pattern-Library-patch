@@ -157,7 +157,7 @@ The corpora are read from `TFG_CORPORA` when it is set, and from the
 export TFG_CORPORA=/path/to/tfg-automated-assessments
 ```
 
-Nineteen checks. Each prints `PASS` or `FAIL` with detail. A check that cannot run
+Twenty checks. Each prints `PASS` or `FAIL` with detail. A check that cannot run
 in the current environment prints `SKIP` with the reason and the exact command it
 would have run, and is reported separately from the checks that passed. **A skip is
 never counted as a pass.**
@@ -182,6 +182,7 @@ python tools/verify.py --questions     the reproduced material matches its sourc
 python tools/verify.py --data          internal consistency of data/
 python tools/verify.py --pages         run each page and inspect what it rendered
 python tools/verify.py --corpus        the generated profile-first corpus, recomputed
+python tools/verify.py --carrier       the check axis: rows, pairs and figures, recomputed
 ```
 
 `node tools/pagecheck.js` runs behind `--pages` and can be run alone, including
@@ -278,6 +279,9 @@ data/
   source-files.json  every file under sources/, generated, with size and type
   views.json         the three views of what a rule is, and which approaches
                      hold each; two hold the first
+  check-carrier.json the check axis: what each approach's OSCAL carries about
+                     the check, the same rule from two corpora, and figures
+                     the harness recomputes
   glossary.json      the vocabulary, including the terms the group has not
                      settled. Rendered as term cards in place; there is no
                      glossary page

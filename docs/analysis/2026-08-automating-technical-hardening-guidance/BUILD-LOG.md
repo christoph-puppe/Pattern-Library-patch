@@ -8856,3 +8856,66 @@ together. The workflow regenerates and diffs the corpus.
   the corpus can be run end to end as the note describes. The corpus shows the
   shape; whether an executor built to the note can consume it is still the
   question only the note's author can answer.
+
+## Session: the check axis
+
+**Date:** 2026-09-09
+**Scope:** one axis across the four approaches, what the OSCAL carries about
+the check, on the start page, with the same rule from two corpora side by side
+**Result:** complete. The new `--carrier` phase and the page check pass; the
+phases that read the pages pass as before, and the sixteen failures that need
+the corpora or the network are unchanged.
+
+### What was asked
+
+The user looked for the comparison the site was meant to draw, between an
+approach that carries rules and points at checks and one that carries the
+automation scripts, and could not find it. It was there only by implication:
+question 3 asks what check executes the rule, and its four cells describe a
+reference, a proposed reference, a description and a script without saying
+that those are three kinds of thing. The user chose to have it built as an
+axis across the four rather than as a fifth approach.
+
+### Decisions
+
+1. **Three kinds, not two.** The published files do not split into rules and
+   scripts. Two approaches carry a reference an engine resolves. One carries a
+   description, and for CIS the description holds the script, so the script
+   is present and nothing says what runs it. The fourth carries the script
+   with props declaring platform, language, evaluation and pass condition, and
+   where the publisher gives no script, as DISA does not, the same construct
+   carries a description. So the axis is a reference, a description, or a
+   declared executable, and the fourth approach's rows say which of its two
+   sources shows which.
+2. **The fusion is a row's consequence, not a fifth column.** Rule and script
+   on one control is what the generated CIS catalog is: objective part, method
+   part with the script, remediation part, parameter. It is shown once, under
+   the table, with the extract that carries it.
+3. **Same rule, two corpora.** The assessment-first corpus holds the CIS
+   Ubuntu benchmark as an assessment plan and the generated corpus holds it as
+   a catalog. Recommendation 1.1.1.1 is shown from both, and the audit script
+   is the same text in both; what differs is the carrier. The STIG rule for
+   SC-28 is shown the same way, and there no script exists in either.
+4. **Figures recomputed, and one difference reported as observed.** The plan
+   has 308 audit steps and 85 carry a script; the catalog has 84 methods
+   carrying one; 83 recommendations carry a script in both, 42 identical and
+   41 differing. In every one of the 41 the plan's copy is shorter and lacks
+   angle brackets the benchmark's script has. The page reports that as the
+   observation it is and infers no cause. The harness recomputes every figure
+   and refuses any number in the sentence that is not a figure the file
+   carries.
+5. **Consequences per kind, no ranking.** What follows from each kind is
+   stated in three short lists, and the kind badges are outlined rather than
+   coloured so they read as categories and not as verdicts.
+6. **On the start page, linked from the six questions page.** The six
+   questions page is the grid and nothing else, by an earlier decision, so the
+   axis is section 6 of the start page and the grid's closing paragraph points
+   at it.
+
+### What changed, by file
+
+`data/check-carrier.json`, new. `renderCheckCarrier` in `assets/site.js` and
+a `.carrier` block in `assets/site.css`. Section 6 and its contents entry in
+`index.html`; one sentence in `six-questions.html`. `check_carrier` in
+`tools/verify.py`; `checkCarrier`, an arrival anchor and three marker
+attributes in `tools/pagecheck.js`. The bundle regenerated.

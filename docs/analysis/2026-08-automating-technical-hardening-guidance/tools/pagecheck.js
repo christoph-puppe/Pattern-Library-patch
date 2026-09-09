@@ -542,7 +542,10 @@ async function checkPage(file) {
     "data-size", "data-repo", "data-term", "data-label", "data-home",
     "data-destination", "data-scale-controls", "data-scale-live",
     "data-copied", "data-haystack", "data-schema", "data-heading-level",
-    "data-status", "data-state", "data-criterion", "data-section"]);
+    "data-status", "data-state", "data-criterion", "data-section",
+    //  markers the check-axis renderer writes for this harness to read,
+    //  never hooks a script selects on
+    "data-approach", "data-pair", "data-kind"]);
   const unwired = [...hooks].filter((h) => !known.has(h));
   check(`${name}: every data hook on the page is wired in site.js`,
         unwired.length === 0, JSON.stringify(unwired));
@@ -1062,7 +1065,7 @@ async function checkPage(file) {
       .some((c) => h.closest("." + c))
     || ["data-views", "data-readers", "data-glossary", "data-slot-fill",
         "data-matrix", "data-sc28", "data-position-questions", "data-contribute",
-        "data-question-sides", "data-approach-cards",
+        "data-question-sides", "data-approach-cards", "data-check-carrier",
         "data-audits", "data-rules", "data-does-not", "data-verification",
         "data-answers-row"].some((d) => h.closest("[" + d + "]"));
   /* The question chip's number and name land in front of the heading text. */
@@ -1115,6 +1118,9 @@ async function checkPage(file) {
     await checkSixQuestions(name, doc);
     checkRuns(name, doc);
   }
+  if (name === "index.html") {
+    checkCarrier(name, doc);
+  }
   if (/^(assessment|catalog|component|profile)-first\.html$/.test(name)) {
     checkTradeoffs(name, doc);
     checkApproachShape(name, doc);
@@ -1142,6 +1148,49 @@ async function checkPage(file) {
    with a word under it on the second. Mixing a two-line item with a one-line
    one is what put the marks half a caption below the tiles beside them, and a
    mark with no word under it left a reader inferring what the glyph meant. */
+/* ------------------------------------------------- the check axis ---------
+   Section 6 of the start page tables what each approach's OSCAL carries about
+   the check and puts the same rule from two corpora side by side. The data
+   file is checked by verify.py; this checks what the renderer made of it: one
+   row per approach in the pre-read's order, a kind on every row, every extract
+   rendered with its status, and both sides of every pair present. */
+function checkCarrier(name, doc) {
+  const root = doc.querySelectorAll("[data-check-carrier]")[0];
+  check(`${name}: the check axis is on the page`, !!root);
+  if (!root) return;
+  const rows = root.querySelectorAll("table.carrier tbody tr");
+  check(`${name}: the axis tables the four approaches in the pre-read's order`,
+        rows.map((r) => textOf(r.querySelectorAll("th")[0])).join("|") === OPTION_ORDER.join("|"),
+        rows.map((r) => textOf(r.querySelectorAll("th")[0])).join("|"));
+  const kinds = root.querySelectorAll("dl.carrier-kinds dt .carrier-kind");
+  check(`${name}: the axis names three kinds`, kinds.length === 3, `${kinds.length}`);
+  const rowKinds = rows.map((r) => r.querySelectorAll("td .carrier-kind").length);
+  check(`${name}: every row carries exactly one kind`, rowKinds.every((n) => n === 1),
+        JSON.stringify(rowKinds));
+  const groups = root.querySelectorAll(".carrier-extracts__group");
+  check(`${name}: every row rests on a rendered extract`, groups.length === rows.length
+        && groups.every((g) => g.querySelectorAll("details.snippet .snippet__title").length > 0),
+        `${groups.length} groups for ${rows.length} rows`);
+  const pairs = root.querySelectorAll(".carrier-pair");
+  check(`${name}: at least one pair puts the same rule from two corpora side by side`,
+        pairs.length >= 1, `${pairs.length}`);
+  pairs.forEach((p) => {
+    const sides = p.querySelectorAll(".carrier-pair__side");
+    const key = p.getAttribute("data-pair");
+    check(`${name}: pair ${key} has two sides from two approaches`,
+          sides.length === 2 && sides[0].getAttribute("data-approach") !== sides[1].getAttribute("data-approach"));
+    const titles = sides.map((s) => s.querySelectorAll("details.snippet .snippet__title").length);
+    check(`${name}: pair ${key} renders an extract on each side`, titles.every((n) => n === 1),
+          JSON.stringify(titles));
+    const badges = sides.map((s) => s.querySelectorAll("details.snippet .status-badge").length);
+    check(`${name}: pair ${key} labels each extract with its corpus's status`,
+          badges.every((n) => n === 1), JSON.stringify(badges));
+  });
+  const cons = root.querySelectorAll(".carrier-consequences__kind");
+  check(`${name}: consequences are stated for every kind`, cons.length === kinds.length,
+        `${cons.length} for ${kinds.length}`);
+}
+
 function checkRuns(name, doc) {
   const runs = doc.querySelectorAll(".mflow__run");
   if (!runs.length) return;
@@ -1850,7 +1899,7 @@ const ARRIVALS = {
      and "stakeholders" is now "paths": the detailed stakeholder mapping lives
      on each approach page, seven parties deep, and this section is about the
      one recommendation branching rather than about the parties. */
-  "index.html": ["paths", "two-paths", "approaches", "satisfaction"]
+  "index.html": ["paths", "two-paths", "approaches", "satisfaction", "carrier"]
 };
 
 /* ------------------------------------------------- opened from a folder ---
