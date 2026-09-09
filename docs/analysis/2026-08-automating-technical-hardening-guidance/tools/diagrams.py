@@ -12,8 +12,8 @@ Why a generator rather than eighteen hand-authored files.
      a reader's problem.
 
   2. Plan section 3 rule 5 requires equal budget "enforced by construction".
-     The three-approach families are emitted from one function each, iterating
-     over one list of three. Giving one approach an extra node or an extra join
+     The per-approach families are emitted from one function each, iterating
+     over one list of four. Giving one approach an extra node or an extra join
      would take deliberate effort and would show up in the verifier's counts.
 
 Every emitted file:
@@ -293,9 +293,9 @@ class Corpus:
 # 2. svg primitives                                                            #
 # --------------------------------------------------------------------------- #
 
-#  The pre-read's option-letter order: A, B, C. Every three-approach loop uses
-#  this list and only this list, so ordering can never become a choice made per
-#  diagram.
+#  The pre-read's option-letter order: A, B, C, then D. Every per-approach loop
+#  uses this list and only this list, so ordering can never become a choice made
+#  per diagram.
 #
 #  The colour token each approach carries did not move with the order. A hue that
 #  changed hands would invalidate every published figure and every association a
@@ -306,6 +306,9 @@ APPROACHES = [
     ("catalog-first",    "Catalog-first",    "A", "catalog",    "square"),
     ("component-first",  "Component-first",  "B", "component",  "triangle"),
     ("assessment-first", "Assessment-first", "C", "assessment", "circle"),
+    #  The fourth arrived later, with a fourth hue at the same lightness and a
+    #  fourth marker shape, so nothing the first three carried had to move.
+    ("profile-first",    "Profile-first",    "D", "profile",    "diamond"),
 ]
 
 STATE_GEOM = {
@@ -552,7 +555,8 @@ def g_slot(n: str, state: str) -> str:
 def g_ring(short: str, shape: str) -> str:
     mark = {"circle": '<circle cx="0" cy="0" r="6" class="ringmark"/>',
             "square": '<rect x="-6" y="-6" width="12" height="12" class="ringmark"/>',
-            "triangle": '<path d="M0,-6.5 L6.5,5 L-6.5,5 z" class="ringmark"/>'}[shape]
+            "triangle": '<path d="M0,-6.5 L6.5,5 L-6.5,5 z" class="ringmark"/>',
+            "diamond": '<path d="M0,-7 L7,0 L0,7 L-7,0 z" class="ringmark"/>'}[shape]
     return (f'<g class="ap-{short}">'
             f'<rect x="{{gx}}" y="{{gy}}" width="34" height="20" rx="6" class="ring" '
             f'transform="translate(0,-14)"/>'
@@ -1133,9 +1137,7 @@ def diagram_73(c: Corpus) -> dict[str, str]:
     how = {h["key"]: h for h in jn["how"]}
     files = {}
 
-    for key, short, letter in (("catalog-first", "catalog", "A"),
-                               ("component-first", "component", "B"),
-                               ("assessment-first", "assessment", "C")):
+    for key, _label, letter, short, _shape in APPROACHES:
         a = jn["approaches"][key]
         did = f"dg-73-join-{short}"
         y = 46
@@ -1275,7 +1277,9 @@ def diagram_75(c: Corpus) -> dict[str, str]:
         mark = {"circle": '<circle cx="0" cy="0" r="6.5" class="ringmark"/>',
                 "square": '<rect x="-6.5" y="-6.5" width="13" height="13" '
                           'class="ringmark"/>',
-                "triangle": '<path d="M0,-7 L7,5.5 L-7,5.5 z" class="ringmark"/>'}[shape]
+                "triangle": '<path d="M0,-7 L7,5.5 L-7,5.5 z" class="ringmark"/>',
+                "diamond": '<path d="M0,-7.5 L7.5,0 L0,7.5 L-7.5,0 z" '
+                           'class="ringmark"/>'}[shape]
         overlay = (f'<g class="ap-{short}">'
                    + path(f"M{RX[0] - 12},{y - 24} H{x2 + 12} V{y + RNH + 12} "
                           f"H{RX[0] - 12} Z", "apline")
@@ -1487,14 +1491,19 @@ def diagram_77(c: Corpus) -> dict[str, str]:
             o.append(txt(x + 14, ly, ln, "s mu"))
             ly += 19
         for j, (akey, _al, _lt, short, shape) in enumerate(APPROACHES):
-            lx = x + 58 + j * 82
+            #  Four lines in a 280-unit box: 40 in, then 66 apart, so the
+            #  last sits at 238 and clears the right edge.
+            lx = x + 40 + j * 66
             ok = avail[bkey][akey]
             mid = (LINE_TOP + LINE_BOT) / 2 + 14
             mark = {"circle": f'<circle cx="{lx}" cy="{mid}" r="7" class="ringmark"/>',
                     "square": f'<rect x="{lx - 7}" y="{mid - 7}" width="14" '
                               f'height="14" class="ringmark"/>',
                     "triangle": f'<path d="M{lx},{mid - 7} L{lx + 7.5},{mid + 6} '
-                                f'L{lx - 7.5},{mid + 6} z" class="ringmark"/>'}[shape]
+                                f'L{lx - 7.5},{mid + 6} z" class="ringmark"/>',
+                    "diamond": f'<path d="M{lx},{mid - 8} L{lx + 8},{mid} '
+                               f'L{lx},{mid + 8} L{lx - 8},{mid} z" '
+                               f'class="ringmark"/>'}[shape]
             o.append(f'<g class="ap-{short}">'
                      + path(f"M{lx},{LINE_TOP} V{LINE_BOT}",
                             "apline" if ok else "apline-off")
@@ -1565,7 +1574,7 @@ def diagram_77(c: Corpus) -> dict[str, str]:
              + LI(G_REF, "a resolved reference"))
     for _k, label, letter, short, shape in APPROACHES:
         items += LI(g_ring(short, shape), f"{label} (Option {letter})")
-    items += LI("", "Inline and by-pointer binding are available to all three. "
+    items += LI("", "Inline and by-pointer binding are available to all four. "
                     "Late binding is available only where the rule is already a "
                     "control. That is a gap in OSCAL, not a defect in any "
                     "approach, and it rewards whichever view of a rule the "
@@ -1587,10 +1596,10 @@ def diagram_77(c: Corpus) -> dict[str, str]:
         "ties rule to control after publication, and it can be authored by anyone, "
         "including a third party. Under each route, three lines run down to the socket, "
         "one per approach in option-letter order: Catalog-first, Component-first, "
-        "Component-first. Every line under the inline route and under the by-pointer "
-        "route is unbroken, because both are available to all three approaches. Under "
-        "the late route, only the Catalog-first line is unbroken; the Assessment-first "
-        "and Component-first lines are struck through, and the schema constraint that "
+        "Assessment-first, Profile-first. Every line under the inline route and under "
+        "the by-pointer route is unbroken, because both are available to all four "
+        "approaches. Under the late route, only the Catalog-first line is unbroken; "
+        "the other three lines are struck through, and the schema constraint that "
         f"strikes them is printed beneath: {constraint}, and mapping-item has no uuid "
         "and no href. So OSCAL's one native, optional, late, third-party-authorable "
         "mechanism reaches only rules that are already modelled as controls. That is a "
@@ -1933,9 +1942,7 @@ def diagram_710(c: Corpus) -> dict[str, str]:
     reg = sc["framework"]["controls"]
     hard = sum(h["requirements"] for h in sc["hardening"])
 
-    for key, short in (("catalog-first", "catalog"),
-                       ("component-first", "component"),
-                       ("assessment-first", "assessment")):
+    for key, _label, _letter, short, _shape in APPROACHES:
         a = sc["approaches"][key]
         by = {f["model"]: f for f in a["files"]}
         total = sum(f["count"] for f in a["files"])
@@ -1997,7 +2004,7 @@ def diagram_710(c: Corpus) -> dict[str, str]:
                 for _b, ms in SC_BANDS for m in ms) +
             f" A model this approach does not use is drawn hollow and labelled "
             f"none, so the absence is as visible as the presence. The tile is the "
-            f"same size in all three figures, so the area of ink is the "
+            f"same size in all four figures, so the area of ink is the "
             f"comparison. {note}.")
         files[f"710-scenario-{short}.svg"] = svg(
             did, y, f"{sc['title']}: the file set for the "
@@ -2028,9 +2035,10 @@ BUILDERS = (diagram_72, diagram_73, diagram_75,
 #  now has to be referenced by a page.
 PUBLISHED = {
     "73-join-assessment.svg", "73-join-catalog.svg", "73-join-component.svg",
+    "73-join-profile.svg",
     "75-stakeholders.svg", "76-satisfaction-6a-6b.svg",
     "710-scenario-catalog.svg", "710-scenario-component.svg",
-    "710-scenario-assessment.svg",
+    "710-scenario-assessment.svg", "710-scenario-profile.svg",
 }
 
 

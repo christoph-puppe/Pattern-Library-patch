@@ -44,9 +44,15 @@ import extract as ex        # same directory
 import svgrender as sr     # same directory
 
 # The pre-read's option-letter order: Catalog-first is A, Component-first is B,
-# Assessment-first is C. One list, so no tool can order the three differently
-# from the site.
-OPTION_ORDER = ["catalog-first", "component-first", "assessment-first"]
+# Assessment-first is C, and Profile-first, which arrived after the pre-read, is
+# D. One list, so no tool can order the four differently from the site.
+OPTION_ORDER = ["catalog-first", "component-first", "assessment-first",
+                "profile-first"]
+
+# The approaches that exist as a concept note rather than as a published corpus.
+# Every check that reads a corpus skips them by name, and the checks that hold
+# every approach to the same shape do not.
+UNPUBLISHED = {"profile-first"}
 
 # Labels that named a construct rather than a question. Each one was on the site
 # and each one told a reader nothing on its own, which is what a name is for.
@@ -936,12 +942,12 @@ def check_data() -> None:
     #  Read the clause that makes the all-three claim and check the question
     #  numbers inside it against the cells. Parsing prose is fragile, so the
     #  clause is delimited by a fixed phrase the finding is required to use.
-    PHRASE = "by all three"
-    check("the finding states its all-three claim in the expected form",
+    PHRASE = "by all four"
+    check("the finding states its all-four claim in the expected form",
           PHRASE in finding, finding)
     if PHRASE in finding:
         claimed = set(re.findall(r"\b(\d(?:[ab])?)\b", finding.split(PHRASE)[0]))
-        check("the finding claims 'all three' only where the matrix agrees",
+        check("the finding claims 'all four' only where the matrix agrees",
               claimed == set(all_three),
               f"finding claims {sorted(claimed)}, matrix has {all_three}")
 
@@ -1470,12 +1476,13 @@ def check_a11y() -> None:
         #  no word count can see. Equal lightness costs dichromat separation,
         #  which is why every approach outline also carries a marker shape and
         #  a written label, and why --diagrams asserts that it does.
-        ap = [t[f"--approach-{k}"] for k in ("assessment", "catalog", "component")]
-        for name, colour in zip(("assessment", "catalog", "component"), ap):
+        SHORTS = ("assessment", "catalog", "component", "profile")
+        ap = [t[f"--approach-{k}"] for k in SHORTS]
+        for name, colour in zip(SHORTS, ap):
             check(f"{theme}: --approach-{name} meets non-text AA (3.0)",
                   _contrast(colour, bg) >= 3.0, f"{_contrast(colour, bg):.2f}")
         spread = max(_rel_lum(c) for c in ap) - min(_rel_lum(c) for c in ap)
-        check(f"{theme}: the three approach colours are equally light",
+        check(f"{theme}: the four approach colours are equally light",
               spread <= 0.02, f"luminance spread {spread:.4f}")
 
     _axe()
@@ -1902,12 +1909,12 @@ def check_diagrams() -> None:
     check("the three-stakeholders drawing carries the shared geometry",
           all(rbodies.values()), str([k for k, v in rbodies.items() if not v]))
 
-    print("\n[diagrams] equal budget across the three approaches")
-    for family, count in (("73-join", 3),):
+    print("\n[diagrams] equal budget across the four approaches")
+    for family, count in (("73-join", 4),):
         got = [os.path.basename(p) for p in files
                if os.path.basename(p).startswith(family)
                and any(a in os.path.basename(p)
-                       for a in ("assessment", "catalog", "component"))]
+                       for a in ("assessment", "catalog", "component", "profile"))]
         check(f"{family}: one drawing per approach", len(got) == count, str(got))
 
     #  A published figure has to be shown somewhere.
@@ -1957,7 +1964,7 @@ def check_diagrams() -> None:
     #  assertion moved with them: other pages render the same states from the
     #  same data, and tools/pagecheck.js checks that table cell by cell.
     approaches = {"assessment": "assessment-first", "catalog": "catalog-first",
-                  "component": "component-first"}
+                  "component": "component-first", "profile": "profile-first"}
 
     #  The figure drew two joins per approach and now draws the whole chain, so
     #  what it has to match is the chain in data/joins.json rather than a count
@@ -2172,7 +2179,7 @@ def check_questions() -> None:
     approaches = [a["key"] for a in json.load(
         open(os.path.join(DATA, "six-questions.json"),
              encoding="utf-8"))["approaches"]]
-    check("four sections: one across the three, then one each",
+    check("five sections: one across the four, then one each",
           [s["key"] for s in secs] == ["all"] + approaches,
           str([s["key"] for s in secs]))
     for s in secs:
@@ -2228,7 +2235,7 @@ def check_questions() -> None:
 # --------------------------------------------------------------------------- #
 
 def question_cells():
-    """The 21 cells of the question matrix, from data."""
+    """The 28 cells of the question matrix, from data."""
     return json.load(open(os.path.join(DATA, "six-questions.json"),
                           encoding="utf-8"))["matrix"]
 
@@ -2567,7 +2574,10 @@ def check_stakeholders() -> None:
         #  holds, cannot see what the owner automates, and is not answerable for
         #  it. Drawing the owner running the same plan said the assessor's route
         #  depended on the owner's tooling, which is the opposite of the claim.
-        want_runners = (["auditor"] if key == "assessment-first"
+        #  The fourth approach has no owner's run either, for its own reason:
+        #  the executable methods are read by the assessment plan, and a run
+        #  of them writes findings rather than responses.
+        want_runners = (["auditor"] if key in ("assessment-first", "profile-first")
                         else ["owner", "auditor"])
         check(f"{key}: the tool is run by {' and the '.join(want_runners)}",
               runners == want_runners, str(runners))
@@ -2584,7 +2594,8 @@ def check_stakeholders() -> None:
                 for k in ("owner", "auditor")}
         check(f"{key}: the auditor's run makes a result",
               made["auditor"] == ["assessment-results"], str(made["auditor"]))
-        want = ([] if key == "assessment-first" else ["system-security-plan"])
+        want = ([] if key in ("assessment-first", "profile-first")
+                else ["system-security-plan"])
         check(f"{key}: the owner's run makes {want[0] if want else 'nothing'}",
               made["owner"] == want, str(made["owner"]))
         #  A row with no run is not an omission, and a reader cannot tell an
@@ -2645,9 +2656,13 @@ def check_stakeholders() -> None:
     #  other two give it a document to edit. Both are asserted, because a row
     #  with a model on it and no explanation of whose model it is would read as
     #  a fourth author of the same file.
+    #  The fourth: the profile that puts the objective and the method on the
+    #  framework control. Placing the part is the tie, so the mapping provider
+    #  edits the profile, which is another party's document here too.
     MAPS_IN = {"catalog-first": "mapping-collection",
                "component-first": "component-definition",
-               "assessment-first": "assessment-plan"}
+               "assessment-first": "assessment-plan",
+               "profile-first": "profile"}
     for key in sorted(sh["approaches"]):
         per = sh["approaches"][key]
         holders = sorted(k for k in keys
@@ -2684,7 +2699,8 @@ def check_stakeholders() -> None:
     #  engine provider writes the check inside it.
     HOLDS_CHECKS = {"catalog-first": "component-definition",
                     "component-first": "component-definition",
-                    "assessment-first": "assessment-plan"}
+                    "assessment-first": "assessment-plan",
+                    "profile-first": "profile"}
     for key in sorted(sh["approaches"]):
         wrote = [m["model"] for m in sh["approaches"][key]["engine"].get("writes", [])]
         want = HOLDS_CHECKS[key]
@@ -2774,6 +2790,12 @@ def check_stakeholders() -> None:
     #  the two pages beside it drew it on someone else. A rule scoped to the one
     #  case where a claim is obvious is a rule that lets the claim be wrong
     #  everywhere else.
+    #  One approach is the exception, and it is the approach's own position
+    #  rather than a row drawn wrong: a third party attaches a check by
+    #  publishing a profile, so parties other than the owner write one. The
+    #  data has to declare which parties, and say why, or the rule would be
+    #  waived in silence.
+    shared = sh.get("shared_profile", {})
     for key in sorted(sh["approaches"]):
         per = sh["approaches"][key]
         owner_models = {m["model"] for m in entries(per["owner"])}
@@ -2781,7 +2803,26 @@ def check_stakeholders() -> None:
               "profile" in owner_models, str(sorted(owner_models)))
         others = sorted(k for k in keys if k != "owner"
                         and any(m["model"] == "profile" for m in entries(per[k])))
-        check(f"{key}: and nobody else writes one", not others, str(others))
+        if key in shared:
+            decl = shared[key]
+            #  Writing, not reading. The auditor's run reads the profile on
+            #  this approach, and a run's input is not an author.
+            writers = sorted(k for k in keys if k != "owner"
+                             and any(m["model"] == "profile"
+                                     for m in per[k].get("writes", [])))
+            check(f"{key}: the parties that also write a profile are the "
+                  f"declared ones", writers == sorted(decl.get("parties", [])),
+                  f"{writers} against {sorted(decl.get('parties', []))}")
+            check(f"{key}: and the declaration says why",
+                  len(decl.get("why", "").split()) >= 24, decl.get("why", "")[:40])
+            for k in others:
+                check(f"{key}/{k}: says on its row that it writes a profile",
+                      len(per[k].get("note", "").split()) >= 12,
+                      per[k].get("note", "")[:40])
+        else:
+            check(f"{key}: and nobody else writes one", not others, str(others))
+    check("no approach declares a shared profile it does not have",
+          set(shared) <= set(sh["approaches"]), str(sorted(shared)))
 
     #  And the page renders all six, in order, each model drawn as a file tile.
     for key in sorted(sh["approaches"]):
@@ -2877,7 +2918,7 @@ def check_scenario() -> None:
     And the three figures are drawn on one grid, so comparing them by eye is
     comparing the same thing.
     """
-    print("\n[scenario] one system, three hardening guides, modelled three ways")
+    print("\n[scenario] one system, three hardening guides, modelled four ways")
     sc = json.load(open(os.path.join(DATA, "scenario.json"), encoding="utf-8"))
     global SCENARIO_FIGURES
     SCENARIO_FIGURES = _scenario_figures(sc)
@@ -3085,7 +3126,7 @@ def check_scenario() -> None:
         m = re.search(r'viewBox="0 0 (\d+) ', fig)
         t = re.search(r'<rect[^>]*width="(\d+)" height="(\d+)"[^>]*class="model"', fig)
         boxes.add((m.group(1) if m else "?", t.groups() if t else None))
-    check("the three figures share a width and a tile size",
+    check("the four figures share a width and a tile size",
           len(boxes) == 1, str(sorted(map(str, boxes))))
 
     check(f"the three guides come to {hard} requirements", hard == 547, str(hard))
@@ -3114,17 +3155,18 @@ def check_scenario() -> None:
     #  Nothing held it, which is why it drifted, so it is held here: the table
     #  columns and the subsection headings both, since they are generated from
     #  the same list and would drift together.
-    LETTERS = ["catalog-first", "component-first", "assessment-first"]
+    LETTERS = OPTION_ORDER
     _sq = json.load(open(os.path.join(DATA, "six-questions.json"),
                          encoding="utf-8"))
     labels = [a["label"] for k in LETTERS
               for a in _sq["approaches"] if a["key"] == k]
+    n = len(labels)
     cols = re.findall(r'<th scope="col">([^<]+)</th>', page)
     check("scenario.html: the table reads in the option-letter order",
-          cols[1:4] == labels, str(cols[:4]))
+          cols[1:n + 1] == labels, str(cols[:n + 1]))
     heads = [h for h in re.findall(r"<h3[^>]*>2\.\d+ ([^,<]+)", page)]
     check("scenario.html: and so do the sections beneath it",
-          heads[:3] == labels, str(heads[:3]))
+          heads[:n] == labels, str(heads[:n]))
 
     #  A model is drawn the same way wherever it is named. The chip is the unit
     #  the approach pages taught, and this page was setting the same seven
@@ -3169,7 +3211,7 @@ def check_tradeoffs() -> None:
     rests on, where it is a claim about what a model can express, is named in
     schema_evidence and checked below without being rendered.
     """
-    print("\n[tradeoffs] three strengths, three risks, on all three pages")
+    print("\n[tradeoffs] strengths and risks, on all four pages")
     tr = json.load(open(os.path.join(DATA, "tradeoffs.json"), encoding="utf-8"))
     sq = json.load(open(os.path.join(DATA, "six-questions.json"), encoding="utf-8"))
     approaches = {a["key"] for a in sq["approaches"]}
@@ -3409,7 +3451,7 @@ def check_links() -> None:
             r'https?://[^\s"\\]+', json.dumps(blob))}
     # Schema identifiers are namespaces rather than pages and are not fetched.
     in_data = {u for u in in_data if "csrc.nist.gov/ns/" not in u
-               and "cisa.gov/ns/" not in u}
+               and "cisa.gov/ns/" not in u and "example.org/ns/" not in u}
     external = sorted(in_markup | in_data)
     print(f"        {len(external)} distinct external links, "
           f"{len(in_markup)} in markup and {len(in_data - in_markup)} from data/")
@@ -3591,7 +3633,7 @@ def check_slots() -> None:
     check("the binding-times table still records who can use late binding",
           set(late.get("available_to", {})) ==
           {a["key"] for a in anat["approaches"]}, str(late.get("available_to")))
-    check("and why the other two cannot",
+    check("and why the others cannot",
           "closed by allOf" in late.get("why", ""))
 
     # An answer describes where a rule lives and how it joins. A bare count
@@ -3640,8 +3682,9 @@ def check_budget() -> None:
     That is the generator checking its own arithmetic. This measures the files
     that actually shipped, which is the only number a reader is exposed to.
     """
-    print("\n[budget] equal budget across the three approach pages")
-    pages = ["assessment-first.html", "catalog-first.html", "component-first.html"]
+    print("\n[budget] equal budget across the four approach pages")
+    pages = ["assessment-first.html", "catalog-first.html", "component-first.html",
+             "profile-first.html"]
     counts = {}
     for p in pages:
         path = os.path.join(SITE_ROOT, p)
@@ -3668,7 +3711,7 @@ def check_budget() -> None:
         got = {p: len(re.findall(pattern, open(os.path.join(SITE_ROOT, p),
                                                encoding="utf-8").read()))
                for p in pages}
-        check(f"the three approach pages carry the same number of {what}",
+        check(f"the four approach pages carry the same number of {what}",
               len(set(got.values())) == 1, str(got))
 
     # Extract counts are the one thing on these pages that cannot be equal.
@@ -3804,10 +3847,18 @@ def check_conformance() -> None:
             root, "AWS", "oscal-content-for-aws-services-main", "**", "*.json"),
             recursive=True),
         "assessment-first": ez_plans(),
+        #  A concept note and no corpus. There is nothing to validate, and the
+        #  label has to say so rather than let an empty file list read as a
+        #  corpus that happens to use no undefined assembly.
+        "profile-first": [],
     }
     for key, files in corpora.items():
         label = [a["status_annotation"] for a in anat["approaches"]
                  if a["key"] == key][0]
+        if key in UNPUBLISHED:
+            check(f"{key} is labelled a concept note and has no file to validate",
+                  "concept note" in label and not files, f"{label!r}, {len(files)} files")
+            continue
         used = set()
         for f in files:
             used |= keys_in(f)
@@ -3841,6 +3892,8 @@ def check_conformance() -> None:
 
     # A validator is present, so run it over one file per corpus.
     for key, files in corpora.items():
+        if key in UNPUBLISHED:
+            continue
         label = [a["status_annotation"] for a in anat["approaches"]
                  if a["key"] == key][0]
         target = sorted(files)[0]
@@ -3962,6 +4015,16 @@ def check_example() -> None:
     for ap, bl in pe["examples"].get("1", {}).items():
         for b in bl:
             found = sorted(t for t in TIE if t in b["content"])
+            #  A part added by a profile has no existence apart from the control
+            #  it is added to: the alter that carries it names the control, and
+            #  there is no way to write the part down without that. So the
+            #  fourth column shows control-id under question 1, as the address
+            #  of the part rather than as a tie, and nothing else from the list.
+            if ap == "profile-first":
+                check(f"q1/{ap}/{b['rule']}: names the control only as the "
+                      f"address of the part, and nothing else from question 2",
+                      found == ["control-id"], str(found))
+                continue
             check(f"q1/{ap}/{b['rule']}: says where the rule is written and "
                   f"leaves the control tie to question 2",
                   not found, str(found))
@@ -3984,7 +4047,7 @@ def check_example() -> None:
     #  the description cannot drift from the encodings it describes.
     rule2 = {ap: bl[1]["content"] for ap, bl in pe["examples"]["1"].items()
              if len(bl) > 1}
-    for ap in ("catalog-first", "component-first"):
+    for ap in ("catalog-first", "component-first", "profile-first"):
         check(f"q1/{ap}: the rule that carries a value declares a parameter",
               '"params"' in rule2.get(ap, ""), "no params in the encoding")
     check("q1/assessment-first: has no parameter to declare",
@@ -4043,6 +4106,13 @@ def check_example() -> None:
          "the observation"),
         ("assessment-first", "6b", "data-at-rest", "5", "assessor-out",
          "the result"),
+        #  Compared on the rule that carries a value, because the run reads
+        #  both rules and the union of their field paths is the second rule's:
+        #  the first declares no parameter and is a subset of it.
+        ("profile-first", "3", "password-min-length", "5", "assessor-in",
+         "the alter that carries the method"),
+        ("profile-first", "6b", "data-at-rest", "5", "assessor-out",
+         "the result"),
     ]
     for ap, qa, ra, qb, rb, what in SHARED:
         a, b = _block(qa, ap, ra), _block(qb, ap, rb)
@@ -4052,7 +4122,7 @@ def check_example() -> None:
 
     #  And a result whose related observation resolves. A finding pointing at an
     #  observation uuid that its own document does not carry is not a result.
-    for ap in ("catalog-first", "assessment-first"):
+    for ap in ("catalog-first", "assessment-first", "profile-first"):
         blk = _block("6b", ap, "data-at-rest")
         res = blk["assessment-results"]["results"][0]
         have = {o["uuid"] for o in res.get("observations", [])}
@@ -4589,7 +4659,7 @@ def check_example() -> None:
         cid = r["check_id"]
         check(f"{r['key']}: the check id is the publisher's XCCDF rule id",
               cid.startswith("SV-") and cid.endswith("_rule"), cid)
-        for ap in ("catalog-first", "component-first", "assessment-first"):
+        for ap in OPTION_ORDER:
             bl = (pe["examples"].get("3") or {}).get(ap) or []
             mine = [b for b in bl if b["rule"] == r["key"]]
             check(f"{r['key']}: {ap} names that same check id at question 3",

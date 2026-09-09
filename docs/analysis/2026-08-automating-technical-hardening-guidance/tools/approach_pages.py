@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-approach_pages.py: emit the three approach pages from one template.
+approach_pages.py: emit the four approach pages from one template.
 
-Plan section 3 rule 5 requires equal budget across the three approaches
+Plan section 3 rule 5 requires equal budget across the four approaches
 "enforced by construction". Three hand-written pages cannot deliver that: the
 one written first sets the shape and the other two drift toward it. So the nine
 sections, their order, their heading text and their per-approach counts come
@@ -45,7 +45,7 @@ SITE_ROOT = os.path.dirname(TOOLS_DIR)
 DATA = os.path.join(SITE_ROOT, "data")
 
 #  Alphabetical by structural name, everywhere, stated on the page.
-ORDER = ["assessment-first", "catalog-first", "component-first"]
+ORDER = ["assessment-first", "catalog-first", "component-first", "profile-first"]
 
 #  Plan section 3 rule 6: consequences, not verdicts. An approach page describes
 #  one approach; a comparative on it reads as a verdict delivered out of the
@@ -132,6 +132,31 @@ CONTENT = {
 
 
 },
+
+# ============================================================== profile-first
+#  The fourth approach has published no OSCAL content. It exists as a concept
+#  note, and the page describes the shape the note proposes in the same three
+#  sections the other pages have, held to the same budget.
+"profile-first": {
+"title": "Profile-first",
+"lede": "In this approach, the <strong>rule</strong> is an assessment objective part on a control and the <strong>check</strong> is an executable assessment method part beside it, carrying a script body. Both are added by the catalog when its author supplies the check, and by a profile otherwise.",
+"description": "Executable assessment methods sit on controls as parts, in the "
+               "catalog when the requirement's author owns the check and in a "
+               "profile otherwise, and findings target the objective beside them.",
+
+#  The stakeholder section opens by naming which of the three readings of a
+#  rule the approach holds. This approach holds the catalog approach's reading
+#  and differs in the construct, which the standard sentence cannot say, so
+#  it supplies its own.
+"reading": ("Three readings of what a hardening rule is are on the record, and "
+            "this approach reads it as <strong>a requirement</strong>, as the "
+            "catalog approach does. What differs is the construct: an "
+            "assessment objective part on the control rather than a control of "
+            "its own, added by the <code>catalog</code> or a "
+            "<code>profile</code>. That is what decides the table below."),
+
+"exists": "",
+},
 }
 
 
@@ -145,6 +170,7 @@ NAV = [("index.html", "Start here"),
        ("catalog-first.html", "Catalog-first"),
        ("component-first.html", "Component-first"),
        ("assessment-first.html", "Assessment-first"),
+       ("profile-first.html", "Profile-first"),
        ("questions.html", "Open questions"),
        ("oscal-artifacts.html", "OSCAL artifacts")]
 
@@ -354,7 +380,12 @@ def stakeholder_section(key: str, c, view, sh) -> str:
 
     o = [f'<section id="stakeholder">\n<h2>{HEADINGS[0][1]}</h2>']
     o.append('<div class="tier2">')
-    o.append(f'  <p>Three readings of what a hardening rule is are on the record, '
+    #  An approach that shares another's reading of the rule and differs in
+    #  the construct says so in its own sentence, because the standard one
+    #  names the model the reading implies and that is not the model this
+    #  approach writes in.
+    o.append(f'  <p>{c["reading"]}</p>' if c.get("reading") else
+             f'  <p>Three readings of what a hardening rule is are on the record, '
              f'and this approach reads it as '
              f'<strong>{view["label"][0].lower() + view["label"][1:]}</strong>, '
              f'which puts it in the {view["implies_layer"]} layer, in the '
@@ -519,7 +550,11 @@ def build(key: str, six_questions, views, tradeoffs, stakeholders,
     c = CONTENT[key]
     ap = [a for a in six_questions["approaches"] if a["key"] == key][0]
     short = key.split("-")[0]
-    view = [v for v in views["views"] if v["aligned_approach"] == key][0]
+    #  A reading is stated for one approach and may be held by another. The
+    #  fourth approach holds the first's reading of the rule and differs in
+    #  the construct that carries it, which views.json records as also_aligned.
+    view = [v for v in views["views"]
+            if v["aligned_approach"] == key or key in v.get("also_aligned", [])][0]
     o = []
     o.append(f'<h1>{c["title"]}</h1>')
     o.append(f'<p class="lede">{c["lede"]}</p>')
@@ -626,8 +661,8 @@ PAGE = """<!doctype html>
      nothing filled. One footer, one place. -->
 <footer class="site-footer">
   <div class="site-footer__inner">
-    <p><strong>This site makes no recommendation.</strong> It states three approaches in the
-       terms their proponents use and shows the content each one ships.</p>
+    <p><strong>This site makes no recommendation.</strong> It states four approaches in the
+       terms their proponents use and shows what each one has published.</p>
   </div>
 </footer>
 
@@ -724,7 +759,7 @@ def run(outdir: str, quiet: bool = False, force: bool = False) -> dict[str, int]
                 f"{key}: a strength runs {s_:.0f} words and a risk {h_:.0f}, "
                 f"over 15 per cent apart")
 
-    #  And across the three pages, so one approach's points are not each given
+    #  And across the four pages, so one approach's points are not each given
     #  more room than another's.
     sect = {k: _pt(tradeoffs["approaches"][k]["pros"]
                    + tradeoffs["approaches"][k]["cons"]) for k in ORDER}
@@ -743,7 +778,7 @@ def run(outdir: str, quiet: bool = False, force: bool = False) -> dict[str, int]
             ", ".join(f"{k} {v}" for k, v in counts.items()) +
             f"; spread {spread:.1%} over 10 per cent. Cut the longest.")
 
-    #  These three pages are generated, and a generated file that someone has
+    #  These four pages are generated, and a generated file that someone has
     #  edited by hand looks exactly like a generated file. This run destroyed a
     #  page that had been edited in place, silently, because nothing checked.
     #

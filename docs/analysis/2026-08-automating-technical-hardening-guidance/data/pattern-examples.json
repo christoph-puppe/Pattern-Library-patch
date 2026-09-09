@@ -1,8 +1,8 @@
 {
-  "note": "Our own encodings. Two rules, written in all three shapes, so the only thing that changes between the columns is the modelling.",
+  "note": "Our own encodings. Two rules, written in all four shapes, so the only thing that changes between the columns is the modelling.",
   "target": {
     "title": "Ubuntu 24.04 LTS",
-    "why": "One target, so the only thing that changes between the three columns is the modelling. Ubuntu because both rules are published for it, by DISA, and a reader can check them."
+    "why": "One target, so the only thing that changes between the four columns is the modelling. Ubuntu because both rules are published for it, by DISA, and a reader can check them."
   },
   "rules": [
     {
@@ -122,6 +122,34 @@
             ]
           ]
         }
+      ],
+      "profile-first": [
+        {
+          "rule": "data-at-rest",
+          "label": "Rule 1, data at rest",
+          "shows": "An assessment objective part, added to the framework control by a profile. The requirement is the part's prose, and a value is a parameter the same add declares and sets.",
+          "content": "{\n  \"profile\": {\n    \"modify\": {\n      \"alters\": [\n        {\n          \"control-id\": \"sc-28\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"parts\": [\n                {\n                  \"id\": \"sc-28_obj-ubtu-24-600090\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS handling data requiring data-at-rest protections must employ cryptographic mechanisms to prevent unauthorized disclosure and modification of the information at rest.\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "name=assessment-objective",
+          "focus": [
+            [
+              11,
+              15
+            ]
+          ]
+        },
+        {
+          "rule": "password-min-length",
+          "label": "Rule 2, minimum password length",
+          "shows": "An assessment objective part, added to the framework control by a profile. The requirement is the part's prose, and a value is a parameter the same add declares and sets.",
+          "content": "{\n  \"profile\": {\n    \"modify\": {\n      \"alters\": [\n        {\n          \"control-id\": \"ia-5.1\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"params\": [\n                {\n                  \"id\": \"password_min_length\",\n                  \"label\": \"Minimum password length\",\n                  \"values\": [\n                    \"15\"\n                  ]\n                }\n              ],\n              \"parts\": [\n                {\n                  \"id\": \"ia-5.1_obj-ubtu-24-400320\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS must enforce a minimum {{ insert: param, password_min_length }}-character password length.\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "name=assessment-objective",
+          "focus": [
+            [
+              20,
+              24
+            ]
+          ]
+        }
       ]
     },
     "2": {
@@ -170,6 +198,25 @@
             [
               39,
               50
+            ]
+          ]
+        }
+      ],
+      "profile-first": [
+        {
+          "rule": "both",
+          "label": "Both rules and their control ties",
+          "shows": "The placement is the tie. The profile imports the framework catalog and alters the control by id, and the parts go inside the alter, so the only identifier in play is the control's own.",
+          "content": "{\n  \"profile\": {\n    \"imports\": [\n      {\n        \"href\": \"./NIST_SP-800-53_rev5_catalog.json\",\n        \"include-controls\": [\n          {\n            \"with-ids\": [\n              \"sc-28\",\n              \"ia-5.1\"\n            ]\n          }\n        ]\n      }\n    ],\n    \"modify\": {\n      \"alters\": [\n        {\n          \"control-id\": \"sc-28\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"parts\": [\n                {\n                  \"id\": \"sc-28_obj-ubtu-24-600090\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS handling data requiring data-at-rest protections must employ cryptographic mechanisms to prevent unauthorized disclosure and modification of the information at rest.\"\n                }\n              ]\n            }\n          ]\n        },\n        {\n          \"control-id\": \"ia-5.1\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"params\": [\n                {\n                  \"id\": \"password_min_length\",\n                  \"label\": \"Minimum password length\",\n                  \"values\": [\n                    \"15\"\n                  ]\n                }\n              ],\n              \"parts\": [\n                {\n                  \"id\": \"ia-5.1_obj-ubtu-24-400320\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS must enforce a minimum {{ insert: param, password_min_length }}-character password length.\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "control-id",
+          "focus": [
+            [
+              19,
+              19
+            ],
+            [
+              34,
+              34
             ]
           ]
         }
@@ -272,6 +319,34 @@
             ]
           ]
         }
+      ],
+      "profile-first": [
+        {
+          "rule": "data-at-rest",
+          "label": "Rule 1, data at rest",
+          "shows": "An assessment method part beside the objective, with method TEST, a script body in its prose, five namespaced props saying how to run and judge it, and a link to the objective it tests.",
+          "content": "{\n  \"profile\": {\n    \"modify\": {\n      \"alters\": [\n        {\n          \"control-id\": \"sc-28\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"parts\": [\n                {\n                  \"id\": \"sc-28_obj-ubtu-24-600090\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS handling data requiring data-at-rest protections must employ cryptographic mechanisms to prevent unauthorized disclosure and modification of the information at rest.\"\n                },\n                {\n                  \"id\": \"sc-28_asm-ubtu-24-600090\",\n                  \"name\": \"assessment-method\",\n                  \"title\": \"SV-270747r1066730_rule\",\n                  \"props\": [\n                    {\n                      \"name\": \"method\",\n                      \"value\": \"TEST\"\n                    },\n                    {\n                      \"name\": \"platform\",\n                      \"value\": \"cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:*:*:*:*\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"language\",\n                      \"value\": \"bash\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"evaluation\",\n                      \"value\": \"exit-code\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"pass-condition\",\n                      \"value\": \"0\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"timeout\",\n                      \"value\": \"PT60S\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    }\n                  ],\n                  \"links\": [\n                    {\n                      \"rel\": \"assessment-objective\",\n                      \"href\": \"#sc-28_obj-ubtu-24-600090\"\n                    }\n                  ],\n                  \"prose\": \"```bash\\nlsblk -rno TYPE | grep -q '^crypt$'\\n```\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "name=assessment-method",
+          "focus": [
+            [
+              16,
+              58
+            ]
+          ]
+        },
+        {
+          "rule": "password-min-length",
+          "label": "Rule 2, minimum password length",
+          "shows": "An assessment method part beside the objective, with method TEST, a script body in its prose, five namespaced props saying how to run and judge it, and a link to the objective it tests.",
+          "content": "{\n  \"profile\": {\n    \"modify\": {\n      \"alters\": [\n        {\n          \"control-id\": \"ia-5.1\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"params\": [\n                {\n                  \"id\": \"password_min_length\",\n                  \"label\": \"Minimum password length\",\n                  \"values\": [\n                    \"15\"\n                  ]\n                }\n              ],\n              \"parts\": [\n                {\n                  \"id\": \"ia-5.1_obj-ubtu-24-400320\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS must enforce a minimum {{ insert: param, password_min_length }}-character password length.\"\n                },\n                {\n                  \"id\": \"ia-5.1_asm-ubtu-24-400320\",\n                  \"name\": \"assessment-method\",\n                  \"title\": \"SV-270732r1066685_rule\",\n                  \"props\": [\n                    {\n                      \"name\": \"method\",\n                      \"value\": \"TEST\"\n                    },\n                    {\n                      \"name\": \"platform\",\n                      \"value\": \"cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:*:*:*:*\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"language\",\n                      \"value\": \"bash\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"evaluation\",\n                      \"value\": \"exit-code\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"pass-condition\",\n                      \"value\": \"0\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"timeout\",\n                      \"value\": \"PT60S\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    }\n                  ],\n                  \"links\": [\n                    {\n                      \"rel\": \"assessment-objective\",\n                      \"href\": \"#ia-5.1_obj-ubtu-24-400320\"\n                    }\n                  ],\n                  \"prose\": \"```bash\\nminlen=$(grep -E '^\\\\s*minlen' /etc/security/pwquality.conf | cut -d= -f2 | tr -d ' ')\\ntest \\\"${minlen:-0}\\\" -ge \\\"$password_min_length\\\"\\n```\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "name=assessment-method",
+          "focus": [
+            [
+              25,
+              67
+            ]
+          ]
+        }
       ]
     },
     "4": {
@@ -329,6 +404,34 @@
             [
               3,
               14
+            ]
+          ]
+        }
+      ],
+      "profile-first": [
+        {
+          "rule": "both",
+          "label": "What the checks run against",
+          "shows": "Whatever component the platform prop matches, by convention.",
+          "content": "{\n  \"profile\": {\n    \"modify\": {\n      \"alters\": [\n        {\n          \"control-id\": \"sc-28\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"parts\": [\n                {\n                  \"id\": \"sc-28_obj-ubtu-24-600090\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS handling data requiring data-at-rest protections must employ cryptographic mechanisms to prevent unauthorized disclosure and modification of the information at rest.\"\n                },\n                {\n                  \"id\": \"sc-28_asm-ubtu-24-600090\",\n                  \"name\": \"assessment-method\",\n                  \"title\": \"SV-270747r1066730_rule\",\n                  \"props\": [\n                    {\n                      \"name\": \"method\",\n                      \"value\": \"TEST\"\n                    },\n                    {\n                      \"name\": \"platform\",\n                      \"value\": \"cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:*:*:*:*\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"language\",\n                      \"value\": \"bash\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"evaluation\",\n                      \"value\": \"exit-code\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"pass-condition\",\n                      \"value\": \"0\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"timeout\",\n                      \"value\": \"PT60S\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    }\n                  ],\n                  \"links\": [\n                    {\n                      \"rel\": \"assessment-objective\",\n                      \"href\": \"#sc-28_obj-ubtu-24-600090\"\n                    }\n                  ],\n                  \"prose\": \"```bash\\nlsblk -rno TYPE | grep -q '^crypt$'\\n```\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "name=platform",
+          "focus": [
+            [
+              25,
+              29
+            ]
+          ]
+        },
+        {
+          "rule": "subject",
+          "label": "The component it matches, in the plan of record",
+          "shows": "The executor matches the method's platform against a component and runs the body on the inventory items that implement it. Nothing on either carries a CPE.",
+          "content": "{\n  \"system-security-plan\": {\n    \"system-implementation\": {\n      \"components\": [\n        {\n          \"uuid\": \"534b356b-0de1-48d4-8536-5d41ed717456\",\n          \"type\": \"operating-system\",\n          \"title\": \"Ubuntu 24.04 LTS\",\n          \"description\": \"Ubuntu 24.04 LTS as a component of the system.\",\n          \"status\": {\n            \"state\": \"operational\"\n          }\n        }\n      ],\n      \"inventory-items\": [\n        {\n          \"uuid\": \"06297a03-cae0-414b-8332-2fc882f81aa1\",\n          \"description\": \"Application host 1, running Ubuntu 24.04 LTS.\",\n          \"implemented-components\": [\n            {\n              \"component-uuid\": \"534b356b-0de1-48d4-8536-5d41ed717456\"\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "inventory-items",
+          "focus": [
+            [
+              15,
+              25
             ]
           ]
         }
@@ -480,6 +583,50 @@
             ]
           ]
         }
+      ],
+      "profile-first": [
+        {
+          "rule": "assessor-in",
+          "label": "What the run reads: the methods on the resolved profile",
+          "shows": "The methods the run is handed, each saying which engine runs it and how to judge the result.",
+          "content": "{\n  \"profile\": {\n    \"modify\": {\n      \"alters\": [\n        {\n          \"control-id\": \"sc-28\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"parts\": [\n                {\n                  \"id\": \"sc-28_obj-ubtu-24-600090\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS handling data requiring data-at-rest protections must employ cryptographic mechanisms to prevent unauthorized disclosure and modification of the information at rest.\"\n                },\n                {\n                  \"id\": \"sc-28_asm-ubtu-24-600090\",\n                  \"name\": \"assessment-method\",\n                  \"title\": \"SV-270747r1066730_rule\",\n                  \"props\": [\n                    {\n                      \"name\": \"method\",\n                      \"value\": \"TEST\"\n                    },\n                    {\n                      \"name\": \"platform\",\n                      \"value\": \"cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:*:*:*:*\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"language\",\n                      \"value\": \"bash\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"evaluation\",\n                      \"value\": \"exit-code\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"pass-condition\",\n                      \"value\": \"0\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"timeout\",\n                      \"value\": \"PT60S\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    }\n                  ],\n                  \"links\": [\n                    {\n                      \"rel\": \"assessment-objective\",\n                      \"href\": \"#sc-28_obj-ubtu-24-600090\"\n                    }\n                  ],\n                  \"prose\": \"```bash\\nlsblk -rno TYPE | grep -q '^crypt$'\\n```\"\n                }\n              ]\n            }\n          ]\n        },\n        {\n          \"control-id\": \"ia-5.1\",\n          \"adds\": [\n            {\n              \"position\": \"ending\",\n              \"params\": [\n                {\n                  \"id\": \"password_min_length\",\n                  \"label\": \"Minimum password length\",\n                  \"values\": [\n                    \"15\"\n                  ]\n                }\n              ],\n              \"parts\": [\n                {\n                  \"id\": \"ia-5.1_obj-ubtu-24-400320\",\n                  \"name\": \"assessment-objective\",\n                  \"prose\": \"Ubuntu 24.04 LTS must enforce a minimum {{ insert: param, password_min_length }}-character password length.\"\n                },\n                {\n                  \"id\": \"ia-5.1_asm-ubtu-24-400320\",\n                  \"name\": \"assessment-method\",\n                  \"title\": \"SV-270732r1066685_rule\",\n                  \"props\": [\n                    {\n                      \"name\": \"method\",\n                      \"value\": \"TEST\"\n                    },\n                    {\n                      \"name\": \"platform\",\n                      \"value\": \"cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:*:*:*:*\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"language\",\n                      \"value\": \"bash\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"evaluation\",\n                      \"value\": \"exit-code\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"pass-condition\",\n                      \"value\": \"0\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    },\n                    {\n                      \"name\": \"timeout\",\n                      \"value\": \"PT60S\",\n                      \"ns\": \"https://example.org/ns/oscal-automation\"\n                    }\n                  ],\n                  \"links\": [\n                    {\n                      \"rel\": \"assessment-objective\",\n                      \"href\": \"#ia-5.1_obj-ubtu-24-400320\"\n                    }\n                  ],\n                  \"prose\": \"```bash\\nminlen=$(grep -E '^\\\\s*minlen' /etc/security/pwquality.conf | cut -d= -f2 | tr -d ' ')\\ntest \\\"${minlen:-0}\\\" -ge \\\"$password_min_length\\\"\\n```\"\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "props",
+          "focus": [
+            [
+              20,
+              50
+            ],
+            [
+              87,
+              117
+            ]
+          ]
+        },
+        {
+          "rule": "assessor-out",
+          "label": "What the run produces: the finding and its observation",
+          "shows": "The finding targets the objective the profile added, and the observation names the host and carries the script's output as evidence.",
+          "content": "{\n  \"assessment-results\": {\n    \"results\": [\n      {\n        \"findings\": [\n          {\n            \"uuid\": \"e98ff33c-cc09-4d29-847c-5ab99cd2a5d6\",\n            \"title\": \"Result for sc-28_obj-ubtu-24-600090\",\n            \"target\": {\n              \"type\": \"objective-id\",\n              \"target-id\": \"sc-28_obj-ubtu-24-600090\",\n              \"status\": {\n                \"state\": \"satisfied\"\n              }\n            },\n            \"related-observations\": [\n              {\n                \"observation-uuid\": \"28e28d31-4428-4ff5-8c9e-ea1198dfb552\"\n              }\n            ]\n          },\n          {\n            \"uuid\": \"b875b658-e6c9-4c84-8e92-08cdec285155\",\n            \"title\": \"Result for ia-5.1_obj-ubtu-24-400320\",\n            \"target\": {\n              \"type\": \"objective-id\",\n              \"target-id\": \"ia-5.1_obj-ubtu-24-400320\",\n              \"status\": {\n                \"state\": \"satisfied\"\n              }\n            },\n            \"related-observations\": [\n              {\n                \"observation-uuid\": \"c89cd6c4-2897-4f8c-8c62-c019f478eb0a\"\n              }\n            ]\n          }\n        ],\n        \"observations\": [\n          {\n            \"uuid\": \"28e28d31-4428-4ff5-8c9e-ea1198dfb552\",\n            \"title\": \"Observation: SV-270747r1066730_rule\",\n            \"description\": \"The executable method ran on the host and exited 0.\",\n            \"methods\": [\n              \"TEST\"\n            ],\n            \"subjects\": [\n              {\n                \"subject-uuid\": \"06297a03-cae0-414b-8332-2fc882f81aa1\",\n                \"type\": \"inventory-item\"\n              }\n            ],\n            \"relevant-evidence\": [\n              {\n                \"description\": \"Exit code 0, with standard output and standard error as the executor captured them.\"\n              }\n            ],\n            \"collected\": \"2026-08-20T12:00:00Z\"\n          },\n          {\n            \"uuid\": \"c89cd6c4-2897-4f8c-8c62-c019f478eb0a\",\n            \"title\": \"Observation: SV-270732r1066685_rule\",\n            \"description\": \"The executable method ran on the host and exited 0.\",\n            \"methods\": [\n              \"TEST\"\n            ],\n            \"subjects\": [\n              {\n                \"subject-uuid\": \"06297a03-cae0-414b-8332-2fc882f81aa1\",\n                \"type\": \"inventory-item\"\n              }\n            ],\n            \"relevant-evidence\": [\n              {\n                \"description\": \"Exit code 0, with standard output and standard error as the executor captured them.\"\n              }\n            ],\n            \"collected\": \"2026-08-20T12:00:00Z\"\n          }\n        ]\n      }\n    ]\n  }\n}",
+          "focus_key": "target-id, relevant-evidence",
+          "focus": [
+            [
+              11,
+              11
+            ],
+            [
+              27,
+              27
+            ],
+            [
+              53,
+              57
+            ],
+            [
+              73,
+              77
+            ]
+          ]
+        }
       ]
     },
     "6a": {
@@ -550,6 +697,34 @@
             [
               3,
               5
+            ]
+          ]
+        }
+      ],
+      "profile-first": [
+        {
+          "rule": "data-at-rest",
+          "label": "Rule 1, data at rest",
+          "shows": "A by-component response in the SSP, against the framework control, exactly as it would be without the approach. Nothing on it names the objective the check tested.",
+          "content": "{\n  \"system-security-plan\": {\n    \"control-implementation\": {\n      \"implemented-requirements\": [\n        {\n          \"uuid\": \"ce9ecf48-a1d4-4256-8f42-f4e8e8c1039b\",\n          \"control-id\": \"sc-28\",\n          \"by-components\": [\n            {\n              \"component-uuid\": \"534b356b-0de1-48d4-8536-5d41ed717456\",\n              \"uuid\": \"7fc3a542-51ab-4e00-849a-5a70b88da698\",\n              \"description\": \"User data is held on an encrypted volume, and the key is held in the organisation's key management service.\"\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "by-components",
+          "focus": [
+            [
+              8,
+              14
+            ]
+          ]
+        },
+        {
+          "rule": "password-min-length",
+          "label": "Rule 2, minimum password length",
+          "shows": "A by-component response in the SSP, against the framework control, exactly as it would be without the approach. Nothing on it names the objective the check tested.",
+          "content": "{\n  \"system-security-plan\": {\n    \"control-implementation\": {\n      \"implemented-requirements\": [\n        {\n          \"uuid\": \"b0ad1d94-4104-40b4-8fb6-b4ac25ae3002\",\n          \"control-id\": \"ia-5.1\",\n          \"by-components\": [\n            {\n              \"component-uuid\": \"534b356b-0de1-48d4-8536-5d41ed717456\",\n              \"uuid\": \"77329122-9641-434e-8640-ba2f22ac8afc\",\n              \"description\": \"Password policy is enforced centrally and sets a minimum length of 15 characters.\"\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+          "focus_key": "by-components",
+          "focus": [
+            [
+              8,
+              14
             ]
           ]
         }
@@ -631,6 +806,34 @@
           "label": "Rule 2, minimum password length",
           "shows": "A finding, targeting the framework control's statement.",
           "content": "{\n  \"assessment-results\": {\n    \"results\": [\n      {\n        \"findings\": [\n          {\n            \"uuid\": \"b875b658-e6c9-4c84-8e92-08cdec285155\",\n            \"title\": \"Result for UBTU-24-400320\",\n            \"target\": {\n              \"type\": \"objective-id\",\n              \"target-id\": \"ia-5.1_obj\",\n              \"status\": {\n                \"state\": \"satisfied\"\n              }\n            },\n            \"related-observations\": [\n              {\n                \"observation-uuid\": \"c89cd6c4-2897-4f8c-8c62-c019f478eb0a\"\n              }\n            ]\n          }\n        ],\n        \"observations\": [\n          {\n            \"uuid\": \"c89cd6c4-2897-4f8c-8c62-c019f478eb0a\",\n            \"title\": \"Observation: SV-270732r1066685_rule\",\n            \"types\": [\n              \"finding\"\n            ],\n            \"methods\": [\n              \"TEST\"\n            ],\n            \"subjects\": [\n              {\n                \"type\": \"assessment-activity\",\n                \"subject-uuid\": \"0831127f-cb3c-427c-8c44-ecf893587311\"\n              }\n            ],\n            \"collected\": \"2026-08-20T12:00:00Z\"\n          }\n        ]\n      }\n    ]\n  }\n}",
+          "focus_key": "findings",
+          "focus": [
+            [
+              5,
+              22
+            ]
+          ]
+        }
+      ],
+      "profile-first": [
+        {
+          "rule": "data-at-rest",
+          "label": "Rule 1, data at rest",
+          "shows": "A finding, targeting the objective the profile added, over an observation that names the host and carries the output.",
+          "content": "{\n  \"assessment-results\": {\n    \"results\": [\n      {\n        \"findings\": [\n          {\n            \"uuid\": \"e98ff33c-cc09-4d29-847c-5ab99cd2a5d6\",\n            \"title\": \"Result for sc-28_obj-ubtu-24-600090\",\n            \"target\": {\n              \"type\": \"objective-id\",\n              \"target-id\": \"sc-28_obj-ubtu-24-600090\",\n              \"status\": {\n                \"state\": \"satisfied\"\n              }\n            },\n            \"related-observations\": [\n              {\n                \"observation-uuid\": \"28e28d31-4428-4ff5-8c9e-ea1198dfb552\"\n              }\n            ]\n          }\n        ],\n        \"observations\": [\n          {\n            \"uuid\": \"28e28d31-4428-4ff5-8c9e-ea1198dfb552\",\n            \"title\": \"Observation: SV-270747r1066730_rule\",\n            \"description\": \"The executable method ran on the host and exited 0.\",\n            \"methods\": [\n              \"TEST\"\n            ],\n            \"subjects\": [\n              {\n                \"subject-uuid\": \"06297a03-cae0-414b-8332-2fc882f81aa1\",\n                \"type\": \"inventory-item\"\n              }\n            ],\n            \"relevant-evidence\": [\n              {\n                \"description\": \"Exit code 0, with standard output and standard error as the executor captured them.\"\n              }\n            ],\n            \"collected\": \"2026-08-20T12:00:00Z\"\n          }\n        ]\n      }\n    ]\n  }\n}",
+          "focus_key": "findings",
+          "focus": [
+            [
+              5,
+              22
+            ]
+          ]
+        },
+        {
+          "rule": "password-min-length",
+          "label": "Rule 2, minimum password length",
+          "shows": "A finding, targeting the objective the profile added, over an observation that names the host and carries the output.",
+          "content": "{\n  \"assessment-results\": {\n    \"results\": [\n      {\n        \"findings\": [\n          {\n            \"uuid\": \"b875b658-e6c9-4c84-8e92-08cdec285155\",\n            \"title\": \"Result for ia-5.1_obj-ubtu-24-400320\",\n            \"target\": {\n              \"type\": \"objective-id\",\n              \"target-id\": \"ia-5.1_obj-ubtu-24-400320\",\n              \"status\": {\n                \"state\": \"satisfied\"\n              }\n            },\n            \"related-observations\": [\n              {\n                \"observation-uuid\": \"c89cd6c4-2897-4f8c-8c62-c019f478eb0a\"\n              }\n            ]\n          }\n        ],\n        \"observations\": [\n          {\n            \"uuid\": \"c89cd6c4-2897-4f8c-8c62-c019f478eb0a\",\n            \"title\": \"Observation: SV-270732r1066685_rule\",\n            \"description\": \"The executable method ran on the host and exited 0.\",\n            \"methods\": [\n              \"TEST\"\n            ],\n            \"subjects\": [\n              {\n                \"subject-uuid\": \"06297a03-cae0-414b-8332-2fc882f81aa1\",\n                \"type\": \"inventory-item\"\n              }\n            ],\n            \"relevant-evidence\": [\n              {\n                \"description\": \"Exit code 0, with standard output and standard error as the executor captured them.\"\n              }\n            ],\n            \"collected\": \"2026-08-20T12:00:00Z\"\n          }\n        ]\n      }\n    ]\n  }\n}",
           "focus_key": "findings",
           "focus": [
             [

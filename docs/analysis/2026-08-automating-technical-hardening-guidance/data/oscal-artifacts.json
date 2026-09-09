@@ -430,6 +430,22 @@
         }
       ],
       "rollup": null
+    },
+    {
+      "key": "profile-first",
+      "name": "Profile-first",
+      "full_name": "Option D",
+      "option": "Option D",
+      "repo": null,
+      "root": null,
+      "totals": {},
+      "files": [],
+      "rollup": null,
+      "note": "No OSCAL document has been published for this approach. What exists is a concept note, and the encodings on the six questions page are the site's own rendering of the shape that note proposes.",
+      "document": {
+        "href": "examples/profile-first/executable-assessment-methods.md",
+        "label": "Executable Assessment Methods, a concept note, September 2026"
+      }
     }
   ]
 }

@@ -450,7 +450,8 @@ function textOf(n) { return (n.textContent || "").replace(/\s+/g, " ").trim(); }
 /* ----------------------------------------------------------------- checks */
 
 /* The pre-read's option-letter order: A, B, C. */
-const OPTION_ORDER = ["Catalog-first", "Component-first", "Assessment-first"];
+const OPTION_ORDER = ["Catalog-first", "Component-first", "Assessment-first",
+                      "Profile-first"];
 
 const RENDERED = {};
 
@@ -914,40 +915,42 @@ async function checkPage(file) {
      This is what caught six places still carrying the old order after the
      change: two hard-coded lists inside renderers, three sets of cards written
      into markup, and one page map. */
-  const ORDER_KEYS = ["catalog-first", "component-first", "assessment-first"];
+  const ORDER_KEYS = ["catalog-first", "component-first", "assessment-first",
+                      "profile-first"];
+  const N = ORDER_KEYS.length;
   [["[data-strip]", "data-strip", "strips"],
    ["[data-appendix]", "data-appendix", "appendix sections"]].forEach(
     ([sel, attr, what]) => {
       const found = doc.querySelectorAll(sel).map((n) => n.getAttribute(attr));
       if (!found.length) return;
-      /* A page may repeat the set, as the start page does. Every run of three
+      /* A page may repeat the set, as the start page does. Every run of four
          has to be in the order. */
-      for (let i = 0; i + 3 <= found.length; i += 3) {
-        check(`${name}: ${what} ${i / 3 + 1} in option-letter order`,
-              JSON.stringify(found.slice(i, i + 3)) === JSON.stringify(ORDER_KEYS),
-              JSON.stringify(found.slice(i, i + 3)));
+      for (let i = 0; i + N <= found.length; i += N) {
+        check(`${name}: ${what} ${i / N + 1} in option-letter order`,
+              JSON.stringify(found.slice(i, i + N)) === JSON.stringify(ORDER_KEYS),
+              JSON.stringify(found.slice(i, i + N)));
       }
     });
   const approachLinks = doc.querySelectorAll(".cards .card h3 a")
     .map((a) => (a.getAttribute("href") || "").replace(/^\.\//, "").replace(/\.html$/, ""))
     .filter((h) => ORDER_KEYS.indexOf(h) !== -1);
-  if (approachLinks.length === 3) {
+  if (approachLinks.length === N) {
     check(`${name}: approach cards in option-letter order`,
           JSON.stringify(approachLinks) === JSON.stringify(ORDER_KEYS),
           JSON.stringify(approachLinks));
   }
   const fillHeads = doc.querySelectorAll(".slot-fill__head")
     .map((h) => textOf(h).split(" (")[0]);
-  for (let i = 0; i + 3 <= fillHeads.length; i += 3) {
-    check(`${name}: question block ${i / 3 + 1} in option-letter order`,
-          JSON.stringify(fillHeads.slice(i, i + 3)) === JSON.stringify(OPTION_ORDER),
-          JSON.stringify(fillHeads.slice(i, i + 3)));
+  for (let i = 0; i + N <= fillHeads.length; i += N) {
+    check(`${name}: question block ${i / N + 1} in option-letter order`,
+          JSON.stringify(fillHeads.slice(i, i + N)) === JSON.stringify(OPTION_ORDER),
+          JSON.stringify(fillHeads.slice(i, i + N)));
   }
   /* And the navigation, which is the order a reader meets first. */
   const navApproaches = doc.querySelectorAll(".site-nav a")
     .map((a) => (a.getAttribute("href") || "").replace(/^\.\//, "").replace(/\.html$/, ""))
     .filter((h) => ORDER_KEYS.indexOf(h) !== -1);
-  check(`${name}: the navigation lists the three in option-letter order`,
+  check(`${name}: the navigation lists the four in option-letter order`,
         JSON.stringify(navApproaches) === JSON.stringify(ORDER_KEYS),
         JSON.stringify(navApproaches));
 
@@ -1112,7 +1115,7 @@ async function checkPage(file) {
     await checkSixQuestions(name, doc);
     checkRuns(name, doc);
   }
-  if (/^(assessment|catalog|component)-first\.html$/.test(name)) {
+  if (/^(assessment|catalog|component|profile)-first\.html$/.test(name)) {
     checkTradeoffs(name, doc);
     checkApproachShape(name, doc);
     checkRuns(name, doc);
@@ -1214,7 +1217,7 @@ function checkApproachShape(name, doc) {
    which answer. */
 function checkExtractsAreStatusOnly(docs) {
   Object.keys(docs).forEach((name) => {
-    if (!/^(assessment|catalog|component)-first\.html$/.test(name)) return;
+    if (!/^(assessment|catalog|component|profile)-first\.html$/.test(name)) return;
     check(`${name}: draws no published extract`,
           docs[name].querySelectorAll("[data-snippet]").length === 0);
   });
@@ -1226,7 +1229,7 @@ function checkJoinTargets(docs) {
   const six = docs["six-questions.html"];
   if (!six) return;
   Object.keys(docs).forEach((name) => {
-    if (!/^(assessment|catalog|component)-first\.html$/.test(name)) return;
+    if (!/^(assessment|catalog|component|profile)-first\.html$/.test(name)) return;
     const ids = docs[name].querySelectorAll(".joins__steps a")
       .map((a) => (a.getAttribute("href") || "").split("#")[1])
       .filter(Boolean);
@@ -1350,9 +1353,11 @@ async function checkSixQuestions(name, doc) {
         doc.querySelectorAll("table.matrix").length === 0
         && doc.querySelectorAll(".answers-row").length === 0);
 
+  const APPROACH_KEYS = anat.approaches.map((a) => a.key);
   const blocks = doc.querySelectorAll(".qacc__one");
-  check(`${name}: three approaches inside every question`,
-        blocks.length === anat.slots.length * 3, String(blocks.length));
+  check(`${name}: every approach inside every question`,
+        blocks.length === anat.slots.length * APPROACH_KEYS.length,
+        String(blocks.length));
 
   /* One tab group per question, three tabs each, and every tab wired to a panel
      that exists. A tab pointing at nothing is a dead control, and the panel is
@@ -1362,9 +1367,9 @@ async function checkSixQuestions(name, doc) {
   const panels = doc.querySelectorAll('[role="tabpanel"]');
   check(`${name}: one tab group per question`,
         groups.length === anat.slots.length, String(groups.length));
-  check(`${name}: three tabs and three panels per question`,
-        tabs.length === anat.slots.length * 3
-        && panels.length === anat.slots.length * 3,
+  check(`${name}: one tab and one panel per approach per question`,
+        tabs.length === anat.slots.length * APPROACH_KEYS.length
+        && panels.length === anat.slots.length * APPROACH_KEYS.length,
         `${tabs.length} tabs, ${panels.length} panels`);
   const ids = new Set(panels.map((p) => p.id));
   check(`${name}: every tab controls a panel that exists`,
@@ -1378,7 +1383,7 @@ async function checkSixQuestions(name, doc) {
      it was the pre-read's shorthand, and on a page that shows the three side by
      side the name is the thing a reader needs. */
   check(`${name}: each tab names its approach`,
-        tabs.every((t) => /^(Catalog|Component|Assessment)-first$/.test(textOf(t))),
+        tabs.every((t) => /^(Catalog|Component|Assessment|Profile)-first$/.test(textOf(t))),
         JSON.stringify(tabs.map((t) => textOf(t)).slice(0, 4)));
   check(`${name}: each states an answer state`,
         blocks.every((b) => textOf(b.querySelectorAll(".qacc__state")[0] || {}).length > 3));
@@ -1498,7 +1503,7 @@ async function checkSixQuestions(name, doc) {
 
   let withSnips = 0, without = 0;
   anat.slots.forEach((s) => {
-    ["catalog-first", "component-first", "assessment-first"].forEach((ap) => {
+    APPROACH_KEYS.forEach((ap) => {
       const id = "q" + s.number + "-" + ap;
       const block = blocks.filter((b) => b.id === id)[0];
       check(`${name}: ${id} exists`, !!block);
@@ -1570,7 +1575,7 @@ async function checkSixQuestions(name, doc) {
      its encodings silently would push this above what the data declares. */
   let expected = 0;
   Object.keys(pattern.examples).forEach((q) => {
-    ["catalog-first", "component-first", "assessment-first"].forEach((ap) => {
+    APPROACH_KEYS.forEach((ap) => {
       const b = pattern.examples[q][ap];
       if (!(b && b.length)) expected += 1;
     });
@@ -1739,7 +1744,8 @@ function checkEncodingsComplete() {
         want.every((id) => drawn.has(id)));
 
   ["assessment-first.html", "catalog-first.html", "component-first.html",
-   "index.html", "questions.html", "scenario.html", "oscal-artifacts.html"]
+   "profile-first.html", "index.html", "questions.html", "scenario.html",
+   "oscal-artifacts.html"]
     .forEach((page) => {
       const doc = RENDERED[page];
       if (!doc) return;

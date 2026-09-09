@@ -2,21 +2,22 @@
 """
 tools/pattern_examples.py: author data/pattern-examples.json.
 
-WHAT THIS IS. The three approaches ship content for different products, so
-quoting what each one published means comparing a certificate control against an
-object-store rule against a Linux STIG. That is a comparison of subject matter,
-not of modelling, which is the only thing this site is for.
+WHAT THIS IS. The three published approaches ship content for different
+products, so quoting what each one published means comparing a certificate
+control against an object-store rule against a Linux STIG. That is a comparison
+of subject matter, not of modelling, which is the only thing this site is for.
+The fourth approach has published nothing and exists as a concept note.
 
-So the examples here are ours. Two rules, chosen once, written in all three
+So the examples here are ours. Two rules, chosen once, written in all four
 shapes. The rules are real: both are Ubuntu 24.04 LTS STIG requirements, with
 their published identifiers kept so a reader can look them up. What is authored
 is the encoding, and only the encoding.
 
 NAMESPACES ARE NOT OURS. Every prop carries the namespace of the approach whose
 pattern it illustrates: AWS's own ns for the catalog shape, the STIG ns for the
-assessment shape, and IBM's proposed first-class assemblies, which need no ns
-because the whole point of the proposal is that they are not props. Nothing here
-invents a namespace.
+assessment shape, the concept note's placeholder ns for the profile shape, and
+IBM's proposed first-class assemblies, which need no ns because the whole point
+of the proposal is that they are not props. Nothing here invents a namespace.
 
 Run with --check to fail if the committed file is stale.
 """
@@ -42,16 +43,27 @@ def uid(seed: str) -> str:
 AWS_NS = "http://aws.amazon.com/ns/oscal"
 STIG_NS = "https://public.cyber.mil/stigs/ns"
 C0_NS = "http://comply0.com/ns/oscal"
+#  The profile-first shape comes from a concept note rather than a published
+#  corpus, and the note says of its own namespace that it is a placeholder and
+#  the vocabulary is the point. It is carried here as the note wrote it, for
+#  the same reason the others are carried as their publishers wrote them: the
+#  namespace on a prop belongs to whoever proposed the prop, and none of them
+#  is ours.
+AUTO_NS = "https://example.org/ns/oscal-automation"
+#  The platform a method applies to, as the note writes it: a CPE, matched
+#  against the component in the plan of record the way XCCDF matches its
+#  platform element. One string for both rules, because both are Ubuntu 24.04.
+UBUNTU_CPE = "cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:*:*:*:*"
 
 TARGET = {
     "title": "Ubuntu 24.04 LTS",
-    "why": ("One target, so the only thing that changes between the three "
+    "why": ("One target, so the only thing that changes between the four "
             "columns is the modelling. Ubuntu because both rules are published "
             "for it, by DISA, and a reader can check them."),
 }
 
 #  The check identifier is the XCCDF Rule id, and it is the same string in all
-#  three approaches. A reader following one check across the columns is
+#  four approaches. A reader following one check across the columns is
 #  following one identifier, and it is the publisher's own rather than a label
 #  invented here. The benchmark id is what a bulk runner executes in one go.
 BENCHMARK_ID = "CAN_Ubuntu_24-04_STIG"
@@ -181,6 +193,24 @@ def in_results_observations(obs):
     return {"assessment-results": {"results": [{"observations": _lst(obs)}]}}
 
 
+def in_profile(alters):
+    """The alters of a profile, which is where profile-first writes.
+
+    Only the modify block. The import that names the framework catalog is
+    shown once, at question 2, where the tie to the control is the subject;
+    every other question shows the alter and what it adds, so the run at
+    question 5 reads the same document shape question 3 shows.
+    """
+    return {"profile": {"modify": {"alters": _lst(alters)}}}
+
+
+def in_ssp_system(body):
+    """The system-implementation half of a plan of record: the components and
+    the inventory items that implement them, which is what a platform match
+    has to land on."""
+    return {"system-security-plan": {"system-implementation": body}}
+
+
 #  One wrapper per cell, so the model a block opens with is declared in exactly
 #  one place and cannot drift from the MODEL row the page renders.
 WRAP = {
@@ -205,6 +235,13 @@ WRAP = {
     ("6b", "catalog-first"): in_results_finding_and_observation,
     ("6b", "component-first"): in_results_observations,
     ("6b", "assessment-first"): in_results_finding_and_observation,
+    ("1", "profile-first"): in_profile,
+    ("2", "profile-first"): lambda body: {"profile": body},
+    ("3", "profile-first"): in_profile,
+    ("4", "profile-first"): in_profile,
+    ("5", "profile-first"): in_profile,
+    ("6a", "profile-first"): in_ssp,
+    ("6b", "profile-first"): in_results_finding_and_observation,
 }
 
 
@@ -950,6 +987,214 @@ def assessment_q6b(r):
 
 
 
+# --------------------------------------------------------------------------- #
+# Profile-first: the rule and the check as parts on the control                #
+#                                                                              #
+# The shape comes from a concept note, not a corpus. The note's own example    #
+# tailors NIST SP 800-53 SI-2 for Ubuntu in a profile: an assessment-objective #
+# part carries the technology-specific requirement, an assessment-method part  #
+# with method TEST carries a script body and the props an executor needs, and  #
+# the method links to the objective so a finding can target it. The two rules  #
+# here are written in exactly that shape, against the framework controls they  #
+# serve, so the column can be read against the other three.                    #
+#                                                                              #
+# Identifiers. The objective keeps the publisher's own STIG id inside its part  #
+# id, so a reader can follow the rule across the columns, and the method's     #
+# title is the XCCDF rule id every other column names as the check. Nothing    #
+# resolves the title: it is provenance for the reader, recording which         #
+# published check the body implements, and the note's example carries none.   #
+# --------------------------------------------------------------------------- #
+
+def profile_ids(r):
+    """The part ids a rule gets: the objective, and the method beside it."""
+    stem = r["stig"]["id"].lower()
+    return (f'{r["control"]}_obj-{stem}', f'{r["control"]}_asm-{stem}')
+
+
+#  The bodies. Short, so the shape is what a reader sees, and written the way
+#  the note writes them: a fenced block in prose, exit code as the verdict. The
+#  second reads its threshold from the environment variable the note says the
+#  executor exports for every param on the control, named after the param id.
+SCRIPTS = {
+    "data-at-rest": "```bash\nlsblk -rno TYPE | grep -q '^crypt$'\n```",
+    "password-min-length": (
+        "```bash\nminlen=$(grep -E '^\\s*minlen' /etc/security/pwquality.conf "
+        "| cut -d= -f2 | tr -d ' ')\n"
+        "test \"${minlen:-0}\" -ge \"$password_min_length\"\n```"),
+}
+
+
+def profile_objective(r):
+    """The rule: an assessment objective part, technology-specific and finer
+    than the control it sits on. A value goes through a parameter insert, as
+    the catalog shape does, so tailoring it is a profile edit."""
+    obj_id, _ = profile_ids(r)
+    prose = r["statement"]
+    if r["param"]:
+        prose = prose.replace(
+            r["param"]["value"] + "-character",
+            "{{ insert: param, " + r["param"]["id"] + " }}-character")
+    return {"id": obj_id, "name": "assessment-objective", "prose": prose}
+
+
+def profile_method(r):
+    """The check: an assessment method part with a body and the props that
+    run it. The five namespaced props are the note's: which platform the
+    check applies to, which engine runs it, how the result is evaluated, what
+    counts as a pass, and how long to wait."""
+    obj_id, asm_id = profile_ids(r)
+    return {
+        "id": asm_id,
+        "name": "assessment-method",
+        "title": r["check_id"],
+        "props": [
+            {"name": "method", "value": "TEST"},
+            {"name": "platform", "value": UBUNTU_CPE, "ns": AUTO_NS},
+            {"name": "language", "value": "bash", "ns": AUTO_NS},
+            {"name": "evaluation", "value": "exit-code", "ns": AUTO_NS},
+            {"name": "pass-condition", "value": "0", "ns": AUTO_NS},
+            {"name": "timeout", "value": "PT60S", "ns": AUTO_NS},
+        ],
+        "links": [{"rel": "assessment-objective", "href": "#" + obj_id}],
+        "prose": SCRIPTS[r["key"]],
+    }
+
+
+def profile_alter(r, method=True):
+    """One alter: the parts a profile adds to the framework control.
+
+    The control-id is the address of the parts and nothing else can carry
+    them, which is why question 1 shows it: a part cannot be written down
+    without naming the control it goes on. A rule carrying a value declares
+    its parameter in the same add, with the value, because the framework
+    control has no parameter of its own for it to set.
+    """
+    add = {"position": "ending"}
+    if r["param"]:
+        add["params"] = [{"id": r["param"]["id"], "label": r["param"]["label"],
+                          "values": [r["param"]["value"]]}]
+    add["parts"] = [profile_objective(r)]
+    if method:
+        add["parts"].append(profile_method(r))
+    return {"control-id": r["control"], "adds": [add]}
+
+
+def profile_q1(r):
+    """Where the rule is written down: the objective part, in the add that
+    puts it on the control. The method is question 3 and is left out here."""
+    return profile_alter(r, method=False)
+
+
+def profile_q2(rules):
+    """The tie is the placement. The profile imports the framework catalog and
+    alters the controls the rules serve; the parts go inside the alter, so
+    the only identifier in play is the control's own."""
+    return {
+        "imports": [{
+            "href": "./NIST_SP-800-53_rev5_catalog.json",
+            "include-controls": [{"with-ids": [r["control"] for r in rules]}],
+        }],
+        "modify": {"alters": [profile_alter(r, method=False) for r in rules]},
+    }
+
+
+def profile_q3(r):
+    """The check beside the rule it tests, in one alter, with the link that
+    joins them."""
+    return profile_alter(r)
+
+
+def profile_q4(_):
+    """What the check runs against is named on the check: the platform prop.
+    The same alter question 3 shows, lit at that prop."""
+    return profile_alter(RULES[0])
+
+
+def profile_q4_subject(_):
+    """The other side of the match: the component in the plan of record and
+    the inventory items that implement it. Nothing on either carries a CPE,
+    which is why the cell says the match is a convention. The uuids are the
+    ones every other column uses for the same system."""
+    return {
+        "components": [{
+            "uuid": uid("000000000001"),
+            "type": "operating-system",
+            "title": TARGET["title"],
+            "description": TARGET["title"] + " as a component of the system.",
+            "status": {"state": "operational"},
+        }],
+        "inventory-items": [{
+            "uuid": uid("00000000aa01"),
+            "description": "Application host 1, running " + TARGET["title"] + ".",
+            "implemented-components": [{"component-uuid": uid("000000000001")}],
+        }],
+    }
+
+
+def profile_q5(_):
+    """What the run reads: the resolved profile, both rules, both parts each.
+    The executor selects the methods whose platform matches a component,
+    binds the control's params to environment variables, runs each body with
+    the engine its language prop names, and applies the evaluation rule."""
+    return [profile_alter(r) for r in RULES]
+
+
+def profile_q5_out(_):
+    """What the run produces: a finding per objective and the observation it
+    rests on, for both rules."""
+    return ([profile_q6b(r)[0] for r in RULES],
+            [profile_q6b(r)[1] for r in RULES])
+
+
+def profile_q6a(r):
+    """The claim, untouched by the approach. A by-component against the
+    framework control, as any plan of record makes one. Nothing on it can
+    name the objective the check tested, and the note does not ask it to."""
+    return {
+        "uuid": uid("ssp-ir-" + r["key"]),
+        "control-id": r["control"],
+        "by-components": [{
+            "component-uuid": uid("000000000001"),
+            "uuid": uid("ssp-bc-" + r["key"]),
+            "description": r["claim"],
+        }],
+    }
+
+
+def profile_q6b(r):
+    """A finding targeting the objective the profile added, and the
+    observation it rests on, which names the host and carries the script's
+    output as evidence. This is step f of the note's executor, and it needs
+    no field the assessment-results model does not already have."""
+    obj_id, _ = profile_ids(r)
+    return {
+        "uuid": uid("finding-" + r["key"]),
+        "title": "Result for " + obj_id,
+        "target": {
+            "type": "objective-id",
+            "target-id": obj_id,
+            "status": {"state": "satisfied"},
+        },
+        "related-observations": [{
+            "observation-uuid": uid("observation-" + r["key"]),
+        }],
+    }, {
+        "uuid": uid("observation-" + r["key"]),
+        "title": "Observation: " + r["check_id"],
+        "description": "The executable method ran on the host and exited 0.",
+        "methods": ["TEST"],
+        "subjects": [{
+            "subject-uuid": uid("00000000aa01"),
+            "type": "inventory-item",
+        }],
+        "relevant-evidence": [{
+            "description": ("Exit code 0, with standard output and standard "
+                            "error as the executor captured them."),
+        }],
+        "collected": COLLECTED,
+    }
+
+
 def assessment_q3_bulk(rules):
     """Both checks named once, on the activity, for a bulk runner.
 
@@ -976,14 +1221,20 @@ def assessment_q3_bulk(rules):
 #  Which builder answers which question, for which approach. A cell with no
 #  entry is a question the approach encodes nothing for, and the page says so.
 BUILDERS = {
-    "1": {"catalog-first": catalog_q1, "component-first": component_q1, "assessment-first": assessment_q1},
-    "2": {"catalog-first": catalog_q2, "component-first": component_q2, "assessment-first": assessment_q2},
-    "3": {"catalog-first": catalog_q3, "component-first": component_q3, "assessment-first": assessment_q3},
-    "4": {"catalog-first": catalog_q4, "component-first": component_q4, "assessment-first": assessment_q4},
+    "1": {"catalog-first": catalog_q1, "component-first": component_q1,
+          "assessment-first": assessment_q1, "profile-first": profile_q1},
+    "2": {"catalog-first": catalog_q2, "component-first": component_q2,
+          "assessment-first": assessment_q2, "profile-first": profile_q2},
+    "3": {"catalog-first": catalog_q3, "component-first": component_q3,
+          "assessment-first": assessment_q3, "profile-first": profile_q3},
+    "4": {"catalog-first": catalog_q4, "component-first": component_q4,
+          "assessment-first": assessment_q4, "profile-first": profile_q4},
     "5": {"catalog-first": catalog_q5, "component-first": component_q5,
-          "assessment-first": assessment_q5},
-    "6a": {"catalog-first": catalog_q6a, "component-first": component_q6a, "assessment-first": assessment_q6a},
-    "6b": {"catalog-first": catalog_q6b, "component-first": component_q6b, "assessment-first": assessment_q6b},
+          "assessment-first": assessment_q5, "profile-first": profile_q5},
+    "6a": {"catalog-first": catalog_q6a, "component-first": component_q6a,
+           "assessment-first": assessment_q6a, "profile-first": profile_q6a},
+    "6b": {"catalog-first": catalog_q6b, "component-first": component_q6b,
+           "assessment-first": assessment_q6b, "profile-first": profile_q6b},
 }
 
 
@@ -1007,6 +1258,7 @@ RULE_KEY = {
     ("5", "catalog-first"): "implementor-in",
     ("5", "component-first"): "implementor-in",
     ("5", "assessment-first"): "assessor-in",
+    ("5", "profile-first"): "assessor-in",
 }
 
 
@@ -1025,6 +1277,11 @@ SHARED_CELLS = {
     ("5", "catalog-first"): "What the run reads: the check components",
     ("5", "component-first"): "What the run reads: the checks it is handed",
     ("5", "assessment-first"): "What the run reads: the checks and the platform",
+    #  The fourth has the assessor's path alone, and the finding is the point:
+    #  the note says the methods are read by the assessment plan and not by
+    #  the system owner, so a run of them ends in a result and never in the
+    #  plan of record.
+    ("5", "profile-first"): "What the run reads: the methods on the resolved profile",
 }
 
 
@@ -1103,6 +1360,30 @@ EXTRA = {
          "focus": "name=check",
          "build": assessment_q3_bulk},
     ],
+    ("4", "profile-first"): [
+        #  The other side of the platform match. The cell's block is the
+        #  method, lit at the prop that names the platform; this is the plan
+        #  of record it is matched against, and what it does not carry is the
+        #  finding: no CPE on the component, none on the inventory item.
+        {"rule": "subject",
+         "label": "The component it matches, in the plan of record",
+         "shows": ("The executor matches the method's platform against a "
+                   "component and runs the body on the inventory items that "
+                   "implement it. Nothing on either carries a CPE."),
+         "focus": "inventory-items",
+         "wrap": in_ssp_system,
+         "build": profile_q4_subject},
+    ],
+    ("5", "profile-first"): [
+        {"rule": "assessor-out",
+         "label": "What the run produces: the finding and its observation",
+         "shows": ("The finding targets the objective the profile added, and "
+                   "the observation names the host and carries the script's "
+                   "output as evidence."),
+         "focus": ["target-id", "relevant-evidence"],
+         "wrap": in_results_finding_and_observation,
+         "build": profile_q5_out},
+    ],
 }
 
 
@@ -1112,21 +1393,25 @@ SHOWS = {
         "catalog-first": "A control. The requirement is the control's statement, the check is named in an assessment-method part, and a value, where there is one, is a control parameter.",
         "component-first": "A rules entry on the component the rule applies to. The rule is first-class rather than a prop, and a value is a rule param set by the control implementation.",
         "assessment-first": "An activity. The requirement is the activity title, the work is in its steps, and the identifiers stay in the publisher's own namespace.",
+        "profile-first": "An assessment objective part, added to the framework control by a profile. The requirement is the part's prose, and a value is a parameter the same add declares and sets.",
     },
     "2": {
         "catalog-first": "A whole document of its own. Metadata and a four-field provenance block come before the first map, and both ends of a map must be a control or a statement.",
         "component-first": "No second document, and two ties in one place. The implemented requirement ties the component to the control, which OSCAL already does; implementing-rules ties the rule to it, which it does not.",
         "assessment-first": "Named on the activity itself. No second document and no second identifier, so nothing can fall out of step, and nothing else can reuse the tie.",
+        "profile-first": "The placement is the tie. The profile imports the framework catalog and alters the control by id, and the parts go inside the alter, so the only identifier in play is the control's own.",
     },
     "3": {
         "catalog-first": "The check is a software component whose title is the identifier the control's assessment-method part named.",
         "component-first": "Two components, not one. The rule sits on the product; the check sits on a second component of type validation, one per engine, and reaches back by rule id and the uuid of the component the rule belongs to.",
         "assessment-first": "The steps are the check, and a check prop names it. Put that prop on the step and the plan can ask for one item; put it on the activity and one invocation covers every step beneath. The runner decides which.",
+        "profile-first": "An assessment method part beside the objective, with method TEST, a script body in its prose, five namespaced props saying how to run and judge it, and a link to the objective it tests.",
     },
     "4": {
         "catalog-first": "Every component the catalog applies to, taken together.",
         "component-first": "The components carrying the rules, named by uuid.",
         "assessment-first": "One host, named explicitly as an inventory item.",
+        "profile-first": "Whatever component the platform prop matches, by convention.",
     },
     "5": {
         "catalog-first": ("The check components the run is handed. What runs "
@@ -1135,16 +1420,20 @@ SHOWS = {
                             "rule and its subject."),
         "assessment-first": ("The checks and what runs them, in one plan the "
                              "assessor owns."),
+        "profile-first": ("The methods the run is handed, each saying which "
+                          "engine runs it and how to judge the result."),
     },
     "6a": {
         "catalog-first": "A by-component response in the SSP, against the product control.",
         "component-first": "The same shape, against the framework control, and carrying implementing-rules so the claim names the rule it rests on.",
         "assessment-first": "Not the claim, but where it lives. import-ssp resolves to a back-matter resource naming the system security plan, and a second resource covers the case where no OSCAL one exists.",
+        "profile-first": "A by-component response in the SSP, against the framework control, exactly as it would be without the approach. Nothing on it names the objective the check tested.",
     },
     "6b": {
         "catalog-first": "A finding, targeting the product control's statement.",
         "component-first": "An observation carrying the check id and its result.",
         "assessment-first": "A finding, targeting the framework control's statement.",
+        "profile-first": "A finding, targeting the objective the profile added, over an observation that names the host and carries the output.",
     },
 }
 
@@ -1205,6 +1494,18 @@ FOCUS = {
     ("6b", "catalog-first"): "findings",
     ("6b", "component-first"): "result",
     ("6b", "assessment-first"): "findings",
+    #  The fourth column. The rule and the check are two parts in one add, so
+    #  each of the first questions lights one part of the same alter: the
+    #  objective under question 1, the method under question 3, and the single
+    #  prop that names the platform under question 4. Question 2 lights the
+    #  control-id, which is the whole of the tie.
+    ("1", "profile-first"): "name=assessment-objective",
+    ("2", "profile-first"): "control-id",
+    ("3", "profile-first"): "name=assessment-method",
+    ("4", "profile-first"): "name=platform",
+    ("5", "profile-first"): "props",
+    ("6a", "profile-first"): "by-components",
+    ("6b", "profile-first"): "findings",
 }
 
 CLOSERS = {"{": "}", "[": "]"}
@@ -1376,11 +1677,11 @@ def build():
             if blocks:
                 examples[q][approach] = blocks
     return {
-        "note": ("Our own encodings. Two rules, written in all three shapes, so the "
+        "note": ("Our own encodings. Two rules, written in all four shapes, so the "
                  "only thing that changes between the columns is the modelling."),
         "target": TARGET,
         #  check_id is published because it is the join: the same string names
-        #  the check in all three approaches, and verify.py asserts that.
+        #  the check in all four approaches, and verify.py asserts that.
         "rules": [{k: r[k] for k in ("key", "label", "statement", "control",
                                      "stig", "check_id", "why_chosen")}
                   for r in RULES],

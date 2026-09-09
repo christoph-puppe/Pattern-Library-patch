@@ -211,9 +211,10 @@
      A cell used to carry one prose line describing the construct, and it read
      differently in every cell: sometimes an assembly name, sometimes a sentence
      about a document. The model was the thing it kept leaving out, and the model
-     is the first thing that differs between the three approaches: the same
-     requirement is a control in one, a component in another and an activity in
-     the third. So both are named, in the same order, in every cell. */
+     is the first thing that differs between the approaches: the same
+     requirement is a control in one, a component in another, an activity in a
+     third and a part on a control in the fourth. So both are named, in the
+     same order, in every cell. */
 
   /* --- lineage: what goes into the runner and what comes out --------------
      Question 5 is the only one whose answer is a step rather than a place. The
@@ -302,7 +303,8 @@
      the same checks to produce a result, from a plan they own. Two paths, one
      file in and one file out each, and the difference between the approaches is
      which of the two they have: catalog-first has the implementer's,
-     assessment-first has the assessor's, component-first has both.
+     assessment-first and profile-first have the assessor's, component-first
+     has both.
 
      The tiles are anchors into the questions that hold the documents, because
      both ends are already answered on this page and this is the lineage between
@@ -920,11 +922,13 @@
      that repeats once per approach is a loop over one list in one order, so
      equal budget is a property of the code rather than a thing to remember. */
 
-  /* The order the working group's pre-read puts the three in. The site no
-     longer shows the letters, but the order is still theirs rather than ours,
-     which is the point. One list, read by every renderer, so no component can
-     order the three differently from another. */
-  var OPTION_ORDER = ["catalog-first", "component-first", "assessment-first"];
+  /* The order the working group's pre-read puts the three in, with the
+     fourth, which arrived after the pre-read, after them. The site no longer
+     shows the letters, but the order is still theirs rather than ours, which
+     is the point. One list, read by every renderer, so no component can order
+     the four differently from another. */
+  var OPTION_ORDER = ["catalog-first", "component-first", "assessment-first",
+                      "profile-first"];
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -1316,6 +1320,24 @@
         h.appendChild(el("span", null, (i + 1) + ". " + p.name));
         h.appendChild(el("span", "criteria-table__who", p.option));
         sec.appendChild(h);
+
+        /* An approach that has published nothing has no rows to count, and
+           a section with no rows has to say why rather than end after its
+           heading. The data carries the note and the one document that does
+           exist, and the section shows both and nothing else. */
+        if (!p.files.length) {
+          sec.appendChild(el("p", null, p.note || "Nothing published."));
+          if (p.document) {
+            var pd = el("p", "small");
+            var da = el("a", null, p.document.label);
+            da.href = BASE + "/" + p.document.href;
+            da.className = "artifact__link";
+            pd.appendChild(da);
+            sec.appendChild(pd);
+          }
+          node.appendChild(sec);
+          return;
+        }
 
         var totals = Object.keys(p.totals).map(function (k) {
           return p.totals[k] + " " + (p.totals[k] === 1

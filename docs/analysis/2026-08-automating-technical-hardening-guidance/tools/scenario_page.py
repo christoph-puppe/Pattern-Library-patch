@@ -4,9 +4,9 @@ scenario_page.py: emit scenario.html from data/scenario.json.
 
 WHY THIS PAGE EXISTS, AND WHY IT IS THE ONLY ONE OF ITS KIND.
 
-The three approaches can each express everything the others can. What separates
+The four approaches can each express everything the others can. What separates
 them is how many documents it takes and what the plan of record ends up holding,
-and neither is visible until the same task is put to all three.
+and neither is visible until the same task is put to all four.
 
 That task is described once. Every count on this site lives here: a figure on an
 approach page would be a second scenario, implied and never stated, and a reader
@@ -15,7 +15,7 @@ tools/verify.py fails the build if a figure appears anywhere else.
 
 Nothing here is typed. The framework count is the length of an id list stored in
 data/scenario-evidence/, each guide's count is recomputed from the plan it came
-from, and the file inventory follows a rule stated per approach. The three
+from, and the file inventory follows a rule stated per approach. The four
 figures are drawn on one grid by tools/diagrams.py.
 
 Usage:
@@ -45,10 +45,11 @@ DATA = os.path.join(SITE_ROOT, "data")
 #  in a table put them in a different order from the page comparing them
 #  question by question. Ordering is the easiest way for a site like this to
 #  argue without saying anything, so two orders is worse than either.
-ORDER = ["catalog-first", "component-first", "assessment-first"]
+ORDER = ["catalog-first", "component-first", "assessment-first", "profile-first"]
 LABEL = {"assessment-first": "Assessment-first",
          "catalog-first": "Catalog-first",
-         "component-first": "Component-first"}
+         "component-first": "Component-first",
+         "profile-first": "Profile-first"}
 
 #  Two sections. What the schemas force used to be a third, and what each count
 #  makes concrete on an approach page a fourth; the first is now stated on the
@@ -126,11 +127,11 @@ def build(sc) -> str:
     # ---- 2. the file sets ------------------------------------------------
     o.append(f'<section id="files" class="wide">\n<h2>{HEADINGS[1][1]}</h2>')
     o.append('<div class="tier2">\n  <p>One tile is one file, and the tile is the '
-             'same size in all three figures, which are drawn on one grid. So the '
-             'three can be compared by eye, and the comparison is area rather than '
+             'same size in all four figures, which are drawn on one grid. So the '
+             'four can be compared by eye, and the comparison is area rather than '
              'a number to be taken on trust. A model an approach does not use is '
              'drawn as a dashed rule and labelled none, because an absence is half '
-             'of what separates the three.</p>\n</div>')
+             'of what separates the four.</p>\n</div>')
 
     o.append('<table class="criteria-table">')
     o.append('  <caption class="small muted">Files by model. The row order is the '
@@ -211,7 +212,7 @@ def run(outdir: str, quiet: bool = False) -> str:
             .replace("{{TITLE}}", "A worked scenario")
             .replace("{{DESCRIPTION}}",
                      "One system under 800-53 High with three hardening guides, "
-                     "modelled in all three approaches, with the file each one "
+                     "modelled in all four approaches, with the file each one "
                      "would produce.")
             .replace("{{SLUG}}", "scenario.html")
             .replace("{{BASE}}", ".")

@@ -147,16 +147,17 @@
      on the three-readers figure, and nothing else.
 
      Three constraints decided them, in this order.
-     1. Equal weight. All three sit at CIE L* 47 (light) / L* 71 (dark) and at
+     1. Equal weight. All four sit at CIE L* 47 (light) / L* 71 (dark) and at
         the same chroma, so no approach is louder than another. Equal lightness
         is what neutrality requires here and it is the opposite of the
         question palette, whose whole point is a lightness ladder.
-     2. No valence. The hues are 185, 265 and 340: teal, blue, mauve. A
-        120-degree triad would have forced a red, a green and an amber onto
-        three positions in a live disagreement, which is an argument no word
-        count can see.
+     2. No valence. The hues are 185, 265, 340 and 100: teal, blue, mauve,
+        olive. A 120-degree triad would have forced a red, a green and an
+        amber onto three positions in a live disagreement, which is an
+        argument no word count can see, and the fourth hue was chosen in the
+        widest gap the first three left rather than at a red or a green.
      3. Hue is decorative. Because lightness is equal, dichromats cannot
-        separate these three, and that is accepted: approach identity on every
+        separate these four, and that is accepted: approach identity on every
         diagram is carried by outline offset, by a marker shape and by a
         written label. Colour only reinforces. verify.py --a11y asserts the
         equal-luminance property; verify.py --diagrams asserts that every
@@ -170,6 +171,11 @@
   --approach-assessment: #007E73;   /* hue 185, 4.96:1 on --bg */
   --approach-catalog:    #3B74A5;   /* hue 265, 4.97:1 on --bg */
   --approach-component:  #985C82;   /* hue 340, 5.01:1 on --bg */
+  /* The fourth arrived after the palette was built and took the hue the other
+     three had left widest open: 100, an olive, at the same L* 47 and the same
+     chroma, so the equal-weight rule holds for four as it held for three and
+     nothing the first three carried had to move. */
+  --approach-profile:    #777139;   /* hue 100, 4.99:1 on --bg */
 
   /* --- the three OSCAL layers ---------------------------------------------
      The model icons are coloured by layer, not by approach. A model belongs to
@@ -292,10 +298,11 @@
 
   --empty-absent-fill: #262D38;
 
-  /* Same three hues, lifted to L* 71 and held equal. 8.2:1 on --bg. */
+  /* Same four hues, lifted to L* 71 and held equal. 8.1:1 on --bg. */
   --approach-assessment: #00C3B3;
   --approach-catalog:    #60B4FD;
   --approach-component:  #EA91CA;
+  --approach-profile:    #BAAF5D;
 
   /* The layers keep their hue and invert their lightness: the chip becomes a
      dark tint of the same hue and the ink lifts off it. Same three-way coding,

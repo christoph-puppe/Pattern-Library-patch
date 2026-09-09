@@ -1,5 +1,5 @@
 {
-  "note": "Three views of what a hardening rule is. Each is internally coherent and each implies a different home. The site takes no position on which is correct and declares a working definition instead. Rendered in the order given, which is the order of the OSCAL layers and not a ranking. The advocate and quote fields are retained as provenance and are NOT rendered: per the Gate 7 decision, no personal name, proponent organization or quotation appears on any page. Each view also names the stakeholder it serves, joining to the glossary term of that name, because the three stakeholders and the three readings are the same three-way split seen from two sides.",
+  "note": "Three views of what a hardening rule is. Each is internally coherent and each implies a different home. Four approaches share the three readings: aligned_approach names the approach a reading was stated for, and also_aligned names a later approach that holds the same reading of the rule and differs in the construct that carries it. The site takes no position on which is correct and declares a working definition instead. Rendered in the order given, which is the order of the OSCAL layers and not a ranking. The advocate and quote fields are retained as provenance and are NOT rendered: per the Gate 7 decision, no personal name, proponent organization or quotation appears on any page. Each view also names the stakeholder it serves, joining to the glossary term of that name, because the three stakeholders and the three readings are the same three-way split seen from two sides.",
   "why_this_matters": "OSCAL has no field for normativity. The pre-read's criterion 3 records requirement level as absent from OSCAL entirely, an orthogonal gap affecting every option. Location has therefore become the only channel available for expressing which of these three views an author holds.",
   "views": [
     {
@@ -14,7 +14,11 @@
       "quote": "fritz-standard-setter",
       "supporting_quotes": [
         "fritz-catalogs-for-requirements"
-      ]
+      ],
+      "also_aligned": [
+        "profile-first"
+      ],
+      "also_aligned_note": "Profile-first reads the rule the same way and puts it in the same layer. What differs is the construct: the rule is an assessment objective part on the control rather than a control of its own, so the check can sit beside it and a profile can add both."
     },
     {
       "key": "capability",

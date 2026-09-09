@@ -113,7 +113,7 @@ jobs:
           python tools/bundle.py
           git diff --exit-code -- data assets/diagrams \
             assessment-first.html catalog-first.html component-first.html \
-            scenario.html \
+            profile-first.html scenario.html \
             || { echo "::error::a generated file differs from its generator."\
                  "Run the generators and commit the result."; exit 1; }
 

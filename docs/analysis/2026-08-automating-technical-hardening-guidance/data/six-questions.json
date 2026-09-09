@@ -33,6 +33,17 @@
       "repo": null,
       "status_annotation": "placeholder and synthetic identifiers",
       "one_line": "The rule is an assessment plan activity or step, the check is a new assembly beneath it."
+    },
+    {
+      "key": "profile-first",
+      "label": "Profile-first",
+      "option_letter": "D",
+      "primary_model": "profile",
+      "layer": "Control",
+      "serves_stakeholder_first": "assessor",
+      "repo": null,
+      "status_annotation": "concept note, no published content",
+      "one_line": "The rule is an assessment objective on the control, the check an executable assessment method beside it, in a catalog or added by a profile."
     }
   ],
   "empty_states": [
@@ -81,7 +92,8 @@
           "available_to": {
             "catalog-first": true,
             "component-first": false,
-            "assessment-first": false
+            "assessment-first": false,
+            "profile-first": false
           },
           "why": "mapping-item.type is closed by allOf to control and statement, and mapping-item carries no uuid and no href, so this binding time reaches a rule only where the rule is already modelled as a control or a control statement. The gap is in OSCAL rather than in any approach, and it is not an argument for the one approach it happens to suit: it rewards whichever view of a rule already matches the schema's assumption."
         }
@@ -645,9 +657,169 @@
         "finding",
         "observation"
       ]
+    },
+    {
+      "slot": "1",
+      "approach": "profile-first",
+      "state": "filled",
+      "snippet_ids": [],
+      "note": "An assessment objective part, added to the framework control by the profile. Naming the control is the address of the part rather than a tie made later.",
+      "mechanisms": [
+        "assembly"
+      ],
+      "model": "profile",
+      "assemblies": [
+        "alter",
+        "add",
+        "part"
+      ]
+    },
+    {
+      "slot": "2",
+      "approach": "profile-first",
+      "state": "filled",
+      "snippet_ids": [],
+      "note": "Containment. The parts are added to the control the alter names, so placing the check is the tie and no second document or identifier carries it.",
+      "mechanisms": [
+        "assembly"
+      ],
+      "model": "profile",
+      "assemblies": [
+        "alter"
+      ]
+    },
+    {
+      "slot": "3",
+      "approach": "profile-first",
+      "state": "filled",
+      "snippet_ids": [],
+      "note": "An assessment method part with method TEST and a body in prose. Namespaced props say which engine runs the body and how its result is judged.",
+      "mechanisms": [
+        "assembly",
+        "prop"
+      ],
+      "model": "profile",
+      "assemblies": [
+        "part"
+      ],
+      "props": [
+        {
+          "name": "language",
+          "ns": "https://example.org/ns/oscal-automation"
+        },
+        {
+          "name": "evaluation",
+          "ns": "https://example.org/ns/oscal-automation"
+        },
+        {
+          "name": "pass-condition",
+          "ns": "https://example.org/ns/oscal-automation"
+        }
+      ]
+    },
+    {
+      "slot": "4",
+      "approach": "profile-first",
+      "state": "partial",
+      "snippet_ids": [],
+      "note": "The method names its platform as a CPE and the executor matches it to an SSP component. No component field carries a CPE, so the match is a convention.",
+      "mechanisms": [
+        "assembly",
+        "prop"
+      ],
+      "model": "profile",
+      "assemblies": [
+        "part"
+      ],
+      "props": [
+        {
+          "name": "platform",
+          "ns": "https://example.org/ns/oscal-automation"
+        }
+      ]
+    },
+    {
+      "slot": "5",
+      "approach": "profile-first",
+      "state": "partial",
+      "snippet_ids": [],
+      "note": "Four props tell an executor how to run the body and judge what comes back. The executor is a resolver outside OSCAL, and the vocabulary has no owner yet.",
+      "mechanisms": [
+        "assembly",
+        "prop"
+      ],
+      "model": "profile",
+      "assemblies": [
+        "part"
+      ],
+      "props": [
+        {
+          "name": "language",
+          "ns": "https://example.org/ns/oscal-automation"
+        },
+        {
+          "name": "evaluation",
+          "ns": "https://example.org/ns/oscal-automation"
+        },
+        {
+          "name": "pass-condition",
+          "ns": "https://example.org/ns/oscal-automation"
+        },
+        {
+          "name": "timeout",
+          "ns": "https://example.org/ns/oscal-automation"
+        }
+      ],
+      "paths": [
+        {
+          "key": "assessor",
+          "label": "Assessor's path",
+          "in": {
+            "slot": "3"
+          },
+          "out": {
+            "slot": "6b"
+          },
+          "assemblies": [
+            "part",
+            "observation",
+            "finding"
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "6a",
+      "approach": "profile-first",
+      "state": "partial",
+      "snippet_ids": [],
+      "note": "The plan of record is untouched by design, so the claim is the ordinary response against the framework control. Nothing on it names the objective the check tests.",
+      "mechanisms": [
+        "assembly"
+      ],
+      "model": "system-security-plan",
+      "assemblies": [
+        "implemented-requirement",
+        "by-component"
+      ]
+    },
+    {
+      "slot": "6b",
+      "approach": "profile-first",
+      "state": "filled",
+      "snippet_ids": [],
+      "note": "A finding targeting the objective the profile added, resting on an observation that carries the raw output as evidence and names the host as its subject.",
+      "mechanisms": [
+        "assembly"
+      ],
+      "model": "assessment-results",
+      "assemblies": [
+        "finding",
+        "observation"
+      ]
     }
   ],
-  "finding": "Questions 1 and 2 are answered by all three. Questions 6a and 6b are answered in full by none of them, and no column is complete from top to bottom.",
+  "finding": "Questions 1 and 2 are answered by all four. Question 6a is answered in full by none of them, and no column is complete from top to bottom.",
   "answer_states": [
     {
       "key": "filled",
@@ -696,7 +868,7 @@
     "why_uneven": "The answer states are three words and the mechanisms carry a sentence each. That is deliberate rather than an oversight. Answered, partly answered and not answered mean what they say; Proposed does not tell a reader that no tool can read the content until the schema lands, and that is the sentence the page turns on."
   },
   "mechanism_note": "How a capability is enabled is a different question from whether it is answered. The answer states describe the published corpus. These describe the model: what an approach would have to rely on to carry the answer at all. An approach can answer everything and still rest on properties no other tool reads, and it can answer nothing while the mechanism it would use is already released.",
-  "carrier_note": "Every answer names the OSCAL model it lives in and the assemblies inside it that carry the answer. The model is the first thing that differs between the three: the same requirement is a control in one, a component in another and an activity in the third, and everything downstream follows from that.",
+  "carrier_note": "Every answer names the OSCAL model it lives in and the assemblies inside it that carry the answer. The model is the first thing that differs between the four: the same requirement is a control in one, a component in another, an activity in a third and a part on a control in the fourth, and everything downstream follows from that.",
   "proposed_assemblies": [
     "assessment-check-id",
     "associated-checks",

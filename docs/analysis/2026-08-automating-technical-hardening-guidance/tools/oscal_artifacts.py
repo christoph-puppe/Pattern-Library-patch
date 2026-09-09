@@ -6,7 +6,8 @@ WHY THIS EXISTS. The walkthrough encodes two rules ourselves, so the pages argue
 from content nobody published. That is the right trade for comparing modelling,
 but it leaves a reader with no way to see what the three groups have actually
 shipped. This inventory is that: every OSCAL document in the three corpora, what
-model it is, and what is in it, counted from the file rather than described.
+model it is, and what is in it, counted from the file rather than described. The
+fourth approach has shipped nothing, and its section says so.
 
 Nothing here is authored. Every number is read off disk.
 """
@@ -43,7 +44,29 @@ PUBLISHERS = [
     ("component-first", "Component-first", "Option B", "IBM", None, "Option B"),
     ("assessment-first", "Assessment-first", "Option C", "Easy Dynamics", None,
      "Option C"),
+    #  No corpus. The fourth approach is a concept note, and the directory is
+    #  None so the scan is skipped rather than pointed at nothing. What the
+    #  page shows for it is the note below and a link to the document.
+    ("profile-first", "Profile-first", "Option D", None, None, "Option D"),
 ]
+
+#  What an approach with no OSCAL document says on the inventory page, and the
+#  one document it does have. Held here beside the list of publishers because
+#  the page has to say why a section has no rows, and "nothing published" is a
+#  fact about the approach rather than a gap in the scan.
+UNPUBLISHED = {
+    "profile-first": {
+        "note": ("No OSCAL document has been published for this approach. What "
+                 "exists is a concept note, and the encodings on the six "
+                 "questions page are the site's own rendering of the shape that "
+                 "note proposes."),
+        "document": {
+            "href": "examples/profile-first/executable-assessment-methods.md",
+            "label": ("Executable Assessment Methods, a concept note, September "
+                      "2026"),
+        },
+    },
+}
 
 MODEL_LABEL = {
     "catalog": "Catalog",
@@ -109,6 +132,7 @@ LINK_BASE = {
         "https://github.com/awslabs/oscal-content-for-aws-services/blob/main/",
     "component-first": "examples/component-first/",
     "assessment-first": "examples/assessment-first/",
+    "profile-first": "examples/profile-first/",
 }
 
 
@@ -142,7 +166,7 @@ def scan(rel_root):
 def build():
     pubs = []
     for key, name, full, rel, repo, option in PUBLISHERS:
-        files = scan(rel)
+        files = scan(rel) if rel else []
         base = LINK_BASE[key]
         for f in files:
             #  A path in this repository, or a URL. quote() leaves the slashes
@@ -173,13 +197,15 @@ def build():
                          "the rest follow the same shape."),
             }
             files = shown
-        pubs.append({
+        entry = {
             "key": key, "name": name, "full_name": full, "option": option,
             "repo": repo, "root": rel,
             "totals": {MODEL_LABEL[m]: c for m, c in sorted(by_model.items())},
             "files": files,
             "rollup": roll,
-        })
+        }
+        entry.update(UNPUBLISHED.get(key, {}))
+        pubs.append(entry)
     return {
         "note": (__doc__ or "").strip().splitlines()[0],
         "publishers": pubs,

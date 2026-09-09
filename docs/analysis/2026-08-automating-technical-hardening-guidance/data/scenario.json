@@ -1,10 +1,10 @@
 {
-  "note": "One system, one baseline, three hardening guides, modelled three ways. The point of the scenario is that the three approaches do not differ in what they can express so much as in how many documents it takes to express it, and what the plan of record ends up holding. Every count is either recomputed from a corpus in this repository, read from the NIST profile stored in data/scenario-evidence/, or forced by the OSCAL schemas, and each says which. What the schemas force is stated on the file rows it explains rather than in a section of its own.",
+  "note": "One system, one baseline, three hardening guides, modelled four ways. The point of the scenario is that the four approaches do not differ in what they can express so much as in how many documents it takes to express it, and what the plan of record ends up holding. Every count is either recomputed from a corpus in this repository, read from the NIST profile stored in data/scenario-evidence/, or forced by the OSCAL schemas, and each says which. What the schemas force is stated on the file rows it explains rather than in a section of its own.",
   "title": "One system, three hardening guides",
-  "summary": "A system under NIST SP 800-53 Revision 5 at the High baseline, running Ubuntu, PostgreSQL and Microsoft 365, hardened against a published guide for each. The same scenario is modelled in all three approaches, using every OSCAL model except the plan of action and milestones.",
+  "summary": "A system under NIST SP 800-53 Revision 5 at the High baseline, running Ubuntu, PostgreSQL and Microsoft 365, hardened against a published guide for each. The same scenario is modelled in all four approaches, using every OSCAL model except the plan of action and milestones.",
   "excluded_model": {
     "model": "plan-of-action-and-milestones",
-    "reason": "It records what was not met and what is being done about it. That is the same document in all three approaches, so it separates none of them."
+    "reason": "It records what was not met and what is being done about it. That is the same document in all four approaches, so it separates none of them."
   },
   "framework": {
     "label": "NIST SP 800-53 Revision 5, High baseline",
@@ -368,6 +368,97 @@
         }
       ],
       "plan_of_record": "The plan of record answers 370 controls, and none of the three guides enters it"
+    },
+    "profile-first": {
+      "rule": "Each guide is published as a catalog whose controls carry their own executable methods, and each component references a profile selecting from it. The framework side is unchanged and the plan of record's control set does not move.",
+      "files": [
+        {
+          "model": "catalog",
+          "count": 4,
+          "what": "one for the framework, one per guide, carrying its checks",
+          "detail": "800-53 Revision 5 untouched, and CIS Ubuntu, DISA PostgreSQL and CISA SCuBA each as a catalog whose controls carry an assessment objective and an executable assessment method, because the author of the requirement is the author of the check",
+          "items": [
+            {
+              "name": "NIST 800-53"
+            },
+            {
+              "name": "CIS Ubuntu"
+            },
+            {
+              "name": "DISA PgSQL"
+            },
+            {
+              "name": "CISA SCuBA"
+            }
+          ]
+        },
+        {
+          "model": "profile",
+          "count": 4,
+          "what": "the High baseline, and one selection per guide",
+          "detail": "the High baseline the plan of record imports, and for each of the three guides the profile the component references, which is how the executor reaches a guide's methods without the guide entering the plan of record's own profile",
+          "items": [
+            {
+              "name": "800-53 High"
+            },
+            {
+              "name": "CIS Ubuntu"
+            },
+            {
+              "name": "DISA PgSQL"
+            },
+            {
+              "name": "CISA SCuBA"
+            }
+          ]
+        },
+        {
+          "model": "mapping-collection",
+          "count": 0,
+          "what": "none, the finding targets the guide's own objective",
+          "detail": "where a profile adds a method to a framework control the placement is the tie; where the guide is its own catalog the note supplies no tie, and that is an open question on the questions page"
+        },
+        {
+          "model": "component-definition",
+          "count": 0,
+          "what": "none, the checks are parts on the controls",
+          "detail": "the executor matches each method's platform prop against the plan of record's own components, so no definition carries the checks and none names the engine"
+        },
+        {
+          "model": "system-security-plan",
+          "count": 1,
+          "what": "one, answering 370 controls",
+          "detail": "no guidance enters it; the components reference the profiles the executor reads, and the responses stay per framework control",
+          "items": [
+            {
+              "name": "System SSP"
+            }
+          ]
+        },
+        {
+          "model": "assessment-plan",
+          "count": 1,
+          "what": "one, reading 547 methods through the components' profiles",
+          "detail": "the plan imports the system security plan, and the executor resolves the profile each component references to find the methods whose platform matches it",
+          "items": [
+            {
+              "name": "System AP"
+            }
+          ]
+        },
+        {
+          "model": "assessment-results",
+          "count": 1,
+          "what": "one, with a finding per objective",
+          "detail": "every finding targets an objective on a guide catalog's control, and every observation carries the script's raw output as evidence",
+          "items": [
+            {
+              "name": "System AR"
+            }
+          ]
+        }
+      ],
+      "plan_of_record": "The plan of record answers 370 controls, and the 547 executable methods are read by the assessment plan through the components' profiles"
     }
   },
   "items_note": "One entry per file, so a reader can follow a particular document from the figure into the list beneath it. The names are shortened to fit a tile. Where a model has more than one kind of file in it, the kind is named too: a component definition holding the thing being configured is software, and one holding the checks that test it is validation, which is the distinction the whole approach rests on and is invisible from the file count alone."

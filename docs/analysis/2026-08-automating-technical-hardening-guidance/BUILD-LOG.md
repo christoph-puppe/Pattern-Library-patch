@@ -8584,3 +8584,162 @@ rendered by no page: they are cited from `data/provenance.json` and
 to ship them.
 
 `2619/2619` verify checks and `649/649` page checks pass.
+
+---
+
+## Session: a fourth approach, from a concept note
+
+**Date:** 2026-09-09
+**Scope:** profile-first, added as Option D to every page, data file, generator
+and check that carried three approaches
+**Result:** complete. 3041 of 3057 verification checks and 792 of 792 page checks
+pass locally. The sixteen that fail are the sixteen that failed before this
+session began, and every one of them needs the corpora or the network: the three
+scenario files the harness opens, the twelve external links it requests, and the
+artifacts inventory whose generator scans a corpus this working copy does not
+hold.
+
+### What arrived
+
+A concept note, *Executable Assessment Methods: Automation Scripts on Controls in
+Catalogs and Profiles*, dated September 2026. It proposes giving SP 800-53A's
+TEST method a body: an `assessment-method` part on a control, with `method=TEST`,
+a set of namespaced props saying which platform the check applies to, which
+engine runs it, how the result is evaluated, what counts as a pass and how long
+to wait, and the script itself in the part's prose or in a back-matter resource.
+The part links to an `assessment-objective` part beside it, so a finding can
+target the objective and nothing in the results model has to change. The catalog
+carries both parts when the author of the requirement is the author of the
+check; a profile adds them otherwise, which is the case the note's own example
+shows, SI-2 tailored for Ubuntu.
+
+The user asked for it to be integrated as an additional option. It is now
+Option D, Profile-first, on every page the other three are on.
+
+### Decisions
+
+1. **The name.** The site names approaches by the model the rule first appears
+   in. The note's rule appears in a catalog when the author owns the check and
+   in a profile otherwise, and the thing the note turns on is the second case:
+   a profile can add parts, props, links and params to a control it does not
+   own, and no custom assembly can be added that way. So the structural name is
+   Profile-first, the primary model is `profile`, the layer is Control, and the
+   lede and the stakeholder section say in words that the catalog route exists.
+
+2. **No corpus.** The other three are described from published files at
+   declared pointers. This one has none, so its cells declare no extracts, its
+   status annotation reads "concept note, no published content", its entry on
+   the artifacts page is a note and a link to the document rather than a count,
+   and `tools/verify.py` carries an `UNPUBLISHED` set that the corpus-reading
+   checks consult by name. The checks that hold every approach to one shape,
+   the budget, the chain, the stakeholder table, the encodings, hold it to the
+   same shape. Nothing about it is exempt that the others are held to.
+
+3. **The note is in the repository.** At
+   `examples/profile-first/executable-assessment-methods.md`, because
+   `examples/` is where the artifacts page links to the one document an
+   approach has, and `tools/package.py` ships that directory whole. The pre-read
+   and the position paper live beside the site rather than in it; this document
+   was supplied for integration, names nobody, and is the only thing the fourth
+   column can be checked against, so a reader has to be able to open it. If it
+   turns out not to be the site's to publish, the file comes out and the link
+   with it, and nothing else changes.
+
+4. **The encodings.** The two rules are written in the note's shape from the
+   note's own example: an objective part carrying the requirement, a method part
+   carrying a short bash body, the five props under the note's namespace, and a
+   link from method to objective. The objective's id keeps the STIG identifier
+   inside it so a reader can follow the rule across the columns, and the method's
+   title is the XCCDF rule id every other column names as the check. That title
+   is provenance for the reader and nothing resolves it; the note's example has
+   none. A value goes through a parameter insert, declared and set in the same
+   add, because the framework control has no parameter of its own for it.
+
+5. **Question 1 shows a control-id.** Every other column is held to naming no
+   control under the question about where the rule is written, because the tie
+   is question 2. A part added by a profile has no existence apart from the
+   control it is added to, and the alter that carries it has to name that
+   control. The check now asserts, for this column only, that `control-id` is
+   the one thing from the question 2 list that appears, and the cell's note
+   says it is the address of the part rather than a tie.
+
+6. **The namespace.** The note calls its namespace a placeholder and says the
+   vocabulary is the point. It is carried as the note wrote it, for the same
+   reason the others are carried as their publishers wrote them, and
+   `--links` treats it as an identifier rather than a page, as it already did
+   for two schema namespaces.
+
+7. **Who writes a profile.** The site held that the profile is the system
+   owner's on every approach and nobody else's, and checked it. On this
+   approach a tool vendor publishes a profile to attach checks and a mapping
+   provider edits the profile that puts a check on a framework control, which
+   is the approach's own position rather than a row drawn wrong.
+   `data/stakeholders.json` now carries `shared_profile`, naming the parties
+   and saying why, and the check reads it: an approach that declares the
+   exception has to declare exactly the parties that write one and give a
+   reason of at least twenty-four words; every other approach is still held to
+   the rule.
+
+8. **Nobody runs the checks for the owner.** The note says the methods are read
+   by the assessment plan and not by the system owner, and a run of them writes
+   findings targeting the objective, never a response in the plan of record.
+   So the owner's row has no run and says why, the auditor's run goes from the
+   profile to a result, and question 5 has the assessor's path alone. The
+   finding that only component-first has both paths still holds.
+
+9. **The reading.** The note reads the rule as a requirement, as the catalog
+   approach does, and differs in the construct that carries it. There are
+   still three readings; `data/views.json` records that two approaches hold the
+   first, under `also_aligned`, and the fourth page opens with its own sentence
+   saying so, because the standard sentence names the model the reading implies
+   and that is not the model this approach writes in.
+
+10. **The scenario.** The three guides in the scenario are technology-specific
+    and their publishers ship their own checks, which under the note's own rule
+    makes each of them a catalog carrying its executable methods. Each component
+    references a profile selecting from its guide, which is the note's step a,
+    so the file set is four catalogs, four profiles, one plan of record, one
+    plan and one result: eleven files, five of the seven models, and the plan of
+    record's control set does not move. No mapping collection, because the
+    note supplies no tie from a guide's own objective to the framework, and that
+    is now an open question on the questions page rather than a file invented
+    to close it.
+
+11. **A fourth hue.** The approach colours sit at one lightness by rule, and the
+    rule is checked. The fourth, hue 100, an olive, was placed in the widest
+    gap the first three left and tuned to the same relative luminance: the
+    spread across four is 0.004 against a bound of 0.02, in both themes. A
+    fourth marker shape, a diamond, goes with it, so identity never rests on
+    the hue.
+
+12. **Budget.** The fourth page landed at 1,139 words against a bound of 1,003,
+    and was cut to 995: a strength and a risk dropped, the stakeholder notes
+    shortened, one duplicated note removed, and the chain notes trimmed. What
+    was cut is in the open questions or the note itself; nothing was cut that
+    only this page said.
+
+### What changed, by file
+
+One entry each in `six-questions.json`, `tradeoffs.json`, `stakeholders.json`,
+`joins.json`, `questions.json`, `scenario.json` and `oscal-artifacts.json`; two
+terms and one usage in `glossary.json`; `also_aligned` in `views.json`. A fourth
+column in `tools/pattern_examples.py`, with a profile wrapper and a
+system-implementation wrapper. `ORDER`, `NAV`, a `CONTENT` block and a per-page
+reading sentence in `tools/approach_pages.py`. A fourth entry in `APPROACHES`
+and a diamond in `tools/diagrams.py`, and two more published figures. A fourth
+publisher with no directory in `tools/oscal_artifacts.py`, and the renderer's
+handling of a section with no rows. The option order in `tools/verify.py`,
+`tools/pagecheck.js` and `assets/site.js`. Two colour tokens in `assets/site.css`.
+The navigation and footer on every page and in `assets/shell.html`, the fourth
+option on the start page, and the workflow's list of generated pages.
+
+### Open items
+
+- The artifacts inventory could not be regenerated here, because the generator
+  scans the corpora. The fourth entry was written by hand in the shape the
+  generator now emits, and the generator was run against an empty corpus root
+  to confirm that its fourth entry is byte-identical. CI, which holds the
+  corpora, regenerates the whole file and diffs it.
+- Proponent review now includes the note's author, and the request in
+  `CORRECTIONS.md` says what the one judgement is that only they can check:
+  whether the site's encoding is the shape the note intends.

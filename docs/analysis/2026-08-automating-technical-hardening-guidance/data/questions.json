@@ -1,11 +1,11 @@
 {
-  "note": "The open questions, in four sections: what is unsettled about OSCAL itself, then what is unsettled about each approach. Each is one line with the reasoning behind it. Questions reproduced from a source document keep that document's wording, including its errors, and are marked with where they came from, because rewriting someone else's question is a way of answering it.",
+  "note": "The open questions, in five sections: what is unsettled about OSCAL itself, then what is unsettled about each approach. Each is one line with the reasoning behind it. Questions reproduced from a source document keep that document's wording, including its errors, and are marked with where they came from, because rewriting someone else's question is a way of answering it.",
   "intro": "Nothing here is a proposal. Where the site has a fact that bears on a question, the fact is stated and the question is left open. Most of what is unsettled is about OSCAL rather than about any one approach, which is why the first section is the longest.",
   "sections": [
     {
       "key": "all",
-      "label": "Across all three approaches",
-      "intro": "Gaps in the models themselves. None is answered by choosing an approach, and each changes what all three can express.",
+      "label": "Across all four approaches",
+      "intro": "Gaps in the models themselves. None is answered by choosing an approach, and each changes what all four can express.",
       "questions": [
         {
           "id": "xccdf",
@@ -134,6 +134,43 @@
           "q": "How should AP-based benchmarks handle tailoring needs that only the catalog/profile model natively supports?",
           "why": "The same question as where a parameter goes, asked of this approach by name. An activity and a step have no parameter, so a value lives in the requirement text and tailoring means editing the sentence.",
           "verbatim": "the position paper submitted to the working group"
+        }
+      ]
+    },
+    {
+      "key": "profile-first",
+      "label": "Profile-first",
+      "intro": "The rule and the check are parts on a control. What is unsettled is who may put code there, who owns the vocabulary that runs it, and what the executor matches against.",
+      "questions": [
+        {
+          "id": "executable-catalogs",
+          "q": "Who may put executable code on a control, and who signs it?",
+          "why": "A catalog or profile carrying executable methods is code, and an executor that resolves a profile from a URL and runs what it finds has installed a remote code path into every assessed system. The concept note asks for pinned hashes on every rlink, signed catalogs and profiles, an executor that refuses anything unverified, and read-only checks with remediation in a part of its own. None of that is agreed anywhere yet, and nothing in OSCAL distinguishes a part that describes from a part that executes."
+        },
+        {
+          "id": "vocabulary-owner",
+          "q": "Who owns the vocabulary of platform, language, evaluation and pass condition?",
+          "why": "The five props carry everything an executor needs, and every one of them is a convention in a placeholder namespace. The note proposes Metaschema external constraints to hold the enumeration, the way FedRAMP holds its own vocabulary without forking the model, and names no body to publish them. Until one does, two vendors can ship two incompatible checks for one control and the profile author picks."
+        },
+        {
+          "id": "platform-match",
+          "q": "What on a system security plan component does the platform CPE match against?",
+          "why": "The note matches the platform prop against the component in the plan of record, the way XCCDF matches its platform element. No field on an OSCAL component or inventory item carries a CPE, so the match is made on a convention the note leaves open, and it says itself that a plain token may serve as well. Which host a check runs on is decided wherever that convention is decided."
+        },
+        {
+          "id": "profile-added-objective",
+          "q": "Does a finding resolve to an objective that only a profile added?",
+          "why": "The mechanism rests on findings targeting an objective id, and the objective exists only in the resolved profile: the catalog it imports has never heard of it. A consumer reading the result against the catalog alone, or against a profile resolved without the tool vendor's additions, finds no such objective. Whether every result reader resolves the profile first is not established."
+        },
+        {
+          "id": "catalog-route-tie",
+          "q": "When a guide ships as a catalog with its own checks, what ties its objectives to the framework?",
+          "why": "The note answers the framework case by placement: a profile adds the check to the framework control, and the placement is the tie. Where the guide is its own catalog, as a benchmark with its own scripts would be, the finding targets the guide's objective and nothing in the note reaches the framework. A mapping collection reaches controls and statements, not parts, so that route is the one catalog-first already has and no wider."
+        },
+        {
+          "id": "check-versions",
+          "q": "Is a changed check a new version of the catalog it sits in?",
+          "why": "The note accepts the coupling: a changed check is a new profile version, and a catalog that ships checks changes whenever one of them does. A benchmark already carries that coupling in its source material. A framework catalog does not, and the approach keeps it out of one by putting the checks in a profile, so the question is only open for the catalog route."
         }
       ]
     }

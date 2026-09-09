@@ -27,7 +27,7 @@ field names.
 ```
 ## Correction <n>
 
-- approach:   catalog-first | assessment-first | component-first
+- approach:   catalog-first | assessment-first | component-first | profile-first
 - received:   2026-09-01
 - corrected:  what they said was wrong, in their words, unedited
 - applied:    what changed on the site, and where
@@ -48,6 +48,16 @@ field names.
 - note:       nothing received. Recorded because silence about a description of
               your own work is information.
 ```
+
+## The fourth approach
+
+Profile-first was added from a concept note rather than from a published body of
+content, so its proponent is the note's author and the request below goes to
+them in the same words. The three judgements the request names apply with one
+difference: there are no extracts to have chosen, because there is no corpus,
+and the encodings on the six questions page are the site's own rendering of the
+note's example. Whether that rendering is the shape the note intends is the
+correction worth the most.
 
 ## The request that has not been sent
 

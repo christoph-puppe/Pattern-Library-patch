@@ -5,10 +5,11 @@ Assessments.
 
 Three organizations have published working OSCAL content that answers the same
 question three different ways: **where does technical hardening guidance live in
-OSCAL, and how does an automated check attach to it?** This site puts the three
-side by side against the same six questions, writes the same two rules out in all
-three shapes so that the only thing differing between the columns is the
-modelling, and names the join key that makes each one work.
+OSCAL, and how does an automated check attach to it?** A concept note proposes a
+fourth way. This site puts the four side by side against the same six questions,
+writes the same two rules out in all four shapes so that the only thing differing
+between the columns is the modelling, and names the join key that makes each one
+work.
 
 **The JSON on the question pages is ours.** The three groups ship content for
 different products, so quoting what each one published would set a certificate
@@ -22,6 +23,17 @@ published is inventoried separately, on `oscal-artifacts.html`, one row per
 document with its contents counted from the file rather than described. Extracts
 at declared pointers into the published files are still carried where a claim
 rests on one, and they are still re-derived on every build.
+
+**The fourth approach has no corpus.** Profile-first comes from a concept note,
+*Executable Assessment Methods*, held at
+`examples/profile-first/executable-assessment-methods.md` and linked from the
+artifacts page, which is the one document that approach has. Its column on the
+six questions page is the site's own encoding of the shape the note proposes,
+written from the note's worked example; its cells declare no extracts, because
+there is nothing to extract from; and its status annotation says so on every
+card. Every check that reads a corpus skips it by name, and every check that
+holds the approaches to one shape holds it to the same shape. The namespace on
+its props is the note's own placeholder, carried as the note wrote it.
 
 Published hardening guidance from four publishers was read as input: CIS, DISA,
 CISA and AWS. The introduction tabulates it one row per benchmark or guide, in a
@@ -59,13 +71,14 @@ reader prices it.
 
 ## Status
 
-Ready to publish, not published. Eight pages, all built: `index.html`,
-`six-questions.html`, the three approach pages, `scenario.html`, `questions.html`
+Ready to publish, not published. Nine pages, all built: `index.html`,
+`six-questions.html`, the four approach pages, `scenario.html`, `questions.html`
 and `oscal-artifacts.html`. What remains is not a build step:
 
 - **Proponent review has not happened.** No request for corrections has been sent
-  to the publishers of the three bodies of content, so none has been received and
-  nobody has declined. This is stated on the site rather than left implicit.
+  to the publishers of the three bodies of content or to the author of the
+  concept note, so none has been received and nobody has declined. This is
+  stated on the site rather than left implicit.
 - Four checks cannot run without network and are skipped locally. They run in CI.
 - Two more skip wherever the pre-read and the position paper are not on disk.
   Both are Word documents, both live beside the site rather than in it, and
@@ -157,7 +170,7 @@ python tools/verify.py --matrix        every matrix cell resolves and is classif
 python tools/verify.py --diagrams      structure, colour, geometry, join literals
 python tools/verify.py --css           colour lives only in the token block
 python tools/verify.py --links         every internal link, anchor and path
-python tools/verify.py --budget        equal budget across the three approach pages
+python tools/verify.py --budget        equal budget across the four approach pages
 python tools/verify.py --a11y          contrast, then axe-core over every page
 python tools/verify.py --bundle        the offline fallback matches data/
 python tools/verify.py --questions     the reproduced material matches its source
@@ -194,11 +207,11 @@ recomputed from the corpora rather than stated.
 
 ```
 python tools/extract.py          # rebuild data/snippets and data/provenance.json
-python tools/pattern_examples.py # write the two rules in all three shapes
-python tools/oscal_artifacts.py  # inventory what the three groups have published
+python tools/pattern_examples.py # write the two rules in all four shapes
+python tools/oscal_artifacts.py  # inventory what each approach has published
 python tools/sources_files.py    # rebuild data/source-files.json from sources/
 python tools/diagrams.py         # rebuild every published SVG in assets/diagrams
-python tools/approach_pages.py   # rebuild the three approach pages
+python tools/approach_pages.py   # rebuild the four approach pages
 python tools/scenario_page.py    # rebuild the worked scenario page
 python tools/bundle.py           # rebuild the offline fallback
 python tools/verify.py --all     # prove the site says what the files say
@@ -248,13 +261,15 @@ data/
   snippets/          29 files, one per extract, never edited by hand
   schema-evidence/   8 verbatim OSCAL 1.2.1 schema fragments with their constraints
   six-questions.json the six questions and the answer matrix, the central claim set
-  pattern-examples.json  the two rules, written in all three shapes. Ours
-  oscal-artifacts.json   what each of the three groups has published, counted
+  pattern-examples.json  the two rules, written in all four shapes. Ours
+  oscal-artifacts.json   what each approach has published, counted, and a note
+                         for the one that has published nothing
   criteria.json      the fifteen evaluation criteria, verbatim from the pre-read
   criteria-fill.json the forty-five cells, answered from the files
   sources.json       the guidance read as input, one row per benchmark
   source-files.json  every file under sources/, generated, with size and type
-  views.json         the three views of what a rule is
+  views.json         the three views of what a rule is, and which approaches
+                     hold each; two hold the first
   glossary.json      the vocabulary, including the terms the group has not
                      settled. Rendered as term cards in place; there is no
                      glossary page
@@ -269,7 +284,7 @@ tools/
   oscal_artifacts.py   builds data/oscal-artifacts.json from the three corpora
   sources_files.py   builds data/source-files.json from sources/
   diagrams.py        builds the published SVGs in assets/diagrams from data/
-  approach_pages.py  builds the three approach pages from one template
+  approach_pages.py  builds the four approach pages from one template
   scenario_page.py   builds scenario.html, the one page that carries figures
   bundle.py          builds assets/bundle.js, the offline fallback
   svgrender.py       rasterises the diagrams for the grayscale contact sheet
@@ -282,12 +297,12 @@ Eight of those are generators and the files they produce must not be edited by
 hand: `data/snippets/*.json` and `data/provenance.json`,
 `data/pattern-examples.json`, `data/oscal-artifacts.json`,
 `data/source-files.json`, `assets/diagrams/*.svg`, `data/criteria-fill.json`, the
-three approach pages, and `assets/bundle.js`. The workflow regenerates all of
+four approach pages, and `assets/bundle.js`. The workflow regenerates all of
 them and fails if the result differs from what was committed.
 
-`tools/diagrams.py` builds 19 diagrams and writes 9. The other 10, the base layer
-map, the three stakeholder variants and the rest, were only ever on a component
-gallery that has been removed. The builders are kept, because the drawing code
+`tools/diagrams.py` builds 20 diagrams and writes 10. The other 10, the base
+layer map, the four stakeholder variants and the rest, were only ever on a
+component gallery that has been removed. The builders are kept, because the drawing code
 belongs in one place, and the `PUBLISHED` constant at the foot of the file is the
 list of what reaches `assets/diagrams/`. Add a name there to publish one.
 
@@ -311,11 +326,11 @@ methodology page that has since been removed. The load-bearing ones:
   that page weighs nothing and states no position. Every other page is held to
   the rule.
 - **Equal budget is enforced by construction**, not by judgement. One generator
-  writes the three approach pages and refuses to write them if their word counts
+  writes the four approach pages and refuses to write them if their word counts
   differ by more than ten per cent.
 - **Non-verbal encoding counts as editorializing.** A badge, a hollow cell or a
   hatch fill argues in a channel a word count cannot see, so every annotation type
-  applies to all three approaches or to none.
+  applies to all four approaches or to none.
 - **Consequences, not verdicts.** State the cost; let the reader price it.
 - **Every figure carries its denominator**, and every figure is recomputed from
   the corpora on every build.
@@ -365,12 +380,22 @@ A criterion cannot be added here. Editorial rule 4 forbids the site from
 authoring evaluation criteria, so a sixteenth goes to the working group and this
 site follows.
 
-## Adding a fourth approach
+## Adding an approach
 
-The site is built so that this is a data change and a page, not a rewrite.
+The site is built so that this is a data change and a page, not a rewrite. The
+fourth approach was added this way, from a concept note rather than a corpus,
+and the places that had to learn a fourth are recorded in `BUILD-LOG.md` under
+that session: one entry in every per-approach data file, a fourth column in the
+encoding generator, a fourth hue at the same lightness, a fourth marker shape,
+and the checks that counted to three.
 
 1. **Add the corpus.** Put the published files where `corpora_root` in
-   `tools/manifest.yaml` can reach them.
+   `tools/manifest.yaml` can reach them. An approach with no corpus, one that
+   exists as a proposal, skips this step and the next: its cells declare no
+   extracts, its status annotation says what it is, its `tools/verify.py`
+   entry goes into `UNPUBLISHED`, and the one document it does have goes under
+   `examples/<approach>/` and is named in `UNPUBLISHED` in
+   `tools/oscal_artifacts.py` so the inventory page links it.
 2. **Declare the extracts.** Add manifest entries with a source file, an RFC 6901
    pointer, and the question each one illustrates. Run `python tools/extract.py`.
 3. **Add the approach to `data/six-questions.json`.** One entry under `approaches` with
@@ -379,7 +404,7 @@ The site is built so that this is a data change and a page, not a rewrite.
    annotation. Then one `matrix` cell for each of the seven question rows, each
    with a state, a note that becomes its tooltip, and the extracts that evidence
    it. An unanswered cell must say which of the three kinds of unanswered it is.
-4. **Write the two rules in your shape.** Add a fourth column to
+4. **Write the two rules in your shape.** Add a column to
    `tools/pattern_examples.py`: the same two rules, in the same order, for every
    question row the approach answers, each block naming the OSCAL construct that
    carries it and carrying your own namespace on any property that needs one. A
@@ -398,11 +423,17 @@ cell, `--example` will reject a column whose rules do not match the others,
 `--budget` will reject an unequal page, and `--criteria` will reject a criteria
 table that does not answer all fifteen for the new approach.
 
-Two more things. The inventory page needs a fourth entry in the `PUBLISHERS` list
-in `tools/oscal_artifacts.py`, naming the corpus directory and the option letter;
+Two more things. The inventory page needs an entry in the `PUBLISHERS` list in
+`tools/oscal_artifacts.py`, naming the corpus directory and the option letter;
 everything else on that page is counted off the files and nothing about it is
 described by hand. And `sources/` lists the hardening guidance read as input, not
 the OSCAL written from it, so a new corpus does not go there.
+
+The checks that count approaches read the count from `data/six-questions.json`,
+with four exceptions that name them: the option-letter order in
+`tools/verify.py`, `tools/pagecheck.js` and `assets/site.js`, the approach list
+in `tools/diagrams.py` with its marker shape, and the approach colour tokens in
+`assets/site.css`, which `--a11y` holds to one lightness.
 
 ## License
 

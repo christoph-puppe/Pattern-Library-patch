@@ -1,5 +1,5 @@
 {
-  "note": "Seven parties touch a hardening rule between the body that writes it and the auditor who reads the outcome, and each one works in an OSCAL model. Which model is the whole of what an approach asks of a party, so this is a mapping rather than an argument. Two entries need their component type named, because the same model does two jobs for two different parties. Two sets of the seven are grouped. The bodies that author hardening guidance are one role played by two kinds of organisation. The automation is a policy engine and the two parties that run it: a provider builds the tool and runs nothing, which is why its flows name whoever executes them, and the system owner and the auditor are those parties. The mapping provider is a party of its own because a hardening guide does not always carry the tie to a framework: a STIG carries CCIs and it is DISA's separate CCI list that names the 800-53 controls, and third parties publish mappings of their own through NIST's OLIR programme. Whoever writes the guide is often not whoever ties it to the framework.",
+  "note": "Seven parties touch a hardening rule between the body that writes it and the auditor who reads the outcome, and each one works in an OSCAL model. Which model is the whole of what an approach asks of a party, so this is a mapping rather than an argument. Two entries need their component type named, because the same model does two jobs for two different parties. Two sets of the seven are grouped. The bodies that author hardening guidance are one role played by two kinds of organisation. The automation is a policy engine and the two parties that run it: a provider builds the tool and runs nothing, which is why its flows name whoever executes them, and the system owner and the auditor are those parties. The mapping provider is a party of its own because a hardening guide does not always carry the tie to a framework: a STIG carries CCIs and it is DISA's separate CCI list that names the 800-53 controls, and third parties publish mappings of their own through NIST's OLIR programme. Whoever writes the guide is often not whoever ties it to the framework. One approach lets parties other than the system owner write a profile, and shared_profile records which and why.",
   "intro": "Seven parties touch a hardening rule between a published guide and an audited system, and each works in an OSCAL model. Two sets of them are grouped: the bodies that author guidance, and the automation.",
   "parties": [
     {
@@ -291,6 +291,76 @@
         ],
         "note": "The only run here. There is no path from a check to a claim, so what comes out is a result and never the plan of record."
       }
+    },
+    "profile-first": {
+      "regulatory": {
+        "writes": [
+          {
+            "model": "catalog"
+          }
+        ]
+      },
+      "mapper": {
+        "writes": [
+          {
+            "model": "profile"
+          }
+        ],
+        "note": "Edits the profile that puts the objective and the method on the framework control. Placing the part is the tie."
+      },
+      "benchmark": {
+        "writes": [
+          {
+            "model": "catalog"
+          }
+        ],
+        "note": "Ships the guide as a catalog carrying its own executable methods: the author of the requirement is the author of the check."
+      },
+      "software": {
+        "writes": [
+          {
+            "model": "catalog"
+          }
+        ]
+      },
+      "engine": {
+        "writes": [
+          {
+            "model": "profile"
+          }
+        ],
+        "note": "Publishes a profile that imports a catalog untouched and adds executable methods for its engine."
+      },
+      "owner": {
+        "writes": [
+          {
+            "model": "profile"
+          },
+          {
+            "model": "system-security-plan"
+          }
+        ],
+        "note": "The selection and the plan of record. A run of the checks writes findings, not responses, so an owner who runs them is assessing."
+      },
+      "auditor": {
+        "flows": [
+          {
+            "runtime": true,
+            "from": [
+              {
+                "model": "profile"
+              }
+            ],
+            "to": [
+              {
+                "model": "assessment-results"
+              }
+            ],
+            "makes": "the findings"
+          }
+        ],
+        "note": "The executor resolves the profiles, matches each method's platform to a component, runs the body and writes the finding."
+      }
     }
   },
   "groups": [
@@ -305,5 +375,14 @@
       "note": "The policy engine and the automation tool are the same thing. A provider builds it, and whoever runs it decides what comes out."
     }
   ],
-  "runtime": "A tool reads OSCAL, executes, and writes OSCAL. The party in this row builds it; the party on each flow runs it."
+  "runtime": "A tool reads OSCAL, executes, and writes OSCAL. The party in this row builds it; the party on each flow runs it.",
+  "shared_profile": {
+    "profile-first": {
+      "parties": [
+        "mapper",
+        "engine"
+      ],
+      "why": "The profile is still the system owner's selection, and it is also the document a third party adds a check with. A tool vendor publishes a profile that imports a catalog untouched and adds executable methods; a mapping provider edits the profile that puts a check on a framework control. The site records this as the approach's own position rather than as a row drawn wrong: tools/verify.py holds every other approach to the rule that nobody but the owner writes a profile."
+    }
+  }
 }

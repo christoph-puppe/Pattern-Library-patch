@@ -1,5 +1,5 @@
 {
-  "note": "The six questions are answered one at a time, which hides the thing that decides whether the set works: what joins one answer to the next. This is the chain from the moment the rule is introduced to the moment something records that it was met, with every foreign key and the primary key it resolves to. Every literal is one of the two running rules as the six questions page encodes it, so the three chains can be read against each other; tools/verify.py fails the build if a value here is not in that encoding.",
+  "note": "The six questions are answered one at a time, which hides the thing that decides whether the set works: what joins one answer to the next. This is the chain from the moment the rule is introduced to the moment something records that it was met, with every foreign key and the primary key it resolves to. Every literal is one of the two running rules as the six questions page encodes it, so the four chains can be read against each other; tools/verify.py fails the build if a value here is not in that encoding.",
   "title": "What joins one answer to the next",
   "intro": "The chain starts where the rule is introduced and runs to the claim and the result. What a step costs is how many relationships it is made of and how each one resolves.",
   "stages": [
@@ -642,6 +642,181 @@
                 "model": "catalog",
                 "field": "controls[].parts[objective].id",
                 "slot": "2"
+              },
+              "how": "reference"
+            }
+          ]
+        }
+      ]
+    },
+    "profile-first": {
+      "introduced": {
+        "model": "profile",
+        "field": "alters[].adds[].parts[].id",
+        "value": "sc-28_obj-ubtu-24-600090",
+        "slot": "1",
+        "note": "The rule is an assessment objective part, added to the framework control by a profile. Every step below starts from that part id."
+      },
+      "hops": [
+        {
+          "from": "rule",
+          "to": "check",
+          "how": "reference",
+          "note": "Both parts sit in one alter, and the method links to the objective by id, inside one document.",
+          "pairs": [
+            {
+              "foreign": {
+                "model": "profile",
+                "field": "parts[assessment-method].links[rel=assessment-objective].href",
+                "value": "#sc-28_obj-ubtu-24-600090",
+                "slot": "3"
+              },
+              "primary": {
+                "model": "profile",
+                "field": "parts[assessment-objective].id",
+                "value": "sc-28_obj-ubtu-24-600090",
+                "slot": "1"
+              },
+              "how": "reference"
+            }
+          ]
+        },
+        {
+          "from": "rule",
+          "to": "control",
+          "how": "containment",
+          "note": "The parts are added to the control the alter names. Placing them is the tie, and no second identifier exists.",
+          "pairs": [
+            {
+              "foreign": {
+                "model": "profile",
+                "field": "no field",
+                "slot": "1"
+              },
+              "primary": {
+                "model": "profile",
+                "field": "alters[].control-id",
+                "value": "sc-28",
+                "slot": "2"
+              },
+              "how": "containment"
+            },
+            {
+              "foreign": {
+                "model": "profile",
+                "field": "alters[].control-id",
+                "value": "sc-28",
+                "slot": "2"
+              },
+              "primary": {
+                "model": "catalog",
+                "field": "controls[].id",
+                "value": "sc-28",
+                "slot": "2",
+                "where": "the framework catalog"
+              },
+              "how": "reference"
+            }
+          ]
+        },
+        {
+          "from": "check",
+          "to": "runtime",
+          "how": "none",
+          "note": "The props name an engine by a token and say how to judge its result. The executor that honours them is outside OSCAL.",
+          "pairs": [
+            {
+              "foreign": {
+                "model": "profile",
+                "field": "parts[assessment-method].props[name=language].value",
+                "value": "bash",
+                "slot": "3"
+              },
+              "primary": {
+                "model": "nothing",
+                "field": "no field",
+                "slot": "5"
+              },
+              "how": "none"
+            },
+            {
+              "foreign": {
+                "model": "profile",
+                "field": "parts[assessment-method].props[name=evaluation].value",
+                "value": "exit-code",
+                "slot": "3"
+              },
+              "primary": {
+                "model": "nothing",
+                "field": "no field",
+                "slot": "5"
+              },
+              "how": "none"
+            }
+          ]
+        },
+        {
+          "from": "runtime",
+          "to": "claim",
+          "how": "none",
+          "note": "The run writes no response. The plan of record is untouched by design, so nothing joins the check to the owner's claim.",
+          "pairs": [
+            {
+              "foreign": {
+                "model": "profile",
+                "field": "no field",
+                "slot": "5"
+              },
+              "primary": {
+                "model": "system-security-plan",
+                "field": "by-components[].description",
+                "slot": "6a"
+              },
+              "how": "none"
+            }
+          ]
+        },
+        {
+          "from": "runtime",
+          "to": "result",
+          "how": "reference",
+          "note": "The observation names the host and carries the raw output as evidence, so two machines behind one component can disagree.",
+          "pairs": [
+            {
+              "foreign": {
+                "model": "assessment-results",
+                "field": "observations[].subjects[].subject-uuid",
+                "value": "06297a03-cae0-414b-8332-2fc882f81aa1",
+                "slot": "6b"
+              },
+              "primary": {
+                "model": "system-security-plan",
+                "field": "system-implementation.inventory-items[].uuid",
+                "value": "06297a03-cae0-414b-8332-2fc882f81aa1",
+                "slot": "4"
+              },
+              "how": "reference"
+            }
+          ]
+        },
+        {
+          "from": "result",
+          "to": "control",
+          "how": "reference",
+          "note": "The finding targets the objective the profile added, so a result reads against the framework with no plan of record.",
+          "pairs": [
+            {
+              "foreign": {
+                "model": "assessment-results",
+                "field": "findings[].target.target-id",
+                "value": "sc-28_obj-ubtu-24-600090",
+                "slot": "6b"
+              },
+              "primary": {
+                "model": "profile",
+                "field": "alters[].adds[].parts[].id",
+                "value": "sc-28_obj-ubtu-24-600090",
+                "slot": "1"
               },
               "how": "reference"
             }

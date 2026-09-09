@@ -1,5 +1,5 @@
 {
-  "note": "Strengths and risks per approach. The counts are not held equal: they were, three a side on every page, so that the shape of the block could not itself be an argument, and that rule was dropped when it started deciding what could be said. An approach has the risks it has. What is still held is that no approach is argued at greater length than another, which tools/approach_pages.py enforces across the three pages. No figures: the site describes one scenario, on one page, and every count belongs there. What each entry rests on is recorded in BUILD-LOG.md and, where it is a claim about what a model can express, in the schema_evidence field here, which is checked but not rendered.",
+  "note": "Strengths and risks per approach. The counts are not held equal: they were, three a side on every page, so that the shape of the block could not itself be an argument, and that rule was dropped when it started deciding what could be said. An approach has the risks it has. What is still held is that no approach is argued at greater length than another, which tools/approach_pages.py enforces across the four pages. No figures: the site describes one scenario, on one page, and every count belongs there. What each entry rests on is recorded in BUILD-LOG.md and, where it is a claim about what a model can express, in the schema_evidence field here, which is checked but not rendered.",
   "approaches": {
     "catalog-first": {
       "intro": "Considerations when introducing technical hardening controls as a catalog have been captured",
@@ -111,6 +111,45 @@
         {
           "title": "The published set does not join up",
           "body": "The result names a plan no file here carries and gives an observation a subject type the model does not define."
+        }
+      ]
+    },
+    "profile-first": {
+      "intro": "Considerations when attaching executable assessment methods to controls in a catalog or a profile have been captured",
+      "pros": [
+        {
+          "title": "The check travels with the requirement",
+          "body": "A profile can add parts, props, links and params to a control, so a third party attaches a check to a catalog it does not own."
+        },
+        {
+          "title": "Parameters feed the script",
+          "body": "A control's params reach the body as environment variables, so one script serves many controls and every organisation its own value."
+        },
+        {
+          "title": "Findings need no new field",
+          "body": "The method links to an assessment objective, so a finding targets an objective id that every consumer built for 800-53A already reads."
+        },
+        {
+          "title": "The plan of record does not grow",
+          "body": "The methods sit on controls the assessment plan reads, so a guide with hundreds of checks adds no control to the system security plan."
+        }
+      ],
+      "cons": [
+        {
+          "title": "The catalog becomes code",
+          "body": "A profile resolved from a URL and executed is a remote code path into every assessed system, with the profile author as its operator."
+        },
+        {
+          "title": "The vocabulary has no owner",
+          "body": "Language, evaluation and pass condition are conventions in a placeholder namespace, and an executor that does not know them can run nothing."
+        },
+        {
+          "title": "The subject is matched by convention",
+          "body": "The platform prop is a CPE and nothing on an SSP component carries one, so which host runs a check is decided outside the schema."
+        },
+        {
+          "title": "The claim never meets the result",
+          "body": "The finding targets the objective and the response the control, so the plan of record cannot say which checks its claim rests on."
         }
       ]
     }
