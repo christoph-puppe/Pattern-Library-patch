@@ -113,9 +113,9 @@ def summarise(model, body):
         rules = sum(len(c.get("rules", [])) for c in comps)
         if rules:
             n["rules"] = rules
-        #  The Rules-shape assembly the generated corpus and the proponent's
-        #  April document carry. Counted where present, like the other
-        #  proposed assemblies, and named by the field.
+        #  The Rules-shape assembly the generated corpus carries. Counted
+        #  where present, like the other proposed assemblies, and named by
+        #  the field.
         scripts = sum(len(ir.get("automation-scripts", []))
                       for c in comps for ci in c.get("control-implementations", [])
                       for ir in ci.get("implemented-requirements", []))

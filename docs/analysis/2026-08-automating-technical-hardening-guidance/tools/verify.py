@@ -3832,7 +3832,7 @@ def check_conformance() -> None:
     proposed_keys = {"rules", "checks", "rule-groups", "implementing-rules",
                      "assessment-check-id", "target-component-uuid",
                      #  the Rules-shape assembly the generated corpus writes
-                     #  one file in, and the proponent's April document uses
+                     #  one file in
                      "automation-scripts"}
 
     def keys_in(path: str) -> set:

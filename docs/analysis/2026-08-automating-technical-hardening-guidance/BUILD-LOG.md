@@ -8994,3 +8994,18 @@ automation scripts. READMEs updated.
 - The name of the fourth option.
 - The open questions page does not yet carry the three questions for the
   Foundation that decisions 2 and 3 raise; they go in with the rename.
+
+## Session: the Rules shape stands on its own
+
+**Date:** 2026-09-09
+**Scope:** every reference to a document the site does not hold removed
+**Result:** complete; the phases that read the data and the pages pass as before.
+
+The user chose to leave the April component definition out. The Rules-shape
+file the generator writes stays, and is now described as what it is: the
+site's own encoding of the Rules construct carrying code, written from the CIS
+benchmark, and not a rendering of any document. The unheld placeholder in the
+Rules row and in the grid cell is gone, the thesis states the idea without a
+history, and the generator's remarks, the harness comments and the READMEs no
+longer name a document that is not here. The name of the fourth option and
+the open questions for the Foundation remain open.

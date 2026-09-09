@@ -8,6 +8,6 @@
   "section": null,
   "language": "json",
   "content": "{\n  \"uuid\": \"aadffa90-0ff7-5e04-8342-e95615bd06c1\",\n  \"benchmark-rule-id\": \"1.1.1.1\",\n  \"script-type\": \"audit\",\n  \"language\": \"bash\",\n  \"applicable-profiles\": [\n    \"Level 1 - Server\",\n    \"Level 2 - Server\",\n    \"Level 1 - Workstation\",\n    \"Level 2 - Workstation\"\n  ],\n  \"evaluation-criteria\": {\n    \"method\": \"stdout-regex\",\n    \"pass-condition\": \"^\\\\*\\\\* PASS \\\\*\\\\*$\",\n    \"fail-condition\": \"^\\\\*\\\\* FAIL \\\\*\\\\*$\"\n  },\n  \"payload\": \"#!/usr/bin/env bash\\n\\n{\\n   a_output=() a_output2=() a_output3=() l_dl=\\\"\\\" l_mod_name=\\\"cramfs\\\" l_mod_type=\\\"fs\\\"\\n   l_mod_path=\\\"$(readlink -f /lib/modules/**/kernel/$l_mod_type | sort -u)\\\"\\n   f_module_chk()\\n   {\\n      l_dl=\\\"y\\\" a_showconfig=()\\n      while IFS= read -r l_showconfig; do\\n         a_showconfig+=(\\\"$l_showconfig\\\")\\n      done < <(modprobe --showconfig | grep -P -- '\\\\b(install|blacklist)\\\\h+'\\\"${l_mod_chk_name//-/_}\\\"'\\\\b')\\n      if ! lsmod | grep \\\"$l_mod_chk_name\\\" &> /dev/null; then\\n         a_output+=(\\\"  - kernel module: \\\\\\\"$l_mod_name\\\\\\\" is not loaded\\\")\\n      else\\n         a_output2+=(\\\"  - kernel module: \\\\\\\"$l_mod_name\\\\\\\" is loaded\\\")\\n      fi\\n      if grep -Pq -- '\\\\binstall\\\\h+'\\\"${l_mod_chk_nam [truncated]\"\n}",
-  "sha256_of_source_file": "5275bde79e2804821993ffed216143234cbddeed9075ce3e58ff7b09b26f6817",
-  "extracted_at": "2026-09-09T19:52:09+00:00"
+  "sha256_of_source_file": "33308db07a610e5a71763ba1593a59e09535b7478e9a37e9c328a528364ef1df",
+  "extracted_at": "2026-09-09T20:04:43+00:00"
 }

@@ -1,12 +1,12 @@
 {
   "note": "Decisions 2 and 3 of the start page's section on code in OSCAL. Decision 1, what the OSCAL carries about the check, is data/check-carrier.json. This file holds the construct decision, Rules against assessment-method, and the placement decision, and the grid that crosses them. Every document a cell names is referenced by inventory key into data/oscal-artifacts.json or by a path under examples/, so the renderer resolves the link and tools/verify.py --decisions checks that it exists and that its status is what the cell says. The site takes no position on either decision; the consequences are stated and no option is ranked.",
   "thesis": [
-    "The proponent of the fourth approach has put the executable into OSCAL twice: in April on a validation component, in a typed assembly of its own, and in September on a control, in the released assessment-method part. The idea is the same in both, the check's code travels in the document, and the two differ in which construct carries it and where it sits. Neither of those is the idea. They are decisions under it, and this section states each one with its consequences.",
+    "The fourth approach's thesis is that the check's code travels in the OSCAL document. Two constructs can carry it, a typed assembly of its own or the released assessment-method part, and it can sit on a control, a component or an activity. Neither of those is the idea. They are decisions under it, and this section states each one with its consequences.",
     "Three decisions, then. What the document carries about the check, which is the axis above. Which construct carries it, where the two candidates are a new typed assembly or the released part. And where it sits, which the construct partly decides."
   ],
   "constructs": {
     "label": "Which construct carries it",
-    "intro": "Two constructs have carried code in this field. A typed assembly, which the site calls Rules after the field name the published proposal uses, adds objects to the schema with their own fields and identity: rules and checks in the published component-first files, automation-scripts in the proponent's April document and in the file the generator writes from the CIS benchmark in that shape. The assessment-method part is released OSCAL, extended by props in a namespace and by links, and it is what the September note and the generated catalog use. The table states each aspect for both and ranks neither.",
+    "intro": "Two constructs can carry code. A typed assembly, which the site calls Rules after the field name the published proposal uses, adds objects to the schema with their own fields and identity: rules and checks in the published component-first files, and an automation-scripts assembly in the file the generator writes from the CIS benchmark in that shape. The assessment-method part is released OSCAL, extended by props in a namespace and by links, and it is what the concept note and the generated catalog use. The table states each aspect for both and ranks neither.",
     "options": [
       {
         "key": "rules",
@@ -21,12 +21,6 @@
             "status": "proposed"
           },
           {
-            "label": "automation-scripts on a validation component, the proponent's April document",
-            "held": false,
-            "carries": "executable",
-            "status": "proposed"
-          },
-          {
             "label": "the same assembly written from the CIS benchmark by the generator",
             "publisher": "profile-first",
             "file": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json",
@@ -34,7 +28,7 @@
             "status": "generated"
           }
         ],
-        "instances_differ": "The two proposals are two schemas. The published one names a rule and a check, each with an id, and the check points at content the tool owns. The April one names a script object with a type, a language, the profiles it applies to, evaluation criteria and the script as payload. They share the idea of a typed object with identity and nothing else, and neither validates under 1.2.1.",
+        "instances_differ": "The two instances are two schemas. The published one names a rule and a check, each with an id, and the check points at content the tool owns. The generated one names a script object with a type, a language, the profiles it applies to, evaluation criteria and the script as payload. They share the idea of a typed object with identity and nothing else, and neither validates under 1.2.1.",
         "consequences": [
           "A validator checks the executor fields themselves, so a document that validates is a document an executor can read.",
           "Nothing validates until a version ships the assembly, and two proposals with different fields are two versions to agree on.",
@@ -85,7 +79,7 @@
       {"aspect": "Where it can sit", "rules": "Wherever the schema author puts it. On a component in both instances so far.", "method": "On a control, in a catalog or a profile. Nowhere else in 1.2.1."},
       {"aspect": "Fit with results", "rules": "Its own vocabulary. A finding needs a way to name a rule.", "method": "A finding targets the objective part beside it, unchanged."},
       {"aspect": "Remediation", "rules": "A second script object, typed.", "method": "A remediation part, in prose or a linked resource."},
-      {"aspect": "Shown carrying", "rules": "A reference in the published files; the script in the April document and the generated file.", "method": "A reference in the published catalog; the script and a description in the generated files."}
+      {"aspect": "Shown carrying", "rules": "A reference in the published files; the script in the generated file.", "method": "A reference in the published catalog; the script and a description in the generated files."}
     ]
   },
   "placements": {
@@ -125,10 +119,9 @@
       {"construct": "rules", "placement": "control", "status": "empty",
        "note": "No document places a typed rule assembly on a control.", "documents": []},
       {"construct": "rules", "placement": "component", "status": "proposed",
-       "note": "Both proposals put the assembly on a validation component, one carrying a reference and one the script.",
+       "note": "Both instances put the assembly on a validation component, one carrying a reference and one the script.",
        "documents": [
          {"publisher": "component-first", "file": "oscap-validation-component-definition.json", "label": "rules and checks, published"},
-         {"held": false, "label": "automation-scripts, the April document"},
          {"publisher": "profile-first", "file": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json", "label": "automation-scripts, generated from the CIS benchmark"}
        ]},
       {"construct": "rules", "placement": "activity", "status": "empty",

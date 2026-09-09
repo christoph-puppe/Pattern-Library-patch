@@ -22,8 +22,8 @@ in the other construct.
 
 **The Rules shape**, for the second construct the site compares. The benchmark
 becomes a validation component whose implemented requirements are keyed to the
-CIS Controls v8 safeguards the benchmark names in its own identifiers, in the
-form the proponent's April document uses, and each carries an
+CIS Controls v8 safeguards the benchmark names in its own identifiers, and
+each carries an
 `automation-scripts` object per audit or remediation script: type, language,
 the benchmark profiles it applies to, evaluation criteria where the script
 prints the result line, and the script as payload. Recommendations that name

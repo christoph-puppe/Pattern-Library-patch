@@ -36,9 +36,8 @@ system becomes a profile that imports the NIST catalog and adds an objective and
 a method to each control a rule serves. `tools/profile_first_corpus.py` writes
 the eight files under `examples/profile-first/oscal/`, seven in the
 assessment-method shape and one, the same benchmark as a validation component
-carrying an `automation-scripts` assembly, in the Rules shape the proponent's
-April document uses, which is a proposed assembly and fails validation as it
-must. `--corpus` recomputes what they hold, and the status annotation on every card, the inventory page and
+carrying an `automation-scripts` assembly, in the Rules shape, which is a
+proposed assembly and fails validation as it must. `--corpus` recomputes what they hold, and the status annotation on every card, the inventory page and
 `examples/profile-first/README.md` say whose they are. The column on the six
 questions page draws its extracts from those files, and the namespace on its
 props is the note's own placeholder, carried as the note wrote it.
