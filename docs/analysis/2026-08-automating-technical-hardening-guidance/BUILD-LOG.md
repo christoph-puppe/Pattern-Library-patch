@@ -8919,3 +8919,78 @@ a `.carrier` block in `assets/site.css`. Section 6 and its contents entry in
 `index.html`; one sentence in `six-questions.html`. `check_carrier` in
 `tools/verify.py`; `checkCarrier`, an arrival anchor and three marker
 attributes in `tools/pagecheck.js`. The bundle regenerated.
+
+## Session: code in OSCAL, three decisions
+
+**Date:** 2026-09-09
+**Scope:** section 6 of the start page restated as the proponent's thesis and
+the decisions under it; the CIS benchmark generated a second time in the Rules
+shape; a `--decisions` phase
+**Result:** complete. The offline phases pass with the same sixteen failures
+that need the corpora or the network, and the page check passes.
+
+### What was asked
+
+The user set the fourth approach's thesis above its placement: the check's
+code belongs in the OSCAL document, and where it sits is secondary. Two more
+things followed. The proponent had put code into OSCAL twice, in April on a
+validation component in a typed `automation-scripts` assembly and in September
+on a control in the released assessment-method part, and the user asked for
+the choice between those two constructs, Rules against assessment-method, to
+be a decision the site states. The two typed-assembly proposals, the published
+rules and checks and the April automation-scripts, were to be one row labelled
+Rules.
+
+### Decisions
+
+1. **Three decisions, stated in order.** What the document carries about the
+   check is decision 1 and keeps the previous session's axis. Which construct
+   carries it is decision 2. Where it sits is decision 3, and the construct
+   partly decides it, since a part sits only on a control in 1.2.1.
+2. **Rules is one row with two proposals under it.** The published rules and
+   checks carry a reference; the April assembly carries the script; they are
+   two schemas sharing the idea of a typed object with identity. The row says
+   so, names both, and marks both proposed.
+3. **The benchmark is generated in both constructs.** The generator now also
+   writes a validation component in the April shape, keyed to CIS Controls v8
+   through the benchmark's own identifiers, with recommendations that name
+   none under a second control implementation sourced from the catalog beside
+   it. The file fails validation on the proposed field, the generator expects
+   it to, and the conformance check asserts that the assessment-method files
+   use no undefined assembly while this one uses the proposed one and nothing
+   else. Its audit scripts are the catalog's inline scripts as a set.
+4. **A grid, construct by placement.** Six cells: released, proposed, empty,
+   or needs a schema change. Every document a cell names is referenced by
+   inventory key, so the link is the inventory's and the harness checks that
+   the file exists and that its validation status is what the cell says.
+5. **The April document itself is not held yet.** It is named in the Rules
+   row and the grid as not held, and the cell will link it once it arrives.
+6. **Nothing renamed yet.** The fourth option is still Profile-first on every
+   page, pending the user's word on the name.
+
+### Counts, recomputed
+
+| | |
+|---|---|
+| Implemented requirements in the Rules-shape file | 49 |
+| Audit script objects, distinct scripts | 97, 85 |
+| Remediation script objects | 67 |
+| Audit objects carrying evaluation criteria | 66 |
+
+### What changed, by file
+
+`build_rules_cdef` and `EXPECT_INVALID` in `tools/profile_first_corpus.py`,
+and the eighth file it writes. `data/decisions.json`, new. `renderDecisions`
+in `assets/site.js`, a `.decisions` block in `assets/site.css`. Section 6
+restructured in `index.html` with three numbered subsections. `check_decisions`
+and the two-construct conformance in `tools/verify.py`; the corpus phase
+checks the Rules-shape file; `tools/pagecheck.js` checks the grid. Two extracts
+from the Rules-shape file in `tools/manifest.yaml`; the inventory counts
+automation scripts. READMEs updated.
+
+### Open items
+
+- The April component definition, to be held under `examples/` and cited.
+- The name of the fourth option.
+- The open questions page does not yet carry the three questions for the
+  Foundation that decisions 2 and 3 raise; they go in with the rename.

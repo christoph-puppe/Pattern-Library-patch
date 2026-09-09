@@ -15,8 +15,23 @@ files are the site's, and the site says so wherever it counts them.
 | `cis-ubuntu-24-04-lts-level-1-server-profile.json`, and the three beside it | profile | the benchmark's own four profiles |
 | `cis-ubuntu-24-04-lts-to-nist-sp-800-53-rev5-mapping.json` | mapping-collection | the SP 800-53 references in the benchmark's own identifiers |
 | `nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json` | profile | `sources/disa/U_CAN_Ubuntu_24-04_LTS_STIG_V1R5_Manual-xccdf.xml`, and the CCI to control mapping in the STIG's published OSCAL conversion |
+| `cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json` | component-definition, Rules shape | the same benchmark file, as a validation component carrying an `automation-scripts` assembly |
 
-Two routes, because the note names two.
+Two routes, because the note names two, and then the same benchmark once more
+in the other construct.
+
+**The Rules shape**, for the second construct the site compares. The benchmark
+becomes a validation component whose implemented requirements are keyed to the
+CIS Controls v8 safeguards the benchmark names in its own identifiers, in the
+form the proponent's April document uses, and each carries an
+`automation-scripts` object per audit or remediation script: type, language,
+the benchmark profiles it applies to, evaluation criteria where the script
+prints the result line, and the script as payload. Recommendations that name
+no CIS Control sit under a second control implementation whose source is the
+catalog beside the file. OSCAL 1.2.1 does not define `automation-scripts`, so
+this file fails validation, the generator expects it to, and `--conformance`
+checks that it does. A recommendation naming two safeguards is carried under
+both, because the shape has no link between two requirements' scripts.
 
 **The catalog route**, where the author of the requirement is the author of the
 check. Every CIS recommendation is a control carrying an `assessment-objective`
@@ -72,6 +87,7 @@ python tools/profile_first_corpus.py --validate   every file against OSCAL 1.2.1
 python tools/verify.py --corpus                   the counts, the links and the structure, recomputed
 ```
 
-All seven files validate under compliance-trestle 5.1.0, which carries the
-OSCAL 1.2.1 schemas, and under the published JSON schemas for the catalog,
-profile and mapping models.
+The seven assessment-method files validate under compliance-trestle 5.1.0,
+which carries the OSCAL 1.2.1 schemas, and under the published JSON schemas
+for the catalog, profile and mapping models. The Rules-shape file fails, on
+the `automation-scripts` field, and that is the expected result.

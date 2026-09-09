@@ -92,7 +92,15 @@ FILES = {
     "catalog": "cis-ubuntu-24-04-lts-benchmark-catalog.json",
     "mapping": "cis-ubuntu-24-04-lts-to-nist-sp-800-53-rev5-mapping.json",
     "stig": "nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json",
+    "rules": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json",
 }
+#  The one file written in the Rules shape rather than the assessment-method
+#  shape: a validation component carrying an automation-scripts assembly, which
+#  OSCAL 1.2.1 does not define. It is expected to fail validation, and the
+#  harness checks that it does, because a proposed assembly that validated
+#  would mean the validator was not looking.
+EXPECT_INVALID = {FILES["rules"]}
+CIS_CONTROLS_NS = "https://cisecurity.org/ns/oscal"
 CIS_PROFILE_FILES = {
     "Level 1 - Server": "cis-ubuntu-24-04-lts-level-1-server-profile.json",
     "Level 2 - Server": "cis-ubuntu-24-04-lts-level-2-server-profile.json",
@@ -403,6 +411,161 @@ def cis_rules_all(bench):
         yield from cis_rules(gl)
 
 
+# --------------------------------------------------------------------------- #
+# The Rules shape: the same benchmark as a validation component               #
+# --------------------------------------------------------------------------- #
+#  The second construct the site compares. A typed assembly, automation-scripts,
+#  on the implemented requirements of a validation component, in the shape the
+#  proponent's own April document uses: one script object per audit or
+#  remediation script, with its language, the benchmark profiles it applies
+#  to, how its output is judged, and the script as payload. The requirements
+#  are keyed to CIS Controls v8 through the references the benchmark carries
+#  in its own identifiers, as that document is; the recommendations that name
+#  no CIS Control sit under a second control implementation whose source is
+#  the catalog beside this file, so nothing is dropped.
+
+CC8_URI = re.compile(r"/v8\.\d+/control/(\d+)/subcontrol/(\d+)$")
+
+
+def cc8_ids(rule) -> list[str]:
+    """CIS Controls v8 safeguard ids a rule names, in the April document's form."""
+    out = []
+    for ident in rule.get("idents", []):
+        m = CC8_URI.search(ident.get("cc8:controlURI", ""))
+        if m:
+            cid = f"cisc-{int(m.group(1)):03d}.{int(m.group(2)):03d}"
+            if cid not in out:
+                out.append(cid)
+    return out
+
+
+def rule_profiles(bench) -> dict[str, list[str]]:
+    out: dict[str, list[str]] = {}
+    for p in bench["Profiles"]:
+        for sel in p["selects"]:
+            if sel["select"]["selected"] == "true":
+                out.setdefault(sel["select"]["idref"], []).append(p["title"])
+    return out
+
+
+def automation_scripts(rule, profiles: list[str], under: str) -> list[dict]:
+    #  A script object sits under one requirement, and a recommendation that
+    #  names two CIS Controls is carried under both, so the object is repeated
+    #  and the uuid says which copy it is. The shape has no link between two
+    #  requirements' scripts, which is one of the differences the site records.
+    num = cis_number(rule["id"])
+    out = []
+    for kind, field in (("audit", "auditcheck"), ("remediation", "fixtext")):
+        codes = [code_text(c) for c in CODE_BLOCK.findall(rule.get(field, ""))]
+        for i, code in enumerate(c for c in codes if is_bash(c)):
+            item = {
+                "uuid": uid(f"script:{under}:{rule['id']}:{kind}:{i}"),
+                "benchmark-rule-id": num,
+                "script-type": kind,
+                "language": "bash",
+                "applicable-profiles": profiles,
+            }
+            if kind == "audit" and "** PASS **" in code:
+                item["evaluation-criteria"] = {
+                    "method": "stdout-regex",
+                    "pass-condition": r"^\*\* PASS \*\*$",
+                    "fail-condition": r"^\*\* FAIL \*\*$",
+                }
+            item["payload"] = code + "\n"
+            out.append(item)
+    return out
+
+
+def build_rules_cdef(bench, rules, catalog_file: str) -> dict:
+    profiles = rule_profiles(bench)
+    by_cc8: dict[str, list] = {}
+    unmapped = []
+    for r in rules:
+        ids = cc8_ids(r)
+        if ids:
+            for cid in ids:
+                by_cc8.setdefault(cid, []).append(r)
+        else:
+            unmapped.append(r)
+
+    def requirement(cid: str, members: list, title: str) -> dict:
+        req = {
+            "uuid": uid("req:" + cid),
+            "control-id": cid,
+            "description": title,
+            "automation-scripts": [],
+        }
+        rationale = [f"{cis_number(r['id'])}: " + to_markdown(r["rationale"])
+                     for r in members if r.get("rationale")]
+        if rationale:
+            req["props"] = [{"name": "rationale", "value": "\n\n".join(rationale),
+                             "ns": CIS_CONTROLS_NS}]
+        for r in members:
+            req["automation-scripts"].extend(
+                automation_scripts(r, profiles.get(r["id"], []), cid))
+        if not req["automation-scripts"]:
+            del req["automation-scripts"]
+        return req
+
+    mapped_reqs = []
+    for cid in sorted(by_cc8):
+        members = by_cc8[cid]
+        title = "; ".join(f"{cis_number(r['id'])} {r['title']}" for r in members)
+        mapped_reqs.append(requirement(cid, members, title))
+    unmapped_reqs = [requirement(r["id"], [r], f"{cis_number(r['id'])} {r['title']}")
+                     for r in unmapped]
+    accepted = [s["accepted"] for s in bench.get("status", []) if "accepted" in s][0]
+    return {"component-definition": {
+        "uuid": uid("cdef:" + bench["id"]),
+        "metadata": {
+            "title": f"{bench['title']} v{bench['version']}, as a validation component "
+                     f"carrying automation scripts",
+            "published": accepted + "T00:00:00Z",
+            "last-modified": GENERATED,
+            "version": bench["version"],
+            "oscal-version": OSCAL_VERSION,
+            "remarks": ("Generated by tools/profile_first_corpus.py from the same "
+                        "benchmark file as the catalog beside it, in the Rules shape: "
+                        "an automation-scripts assembly on the implemented requirements "
+                        "of a validation component, as the proponent's April document "
+                        "uses it. OSCAL 1.2.1 does not define that assembly, so this "
+                        "file does not validate, and it is not meant to. Every script, "
+                        "identifier, profile and rationale is taken from the benchmark "
+                        "file; the requirements are keyed to CIS Controls v8 through the "
+                        "references in the benchmark's own identifiers, and the "
+                        "recommendations that name none sit under a second control "
+                        "implementation whose source is the catalog beside this file."),
+        },
+        "components": [{
+            "uuid": uid("component:" + bench["id"]),
+            "type": "validation",
+            "title": f"{bench['title']} bash automation",
+            "description": ("The audit and remediation scripts the benchmark publishes, "
+                            "one script object each, on the CIS Control each "
+                            "recommendation names."),
+            "props": [{"name": "platform", "value": bench["platforms"][0],
+                       "ns": AUTO_NS}],
+            "control-implementations": [
+                {
+                    "uuid": uid("impl:cc8:" + bench["id"]),
+                    "source": "http://cisecurity.org/20-cc/v8.0/",
+                    "description": ("Scripts keyed to the CIS Controls v8 safeguards the "
+                                    "benchmark's recommendations reference."),
+                    "implemented-requirements": mapped_reqs,
+                },
+                {
+                    "uuid": uid("impl:catalog:" + bench["id"]),
+                    "source": catalog_file,
+                    "description": ("Recommendations that reference no CIS Control, keyed "
+                                    "to the catalog beside this file, one requirement per "
+                                    "recommendation."),
+                    "implemented-requirements": unmapped_reqs,
+                },
+            ],
+        }],
+    }}
+
+
 def build_cis_profiles(bench, catalog_file: str) -> dict[str, dict]:
     out = {}
     for p in bench["Profiles"]:
@@ -632,6 +795,7 @@ def build_all() -> dict[str, dict]:
     files.update(build_cis_profiles(bench, FILES["catalog"]))
     files[FILES["mapping"]] = build_mapping(bench, rules, FILES["catalog"])
     files[FILES["stig"]] = build_stig(bench["platforms"][0])
+    files[FILES["rules"]] = build_rules_cdef(bench, rules, FILES["catalog"])
     return files
 
 
@@ -656,7 +820,16 @@ def counts(files: dict[str, dict]) -> dict:
     stig = files[FILES["stig"]]["profile"]
     objectives = sum(1 for a in stig["modify"]["alters"] for ad in a["adds"]
                      for p in ad.get("parts", []) if p["name"] == "assessment-objective")
+    cdef = files[FILES["rules"]]["component-definition"]["components"][0]
+    reqs = [r for ci in cdef["control-implementations"] for r in ci["implemented-requirements"]]
+    scripts = [sc for r in reqs for sc in r.get("automation-scripts", [])]
     return {
+        "rules_requirements": len(reqs),
+        "rules_audit_scripts": sum(1 for sc in scripts if sc["script-type"] == "audit"),
+        "rules_remediation_scripts": sum(1 for sc in scripts if sc["script-type"] == "remediation"),
+        "rules_evaluated": sum(1 for sc in scripts if "evaluation-criteria" in sc),
+        "rules_distinct_audit_scripts": len({sc["payload"] for sc in scripts
+                                             if sc["script-type"] == "audit"}),
         "cis_controls": len(ctls),
         "cis_test": meth["TEST"],
         "cis_examine": meth["EXAMINE"],
@@ -678,7 +851,8 @@ def counts(files: dict[str, dict]) -> dict:
 #  laid out this way, so the validator gets a temporary workspace with every
 #  document copied into the directory its root element names.
 TRESTLE_DIRS = {"catalog": "catalogs", "profile": "profiles",
-                "mapping-collection": "mapping-collections"}
+                "mapping-collection": "mapping-collections",
+                "component-definition": "component-definitions"}
 
 
 def validate(files: dict[str, dict]) -> int:
@@ -699,10 +873,13 @@ def validate(files: dict[str, dict]) -> int:
             rc = subprocess.run([exe, "validate", "-f", rel], cwd=tmp,
                                 capture_output=True, text=True)
             ok = rc.returncode == 0
-            rc_all |= rc.returncode
+            expected = (name not in EXPECT_INVALID) == ok
+            rc_all |= 0 if expected else 1
             tail = (rc.stdout + rc.stderr).strip().splitlines()
-            print(f"  {'VALID' if ok else 'INVALID'}  {name}"
-                  + ("" if ok else "  |  " + (tail[-1] if tail else "")))
+            print(f"  {'VALID' if ok else 'INVALID'}"
+                  f"{'' if expected else ' (NOT EXPECTED)'}"
+                  f"{' (expected, a proposed assembly)' if not ok and expected else ''}"
+                  f"  {name}" + ("" if ok else "  |  " + (tail[-1] if tail else "")))
     return rc_all
 
 

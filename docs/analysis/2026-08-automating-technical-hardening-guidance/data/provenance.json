@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-09T14:04:28+00:00",
+  "generated_at": "2026-09-09T19:53:00+00:00",
   "corpora_root": "../../tfg-automated-assessments",
-  "snippet_count": 44,
+  "snippet_count": 46,
   "snippets": [
     {
       "id": "ez-stig-activity-v259312",
@@ -574,6 +574,32 @@
       "sha256_of_source_file": "e0fface935e7e54ab0daf36955658cb8005a702669e976a1a8da8756eb8c73f9",
       "sha256_of_content": "3667c10c42ee8e2aeb4bc5a9fdd79d60649d3ca76df0155cf916e8178526748e",
       "extracted_at": "2026-09-09T14:00:26+00:00"
+    },
+    {
+      "id": "pf-rules-requirement",
+      "slot": "3",
+      "approach": "profile-first",
+      "title": "CIS Control 8.9 as an implemented requirement carrying an audit and a remediation script, the Rules shape",
+      "source": "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json",
+      "pointer": "/component-definition/components/0/control-implementations/0/implemented-requirements/18",
+      "language": "json",
+      "bytes": 2090,
+      "sha256_of_source_file": "5275bde79e2804821993ffed216143234cbddeed9075ce3e58ff7b09b26f6817",
+      "sha256_of_content": "7f2f793b233a018e039df1a411b378a8d3246f99dd367a916f42c75c3082d2d6",
+      "extracted_at": "2026-09-09T19:53:00+00:00"
+    },
+    {
+      "id": "pf-rules-script-1-1-1-1",
+      "slot": "3",
+      "approach": "profile-first",
+      "title": "CIS 1.1.1.1 audit script as an automation-scripts object, the Rules shape",
+      "source": "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json",
+      "pointer": "/component-definition/components/0/control-implementations/0/implemented-requirements/8/automation-scripts/0",
+      "language": "json",
+      "bytes": 1203,
+      "sha256_of_source_file": "5275bde79e2804821993ffed216143234cbddeed9075ce3e58ff7b09b26f6817",
+      "sha256_of_content": "8ebe6d636de91d04e69c8b94e553fb30c75d0a782a07b3f9aa06e7b6fe625c12",
+      "extracted_at": "2026-09-09T19:52:09+00:00"
     }
   ]
 }

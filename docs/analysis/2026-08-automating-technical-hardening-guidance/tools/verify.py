@@ -20,6 +20,7 @@ Usage:
     python tools/verify.py --pages      run each page and inspect the result
     python tools/verify.py --corpus     the generated corpus, recomputed and checked
     python tools/verify.py --carrier    the check axis: rows, pairs and figures, recomputed
+    python tools/verify.py --decisions  construct and placement: cells, documents and figures
 
 A later build phase adds --budget. The flag is registered here so the harness
 grows without restructuring.
@@ -3829,7 +3830,10 @@ def check_conformance() -> None:
     # component-first content unvalidatable, and their absence is what makes
     # the other two content sets ordinary OSCAL.
     proposed_keys = {"rules", "checks", "rule-groups", "implementing-rules",
-                     "assessment-check-id", "target-component-uuid"}
+                     "assessment-check-id", "target-component-uuid",
+                     #  the Rules-shape assembly the generated corpus writes
+                     #  one file in, and the proponent's April document uses
+                     "automation-scripts"}
 
     def keys_in(path: str) -> set:
         found = set()
@@ -3871,6 +3875,26 @@ def check_conformance() -> None:
             detail = (rc.stdout + rc.stderr).strip().splitlines()
             check(f"{key}: the corpus is what its generator writes", rc.returncode == 0,
                   detail[-1] if detail else "")
+            #  The generated corpus is written in both constructs the site
+            #  compares. The assessment-method files use released assemblies
+            #  and no undefined key; the one Rules-shape file uses the
+            #  proposed assembly and nothing else undefined. Both are asserted,
+            #  so a proposed key leaking into a released-shape file is caught.
+            sys.path.insert(0, TOOLS_DIR)
+            import profile_first_corpus as pfc
+            rules_files = [f for f in files if os.path.basename(f) in pfc.EXPECT_INVALID]
+            released = [f for f in files if os.path.basename(f) not in pfc.EXPECT_INVALID]
+            used_released = set()
+            for f in released:
+                used_released |= keys_in(f)
+            check(f"{key}: the assessment-method files use no undefined assembly",
+                  not used_released, str(sorted(used_released)))
+            used_rules = set()
+            for f in rules_files:
+                used_rules |= keys_in(f)
+            check(f"{key}: the Rules-shape file uses the proposed assembly and no other",
+                  rules_files and used_rules == {"automation-scripts"}, str(sorted(used_rules)))
+            continue
         used = set()
         for f in files:
             used |= keys_in(f)
@@ -3921,8 +3945,10 @@ def check_conformance() -> None:
             lines = [ln.strip() for ln in rc.stdout.splitlines() if ln.strip()]
             for ln in lines:
                 print(f"        {ln}")
-            check(f"{key} is labelled generated and every file validates",
-                  rc.returncode == 0 and any(ln.startswith("VALID") for ln in lines),
+            check(f"{key} is labelled generated, every assessment-method file validates "
+                  f"and the Rules-shape file fails as a proposed assembly must",
+                  rc.returncode == 0 and any(ln.startswith("VALID") for ln in lines)
+                  and any(ln.startswith("INVALID (expected") for ln in lines),
                   f"exit {rc.returncode}: {(rc.stdout + rc.stderr)[-200:]}")
             continue
         if not files:
@@ -5487,6 +5513,55 @@ def check_corpus() -> None:
           any(any(h.get("algorithm") == "SHA-256" for rl in r.get("rlinks", [])
                   for h in rl.get("hashes", [])) for r in bm.values()))
 
+    # --- the Rules shape: the same benchmark as a validation component -------- #
+    cdef = docs[pfc.FILES["rules"]]["component-definition"]
+    comp = cdef["components"][0]
+    reqs = [r for ci in comp["control-implementations"] for r in ci["implemented-requirements"]]
+    scripts = [sc for r in reqs for sc in r.get("automation-scripts", [])]
+    check("the Rules-shape file is one validation component with two control implementations",
+          comp["type"] == "validation" and len(comp["control-implementations"]) == 2)
+    check("its requirements are keyed to CIS Controls v8, or to the catalog beside it",
+          all(re.fullmatch(r"cisc-\d{3}\.\d{3}", r["control-id"])
+              for r in comp["control-implementations"][0]["implemented-requirements"])
+          and all(r["control-id"] in ids
+                  for r in comp["control-implementations"][1]["implemented-requirements"])
+          and comp["control-implementations"][1]["source"] == pfc.FILES["catalog"])
+    check("every script object carries type, language, profiles and a shebang payload",
+          all(sc["script-type"] in ("audit", "remediation") and sc["language"] == "bash"
+              and sc["applicable-profiles"] and sc["payload"].startswith("#!")
+              for sc in scripts), str(len(scripts)))
+    titles = set(pfc.CIS_PROFILE_FILES)
+    check("every applicable profile is one of the benchmark's four",
+          all(set(sc["applicable-profiles"]) <= titles for sc in scripts))
+    check("every evaluation criterion names the pass and fail lines the scripts print",
+          all(sc["evaluation-criteria"]["method"] == "stdout-regex"
+              and "PASS" in sc["evaluation-criteria"]["pass-condition"]
+              and "FAIL" in sc["evaluation-criteria"]["fail-condition"]
+              for sc in scripts if "evaluation-criteria" in sc))
+    check("an audit script carries evaluation criteria exactly when it prints the result line",
+          all(("evaluation-criteria" in sc) == ("** PASS **" in sc["payload"])
+              for sc in scripts if sc["script-type"] == "audit"))
+    #  The same scripts as the catalog beside it, from the same source: the
+    #  point of writing both is that the executable is the same text in two
+    #  constructs. Compared as sets, whitespace-normalised, audit scripts only.
+    fence = re.compile(r"```bash\n(.*?)```", re.S)
+
+    def norm(t):
+        return re.sub(r"\s+", " ", t).strip()
+    cat_inline = {norm(b) for c in ctls for b in fence.findall(methods[c["id"]].get("prose") or "")
+                  if b.startswith("#!")}
+    rules_audit = {norm(sc["payload"]) for sc in scripts if sc["script-type"] == "audit"}
+    check("the Rules-shape audit scripts are the catalog's inline audit scripts, as a set",
+          cat_inline == rules_audit,
+          f"{len(cat_inline)} in the catalog, {len(rules_audit)} in the component, "
+          f"{len(cat_inline ^ rules_audit)} differ")
+    check("a recommendation naming two CIS Controls is carried under both, so script "
+          "objects outnumber distinct scripts",
+          n["rules_audit_scripts"] > n["rules_distinct_audit_scripts"],
+          f"{n['rules_audit_scripts']} objects, {n['rules_distinct_audit_scripts']} distinct")
+    uuids = [sc["uuid"] for sc in scripts]
+    check("every script object has its own uuid", len(uuids) == len(set(uuids)))
+
     # --- the half that needs the framework catalog ---------------------------- #
     if not have_network():
         skip("every control the STIG profile imports and the mapping targets exists "
@@ -5726,9 +5801,137 @@ def check_carrier() -> None:
     check("the axis names none of the people on the record",
           not any(n in text for n in people))
 
+
+# --------------------------------------------------------------------------- #
+# --decisions                                                                  #
+# --------------------------------------------------------------------------- #
+
+def check_decisions() -> None:
+    """Decisions 2 and 3: the construct and the placement, and their grid.
+
+    Every instance and every grid cell names documents by inventory key, so
+    each has to exist in the inventory, and each cell's status has to be what
+    the held files say: a released cell's generated files validate, a proposed
+    cell's generated file is the one the generator expects to fail, and an
+    empty or needs-schema cell names nothing. The figures are recomputed from
+    the Rules-shape file and the catalog.
+    """
+    print("\n[decisions] construct and placement, recomputed")
+    d = json.load(open(os.path.join(DATA, "decisions.json"), encoding="utf-8"))
+    inv = json.load(open(os.path.join(DATA, "oscal-artifacts.json"), encoding="utf-8"))
+    cc = json.load(open(os.path.join(DATA, "check-carrier.json"), encoding="utf-8"))
+    sys.path.insert(0, TOOLS_DIR)
+    import profile_first_corpus as pfc
+
+    files = {(p["key"], f["file"]): f for p in inv["publishers"] for f in p["files"]}
+    kinds = {k["key"] for k in cc["kinds"]}
+    c, p = d["constructs"], d["placements"]
+    okeys = [o["key"] for o in c["options"]]
+    check("two constructs: Rules and assessment-method",
+          okeys == ["rules", "assessment-method"], str(okeys))
+    check("the construct table has an aspect row set with both columns filled",
+          len(c["rows"]) >= 6 and all(r["rules"] and r["method"] for r in c["rows"]))
+    statuses = {s["key"] for s in p["statuses"]}
+    check("four cell statuses", statuses == {"released", "proposed", "needs-schema", "empty"})
+
+    def held(doc) -> bool:
+        return doc.get("held", True)
+
+    def exists(doc) -> bool:
+        return (doc["publisher"], doc["file"]) in files
+
+    for o in c["options"]:
+        check(f"{o['key']}: at least two instances, every held one in the inventory",
+              len(o["instances"]) >= 2 and all(exists(i) for i in o["instances"] if held(i)),
+              str([i["label"] for i in o["instances"] if held(i) and not exists(i)]))
+        check(f"{o['key']}: every instance says what it carries, from the axis",
+              all(i["carries"] in kinds for i in o["instances"]))
+        check(f"{o['key']}: says how its instances differ and states consequences",
+              bool(o.get("instances_differ")) and len(o["consequences"]) >= 2)
+    check("the Rules construct is shown carrying both a reference and the script",
+          {i["carries"] for i in c["options"][0]["instances"]} >= {"reference", "executable"})
+
+    pkeys = [x["key"] for x in p["options"]]
+    cells = {(x["construct"], x["placement"]): x for x in p["cells"]}
+    check("the grid has one cell per construct and placement",
+          set(cells) == {(o, q) for o in okeys for q in pkeys} and len(p["cells"]) == 6)
+    for (o, q), cell in sorted(cells.items()):
+        docs = cell["documents"]
+        check(f"cell {o} on {q}: status {cell['status']} is one of the four",
+              cell["status"] in statuses)
+        if cell["status"] in ("empty", "needs-schema"):
+            check(f"cell {o} on {q}: names no document", not docs, str(len(docs)))
+            continue
+        check(f"cell {o} on {q}: names a document, and every held one is in the inventory",
+              docs and all(exists(x) for x in docs if held(x)),
+              str([x["label"] for x in docs if held(x) and not exists(x)]))
+        gen = [x["file"] for x in docs if held(x) and x["publisher"] == "profile-first"]
+        if cell["status"] == "proposed":
+            check(f"cell {o} on {q}: its generated file is the one expected to fail validation",
+                  gen and all(f in pfc.EXPECT_INVALID for f in gen), str(gen))
+        else:
+            check(f"cell {o} on {q}: its generated files are ones that validate",
+                  gen and not any(f in pfc.EXPECT_INVALID for f in gen), str(gen))
+    check("the assessment-method construct sits only on a control in 1.2.1",
+          cells[("assessment-method", "component")]["status"] == "needs-schema"
+          and cells[("assessment-method", "activity")]["status"] == "needs-schema")
+    check("every placement says what it couples the code to and how it reaches the plan of record",
+          all(x["couples_to"] and x["reaches_ssp"] and x["models"] for x in p["options"]))
+
+    # --- figures ------------------------------------------------------------ #
+    base = os.path.join(SITE_ROOT, GENERATED_CORPUS)
+    cdef = json.load(open(os.path.join(base, pfc.FILES["rules"]),
+                          encoding="utf-8"))["component-definition"]
+    comp = cdef["components"][0]
+    reqs = [r for ci in comp["control-implementations"] for r in ci["implemented-requirements"]]
+    scripts = [sc for r in reqs for sc in r.get("automation-scripts", [])]
+    cat = json.load(open(os.path.join(base, pfc.FILES["catalog"]),
+                         encoding="utf-8"))["catalog"]
+    fence = re.compile(r"```bash\n(.*?)```", re.S)
+
+    def norm(t):
+        return re.sub(r"\s+", " ", t).strip()
+    inline = set()
+
+    def walk(gs):
+        for g in gs:
+            for ctl in g.get("controls", []):
+                m = next(pt for pt in ctl["parts"] if pt["name"] == "assessment-method")
+                for b in fence.findall(m.get("prose") or ""):
+                    if b.startswith("#!"):
+                        inline.add(norm(b))
+            walk(g.get("groups", []))
+    walk(cat["groups"])
+    got = {
+        "rules_requirements": len(reqs),
+        "rules_audit_scripts": sum(1 for sc in scripts if sc["script-type"] == "audit"),
+        "rules_distinct_audit_scripts": len({norm(sc["payload"]) for sc in scripts
+                                             if sc["script-type"] == "audit"}),
+        "rules_remediation_scripts": sum(1 for sc in scripts
+                                         if sc["script-type"] == "remediation"),
+        "rules_evaluated": sum(1 for sc in scripts if "evaluation-criteria" in sc),
+        "catalog_inline_audit_scripts": len(inline),
+    }
+    fig = d["figures"]
+    for k, v in got.items():
+        check(f"figure {k} = {v}", fig.get(k) == v, f"data says {fig.get(k)}")
+    cited = {int(n) for n in re.findall(r"\b\d+\b", fig["text"])}
+    values = {v for v in fig.values() if isinstance(v, int)} | {1, 2, 3, 4}
+    check("every number in the figures sentence is a figure the file carries",
+          cited <= values, str(sorted(cited - values)))
+
+    text = open(os.path.join(DATA, "decisions.json"), encoding="utf-8").read()
+    check("the decisions use no long dash", not LONG_DASH.search(text))
+    people = sorted({q["speaker"] for q in json.load(open(
+        os.path.join(DATA, "quotes.json"), encoding="utf-8"))["quotes"] if q.get("speaker")})
+    check("the decisions name none of the people on the record",
+          not any(n in text for n in people))
+
+
 PHASES = {
     "corpus": check_corpus,
     "carrier": check_carrier,
+    "decisions": check_decisions,
     "snippets": check_snippets,
     "schema": check_schema,
     "stats": check_stats,

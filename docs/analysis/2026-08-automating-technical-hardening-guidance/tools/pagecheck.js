@@ -545,7 +545,8 @@ async function checkPage(file) {
     "data-status", "data-state", "data-criterion", "data-section",
     //  markers the check-axis renderer writes for this harness to read,
     //  never hooks a script selects on
-    "data-approach", "data-pair", "data-kind"]);
+    "data-approach", "data-pair", "data-kind", "data-construct", "data-placement",
+    "data-decisions"]);
   const unwired = [...hooks].filter((h) => !known.has(h));
   check(`${name}: every data hook on the page is wired in site.js`,
         unwired.length === 0, JSON.stringify(unwired));
@@ -1066,6 +1067,7 @@ async function checkPage(file) {
     || ["data-views", "data-readers", "data-glossary", "data-slot-fill",
         "data-matrix", "data-sc28", "data-position-questions", "data-contribute",
         "data-question-sides", "data-approach-cards", "data-check-carrier",
+        "data-decisions",
         "data-audits", "data-rules", "data-does-not", "data-verification",
         "data-answers-row"].some((d) => h.closest("[" + d + "]"));
   /* The question chip's number and name land in front of the heading text. */
@@ -1189,6 +1191,39 @@ function checkCarrier(name, doc) {
   const cons = root.querySelectorAll(".carrier-consequences__kind");
   check(`${name}: consequences are stated for every kind`, cons.length === kinds.length,
         `${cons.length} for ${kinds.length}`);
+
+  /* Decisions 2 and 3: the construct table, the two options with their
+     instances, and the construct-by-placement grid with a status in every
+     cell and a resolved link on every held document. */
+  const construct = doc.querySelectorAll('[data-decisions="construct"]')[0];
+  const placement = doc.querySelectorAll('[data-decisions="placement"]')[0];
+  check(`${name}: the construct and placement decisions are on the page`, !!construct && !!placement);
+  if (!construct || !placement) return;
+  const crow = construct.querySelectorAll("table.decisions tbody tr");
+  check(`${name}: the construct table has rows with both constructs filled`,
+        crow.length >= 6 && crow.every((r) => r.querySelectorAll("td").length === 2
+          && r.querySelectorAll("td").every((td) => textOf(td).length > 0)), `${crow.length}`);
+  const opts = construct.querySelectorAll(".decisions__option");
+  check(`${name}: two constructs, each with instances and consequences`,
+        opts.length === 2 && opts.every((o) => o.querySelectorAll(".decisions__instances li").length >= 2
+          && o.querySelectorAll(".decisions__consequences li").length >= 2), `${opts.length}`);
+  const missing = construct.querySelectorAll(".decisions__doc--missing")
+    .concat(placement.querySelectorAll(".decisions__doc--missing"));
+  check(`${name}: every held document a decision names resolves in the inventory`,
+        missing.length === 0, JSON.stringify(missing.map(textOf).slice(0, 3)));
+  const cells = placement.querySelectorAll("table.decisions--grid tbody td");
+  check(`${name}: the grid is two constructs by three placements, a status in every cell`,
+        cells.length === 6 && cells.every((td) => td.querySelectorAll(".dstatus").length === 1),
+        `${cells.length}`);
+  const emptyWithDocs = cells.filter((td) =>
+    /^(empty|needs-schema)$/.test(td.getAttribute("data-state") || "")
+    && td.querySelectorAll(".decisions__docs li").length > 0);
+  const filledWithout = cells.filter((td) =>
+    /^(released|proposed)$/.test(td.getAttribute("data-state") || "")
+    && td.querySelectorAll(".decisions__docs li").length === 0);
+  check(`${name}: a cell names documents exactly when its status says one exists`,
+        emptyWithDocs.length === 0 && filledWithout.length === 0,
+        `${emptyWithDocs.length} empty with documents, ${filledWithout.length} filled without`);
 }
 
 function checkRuns(name, doc) {

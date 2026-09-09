@@ -2020,3 +2020,33 @@ figcaption {
 .carrier-consequences { display: grid; gap: var(--s4); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-block: var(--s5); }
 .carrier-consequences__kind ul { margin: 0; padding-left: 1.2em; font-size: var(--fs-sm); }
 .carrier-consequences__kind li + li { margin-top: var(--s2); }
+
+/* --- .decisions : construct and placement, decisions 2 and 3 ---------------
+   Status chips are outlined like the kind badges and carry a distinct border
+   style each, so the grid reads without colour. */
+.dstatus {
+  display: inline-block; border: 1px solid var(--border-strong); border-radius: var(--radius);
+  padding: 0 var(--s2); font-size: var(--fs-xs); font-weight: 650; white-space: nowrap;
+  color: var(--text); background: var(--bg);
+}
+.dstatus--released { border-width: 2px; }
+.dstatus--proposed { border-style: dashed; }
+.dstatus--needs-schema { border-style: dotted; color: var(--text-muted); }
+.dstatus--empty { border-color: var(--border); color: var(--text-muted); }
+.decisions.matrix { min-width: 760px; }
+.decisions.matrix td { font-size: var(--fs-sm); }
+.decisions--grid td[data-state] { vertical-align: top; }
+.decisions__note { margin: var(--s2) 0 0; font-size: var(--fs-sm); color: var(--text-muted); }
+.decisions__docs, .decisions__instances { margin: var(--s2) 0 0; padding-left: 1.1em; font-size: var(--fs-sm); }
+.decisions__docs li + li, .decisions__instances li + li { margin-top: var(--s1, 0.25rem); }
+.decisions__doc--unheld, .decisions__doc--missing { color: var(--text-muted); }
+.decisions__options { display: grid; gap: var(--s4); grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-block: var(--s5); }
+.decisions__option { border: 1px solid var(--border); border-radius: var(--radius); padding: var(--s4); background: var(--bg); min-width: 0; }
+.decisions__label { margin: 0; font-size: var(--fs-sm); }
+.decisions__differ { font-size: var(--fs-sm); color: var(--text-muted); }
+.decisions__consequences { margin: var(--s3) 0 0; padding-left: 1.1em; font-size: var(--fs-sm); }
+.decisions__consequences li + li { margin-top: var(--s2); }
+.decisions__placements, .decisions__statuses { display: grid; gap: var(--s2) var(--s4); grid-template-columns: max-content 1fr; margin-block: var(--s5); max-width: var(--measure-wide, 72rem); }
+.decisions__placements dt, .decisions__statuses dt { margin: 0; font-size: var(--fs-sm); }
+.decisions__placements dd, .decisions__statuses dd { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); }
+.decisions__placements dd span { display: block; }

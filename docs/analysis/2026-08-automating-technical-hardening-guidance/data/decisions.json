@@ -1,0 +1,161 @@
+{
+  "note": "Decisions 2 and 3 of the start page's section on code in OSCAL. Decision 1, what the OSCAL carries about the check, is data/check-carrier.json. This file holds the construct decision, Rules against assessment-method, and the placement decision, and the grid that crosses them. Every document a cell names is referenced by inventory key into data/oscal-artifacts.json or by a path under examples/, so the renderer resolves the link and tools/verify.py --decisions checks that it exists and that its status is what the cell says. The site takes no position on either decision; the consequences are stated and no option is ranked.",
+  "thesis": [
+    "The proponent of the fourth approach has put the executable into OSCAL twice: in April on a validation component, in a typed assembly of its own, and in September on a control, in the released assessment-method part. The idea is the same in both, the check's code travels in the document, and the two differ in which construct carries it and where it sits. Neither of those is the idea. They are decisions under it, and this section states each one with its consequences.",
+    "Three decisions, then. What the document carries about the check, which is the axis above. Which construct carries it, where the two candidates are a new typed assembly or the released part. And where it sits, which the construct partly decides."
+  ],
+  "constructs": {
+    "label": "Which construct carries it",
+    "intro": "Two constructs have carried code in this field. A typed assembly, which the site calls Rules after the field name the published proposal uses, adds objects to the schema with their own fields and identity: rules and checks in the published component-first files, automation-scripts in the proponent's April document and in the file the generator writes from the CIS benchmark in that shape. The assessment-method part is released OSCAL, extended by props in a namespace and by links, and it is what the September note and the generated catalog use. The table states each aspect for both and ranks neither.",
+    "options": [
+      {
+        "key": "rules",
+        "label": "Rules",
+        "meaning": "A typed assembly added to the schema, with its own identity and its own fields for what the check is and how it is run.",
+        "instances": [
+          {
+            "label": "rules and checks on validation components, published",
+            "publisher": "component-first",
+            "file": "oscap-validation-component-definition.json",
+            "carries": "reference",
+            "status": "proposed"
+          },
+          {
+            "label": "automation-scripts on a validation component, the proponent's April document",
+            "held": false,
+            "carries": "executable",
+            "status": "proposed"
+          },
+          {
+            "label": "the same assembly written from the CIS benchmark by the generator",
+            "publisher": "profile-first",
+            "file": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json",
+            "carries": "executable",
+            "status": "generated"
+          }
+        ],
+        "instances_differ": "The two proposals are two schemas. The published one names a rule and a check, each with an id, and the check points at content the tool owns. The April one names a script object with a type, a language, the profiles it applies to, evaluation criteria and the script as payload. They share the idea of a typed object with identity and nothing else, and neither validates under 1.2.1.",
+        "consequences": [
+          "A validator checks the executor fields themselves, so a document that validates is a document an executor can read.",
+          "Nothing validates until a version ships the assembly, and two proposals with different fields are two versions to agree on.",
+          "A rule is an object with its own id, so it can sit on a component and be named from a plan or a result without going through a control."
+        ]
+      },
+      {
+        "key": "assessment-method",
+        "label": "assessment-method",
+        "meaning": "The released part on a control, with its method prop, carrying the body in prose or a linked resource and the executor's needs as props in a namespace.",
+        "instances": [
+          {
+            "label": "assessment-method parts naming the check by identifier, published",
+            "publisher": "catalog-first",
+            "file": "catalogs/aws_security-hub.oscal.json",
+            "carries": "reference",
+            "status": "released"
+          },
+          {
+            "label": "executable assessment methods on every recommendation, generated from the CIS benchmark",
+            "publisher": "profile-first",
+            "file": "cis-ubuntu-24-04-lts-benchmark-catalog.json",
+            "carries": "executable",
+            "status": "generated"
+          },
+          {
+            "label": "executable assessment methods added to SP 800-53 controls by a profile, generated from the STIG",
+            "publisher": "profile-first",
+            "file": "nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json",
+            "carries": "description",
+            "status": "generated"
+          }
+        ],
+        "instances_differ": "One released construct, used three ways: to name a check by identifier, to carry a script with the props an executor needs, and to carry check text where the publisher gives no script. The part is the same in all three; what changes is what its prose and props hold.",
+        "consequences": [
+          "Every file validates today, and a finding targets the objective part beside the method with no change to the results model.",
+          "A validator checks that a part and its props exist and nothing about what the props say, so the executor's vocabulary has to be agreed outside the schema.",
+          "A part sits on a control and nowhere else in 1.2.1, so the code is addressed through a requirement and reaches a component only through a profile the system's plan imports."
+        ]
+      }
+    ],
+    "columns": ["Aspect", "Rules", "assessment-method"],
+    "rows": [
+      {"aspect": "What it is", "rules": "A typed assembly of its own, added to the schema.", "method": "The released assessment-method part on a control, with a method prop."},
+      {"aspect": "Schema", "rules": "New fields and a new version. Nothing validates until it ships.", "method": "No change. Every file validates under 1.2.1."},
+      {"aspect": "What a validator checks", "rules": "The fields themselves: type, language, criteria, payload.", "method": "That a part and its props exist. Nothing about what the props say."},
+      {"aspect": "Identity", "rules": "An object with its own id, referenceable from any document.", "method": "A part id, addressed through the control it sits on."},
+      {"aspect": "Where it can sit", "rules": "Wherever the schema author puts it. On a component in both instances so far.", "method": "On a control, in a catalog or a profile. Nowhere else in 1.2.1."},
+      {"aspect": "Fit with results", "rules": "Its own vocabulary. A finding needs a way to name a rule.", "method": "A finding targets the objective part beside it, unchanged."},
+      {"aspect": "Remediation", "rules": "A second script object, typed.", "method": "A remediation part, in prose or a linked resource."},
+      {"aspect": "Shown carrying", "rules": "A reference in the published files; the script in the April document and the generated file.", "method": "A reference in the published catalog; the script and a description in the generated files."}
+    ]
+  },
+  "placements": {
+    "label": "Where it sits",
+    "intro": "Three homes have been used or proposed. The construct decides part of this: a part can only sit where parts are allowed, which in 1.2.1 means a control, while a new assembly sits wherever its schema puts it. What the placement decides is what the code is coupled to and how it reaches the system's plan of record.",
+    "options": [
+      {
+        "key": "control",
+        "label": "On a control",
+        "models": ["catalog", "profile"],
+        "couples_to": "A requirement. The code says which control it tests, and the platform it runs on is a prop repeated on every method.",
+        "reaches_ssp": "Through the profile the plan of record imports. Nothing on the system's by-component names the objective."
+      },
+      {
+        "key": "component",
+        "label": "On a component",
+        "models": ["component-definition"],
+        "couples_to": "A platform. The component is the thing the code runs on, stated once, and the control is a reference on the requirement.",
+        "reaches_ssp": "Through by-component, which is where the system's own responses live."
+      },
+      {
+        "key": "activity",
+        "label": "On an activity",
+        "models": ["assessment-plan"],
+        "couples_to": "One assessment. The code is part of a plan for one system at one time.",
+        "reaches_ssp": "Not at all. The plan imports the plan of record and adds nothing to it."
+      }
+    ],
+    "grid_label": "Construct by placement, and what occupies each cell",
+    "statuses": [
+      {"key": "released", "label": "Released", "meaning": "A released assembly carries it and a held file validates."},
+      {"key": "proposed", "label": "Proposed", "meaning": "A held file does it with an assembly 1.2.1 does not define, and fails validation as it must."},
+      {"key": "needs-schema", "label": "Needs a schema change", "meaning": "No held file, and the released schema has no place for it here."},
+      {"key": "empty", "label": "Empty", "meaning": "No held file, and nothing in either proposal prevents it."}
+    ],
+    "cells": [
+      {"construct": "rules", "placement": "control", "status": "empty",
+       "note": "No document places a typed rule assembly on a control.", "documents": []},
+      {"construct": "rules", "placement": "component", "status": "proposed",
+       "note": "Both proposals put the assembly on a validation component, one carrying a reference and one the script.",
+       "documents": [
+         {"publisher": "component-first", "file": "oscap-validation-component-definition.json", "label": "rules and checks, published"},
+         {"held": false, "label": "automation-scripts, the April document"},
+         {"publisher": "profile-first", "file": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json", "label": "automation-scripts, generated from the CIS benchmark"}
+       ]},
+      {"construct": "rules", "placement": "activity", "status": "empty",
+       "note": "No document places a typed rule assembly on an activity.", "documents": []},
+      {"construct": "assessment-method", "placement": "control", "status": "released",
+       "note": "The part is released here. The published catalog names a check by identifier; the generated files carry the script and the check text.",
+       "documents": [
+         {"publisher": "catalog-first", "file": "catalogs/aws_security-hub.oscal.json", "label": "naming the check, published"},
+         {"publisher": "profile-first", "file": "cis-ubuntu-24-04-lts-benchmark-catalog.json", "label": "carrying the script, generated"},
+         {"publisher": "profile-first", "file": "nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json", "label": "added by a profile, generated"}
+       ]},
+      {"construct": "assessment-method", "placement": "component", "status": "needs-schema",
+       "note": "An implemented requirement has a description, props, links, set-parameters and statements, and no parts. A part can be carried here only in a later version.",
+       "documents": []},
+      {"construct": "assessment-method", "placement": "activity", "status": "needs-schema",
+       "note": "An activity and a step have props, links and a description, and no parts. The assessment-first corpus carries descriptions here, which is the second kind on the axis above and neither construct.",
+       "documents": []}
+    ]
+  },
+  "figures": {
+    "note": "Recomputed by tools/verify.py --decisions from the generated Rules-shape component definition and the generated catalog.",
+    "rules_requirements": 49,
+    "rules_audit_scripts": 97,
+    "rules_distinct_audit_scripts": 85,
+    "rules_remediation_scripts": 67,
+    "rules_evaluated": 66,
+    "catalog_inline_audit_scripts": 85,
+    "text": "Written from one benchmark in both constructs, the Rules-shape file carries 97 audit script objects and 67 remediation script objects under 49 implemented requirements, and 66 of the audit objects carry evaluation criteria. The 97 are 85 distinct scripts, because a recommendation that names two CIS Controls is carried under both and the shape has no link between two requirements' scripts. The catalog beside it carries the same 85 scripts inline, one per method, and links the others by name."
+  }
+}

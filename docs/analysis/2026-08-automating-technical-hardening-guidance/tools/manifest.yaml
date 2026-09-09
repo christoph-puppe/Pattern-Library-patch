@@ -390,3 +390,23 @@ snippets:
     pointer: "$"
     language: markdown
     section: "The executor"
+
+  # The same benchmark in the Rules shape: a validation component carrying an
+  # automation-scripts assembly, which 1.2.1 does not define. Two extracts, so
+  # the site can put the two constructs side by side on one recommendation.
+  - id: pf-rules-requirement
+    slot: "3"
+    approach: profile-first
+    title: "CIS Control 8.9 as an implemented requirement carrying an audit and a remediation script, the Rules shape"
+    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json"
+    pointer: "/component-definition/components/0/control-implementations/0/implemented-requirements/18"
+    trim: ["/props"]
+    max_prose: 500
+
+  - id: pf-rules-script-1-1-1-1
+    slot: "3"
+    approach: profile-first
+    title: "CIS 1.1.1.1 audit script as an automation-scripts object, the Rules shape"
+    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json"
+    pointer: "/component-definition/components/0/control-implementations/0/implemented-requirements/8/automation-scripts/0"
+    max_prose: 700

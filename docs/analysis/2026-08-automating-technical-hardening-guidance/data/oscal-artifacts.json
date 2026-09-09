@@ -440,10 +440,26 @@
       "root": null,
       "totals": {
         "Catalog": 1,
+        "Component definition": 1,
         "Mapping collection": 1,
         "Profile": 5
       },
       "files": [
+        {
+          "file": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json",
+          "model": "component-definition",
+          "model_label": "Component definition",
+          "title": "CIS Ubuntu Linux 24.04 LTS Benchmark v1.0.0, as a validation component carrying automation scripts",
+          "counts": {
+            "components": 1,
+            "validation": 1,
+            "automation scripts": 164,
+            "implemented requirements": 49
+          },
+          "bytes": 498243,
+          "href": "examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json",
+          "href_external": false
+        },
         {
           "file": "cis-ubuntu-24-04-lts-benchmark-catalog.json",
           "model": "catalog",

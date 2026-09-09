@@ -2105,6 +2105,209 @@
     });
   }
 
+  /* --- decisions 2 and 3: construct, and placement -------------------------
+     Two blocks, one hook each, so the static headings that number them can
+     sit above. Documents are named by inventory key and resolved against
+     data/oscal-artifacts.json, so a cell links to the same row the inventory
+     page shows and never carries a path of its own. */
+  function renderDecisions(node) {
+    var which = node.dataset.decisions;
+    Promise.all([load("decisions.json"), load("oscal-artifacts.json"),
+                 load("check-carrier.json")])
+      .then(function (all) {
+      var d = all[0], inv = all[1], cc = all[2];
+      var kindByKey = {};
+      cc.kinds.forEach(function (k) { kindByKey[k.key] = k; });
+      var files = {};
+      inv.publishers.forEach(function (p) {
+        p.files.forEach(function (f) { files[p.key + "|" + f.file] = f; });
+      });
+      node.textContent = "";
+
+      function kindBadge(key) {
+        var k = kindByKey[key] || { label: key };
+        return el("span", "carrier-kind carrier-kind--" + key, k.label);
+      }
+      function statusChip(key, label) {
+        return el("span", "dstatus dstatus--" + key, label || key);
+      }
+      function docLink(doc) {
+        if (doc.held === false) {
+          var s = el("span", "decisions__doc decisions__doc--unheld", doc.label);
+          s.title = "Not held in this repository";
+          return s;
+        }
+        var f = files[doc.publisher + "|" + doc.file];
+        if (!f) {
+          return el("span", "decisions__doc decisions__doc--missing",
+                    doc.label + " (not in the inventory)");
+        }
+        var a = el("a", "decisions__doc", doc.label);
+        a.href = f.href;
+        if (f.href_external) { a.target = "_blank"; a.rel = "noopener"; }
+        a.title = f.title || f.file;
+        return a;
+      }
+
+      if (which === "thesis") {
+        (d.thesis || []).forEach(function (p) { node.appendChild(el("p", null, p)); });
+        return;
+      }
+
+      if (which === "construct") {
+        var c = d.constructs;
+        node.appendChild(el("p", null, c.intro));
+        var wrap = el("div", "table-wrap");
+        var t = document.createElement("table");
+        t.className = "matrix decisions";
+        t.setAttribute("aria-label", c.label);
+        var thead = document.createElement("thead");
+        var hr = document.createElement("tr");
+        c.columns.forEach(function (col) {
+          var th = document.createElement("th");
+          th.scope = "col";
+          th.textContent = col;
+          hr.appendChild(th);
+        });
+        thead.appendChild(hr);
+        t.appendChild(thead);
+        var tb = document.createElement("tbody");
+        c.rows.forEach(function (r) {
+          var tr = document.createElement("tr");
+          var th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = r.aspect;
+          tr.appendChild(th);
+          [["rules", 1], ["method", 2]].forEach(function (f) {
+            var td = document.createElement("td");
+            td.setAttribute("data-label", c.columns[f[1]]);
+            td.textContent = r[f[0]];
+            tr.appendChild(td);
+          });
+          tb.appendChild(tr);
+        });
+        t.appendChild(tb);
+        wrap.appendChild(t);
+        node.appendChild(wrap);
+
+        var opts = el("div", "decisions__options");
+        c.options.forEach(function (o) {
+          var box = el("div", "decisions__option");
+          box.dataset.construct = o.key;
+          var lab = el("p", "decisions__label");
+          lab.appendChild(el("strong", null, o.label));
+          lab.appendChild(document.createTextNode(". " + o.meaning));
+          box.appendChild(lab);
+          var ul = el("ul", "decisions__instances");
+          o.instances.forEach(function (i) {
+            var li = el("li");
+            li.appendChild(docLink(i));
+            li.appendChild(document.createTextNode(" "));
+            li.appendChild(kindBadge(i.carries));
+            li.appendChild(document.createTextNode(" "));
+            li.appendChild(statusChip(i.status));
+            ul.appendChild(li);
+          });
+          box.appendChild(ul);
+          box.appendChild(el("p", "decisions__differ", o.instances_differ));
+          var cl = el("ul", "decisions__consequences");
+          o.consequences.forEach(function (x) { cl.appendChild(el("li", null, x)); });
+          box.appendChild(cl);
+          opts.appendChild(box);
+        });
+        node.appendChild(opts);
+        return;
+      }
+
+      if (which === "placement") {
+        var p = d.placements;
+        node.appendChild(el("p", null, p.intro));
+        var dl = el("dl", "decisions__placements");
+        p.options.forEach(function (o) {
+          var dt = el("dt");
+          dt.appendChild(el("strong", null, o.label));
+          dt.appendChild(document.createTextNode(" (" + o.models.join(", ") + ")"));
+          dl.appendChild(dt);
+          var dd = el("dd");
+          dd.appendChild(el("span", null, "Couples the code to: " + o.couples_to + " "));
+          dd.appendChild(el("span", null, "Reaches the plan of record: " + o.reaches_ssp));
+          dl.appendChild(dd);
+        });
+        node.appendChild(dl);
+
+        var byCell = {};
+        p.cells.forEach(function (x) { byCell[x.construct + "|" + x.placement] = x; });
+        var wrap2 = el("div", "table-wrap");
+        var g = document.createElement("table");
+        g.className = "matrix decisions decisions--grid";
+        g.setAttribute("aria-label", p.grid_label);
+        var gh = document.createElement("thead");
+        var ghr = document.createElement("tr");
+        var corner = document.createElement("th");
+        corner.scope = "col";
+        corner.textContent = "Construct";
+        ghr.appendChild(corner);
+        p.options.forEach(function (o) {
+          var th = document.createElement("th");
+          th.scope = "col";
+          th.textContent = o.label;
+          ghr.appendChild(th);
+        });
+        gh.appendChild(ghr);
+        g.appendChild(gh);
+        var gb = document.createElement("tbody");
+        var statusLabel = {};
+        p.statuses.forEach(function (s) { statusLabel[s.key] = s.label; });
+        d.constructs.options.forEach(function (o) {
+          var tr = document.createElement("tr");
+          tr.dataset.construct = o.key;
+          var th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = o.label;
+          tr.appendChild(th);
+          p.options.forEach(function (pl) {
+            var cell = byCell[o.key + "|" + pl.key];
+            var td = document.createElement("td");
+            td.setAttribute("data-label", pl.label);
+            td.dataset.placement = pl.key;
+            if (!cell) { td.textContent = "?"; tr.appendChild(td); return; }
+            td.dataset.state = cell.status;
+            td.appendChild(statusChip(cell.status, statusLabel[cell.status]));
+            td.appendChild(el("p", "decisions__note", cell.note));
+            if (cell.documents.length) {
+              var ul = el("ul", "decisions__docs");
+              cell.documents.forEach(function (doc) {
+                var li = el("li");
+                li.appendChild(docLink(doc));
+                ul.appendChild(li);
+              });
+              td.appendChild(ul);
+            }
+            tr.appendChild(td);
+          });
+          gb.appendChild(tr);
+        });
+        g.appendChild(gb);
+        wrap2.appendChild(g);
+        node.appendChild(wrap2);
+
+        var leg = el("dl", "decisions__statuses");
+        p.statuses.forEach(function (s) {
+          var dt = el("dt");
+          dt.appendChild(statusChip(s.key, s.label));
+          leg.appendChild(dt);
+          leg.appendChild(el("dd", null, s.meaning));
+        });
+        node.appendChild(leg);
+        if (d.figures && d.figures.text) {
+          node.appendChild(el("p", "carrier-figures", d.figures.text));
+        }
+      }
+    }).catch(function (e) {
+      fail(node, "decisions: " + (e && e.message ? e.message : String(e)));
+    });
+  }
+
   function renderAnswersLegend(node) {
     load("six-questions.json").then(function (a) {
       /* Silence was the wrong failure mode. This used to be a bare `if`, so a
@@ -2248,6 +2451,7 @@
     document.querySelectorAll("[data-approach-cards]").forEach(renderApproachCards);
     document.querySelectorAll("[data-sources]").forEach(renderSources);
     document.querySelectorAll("[data-check-carrier]").forEach(renderCheckCarrier);
+    document.querySelectorAll("[data-decisions]").forEach(renderDecisions);
     document.querySelectorAll("[data-answers-legend]").forEach(renderAnswersLegend);
     document.querySelectorAll(".tabs").forEach(initTabs);
     initGlossary();

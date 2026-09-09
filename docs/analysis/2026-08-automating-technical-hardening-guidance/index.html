@@ -69,7 +69,7 @@
     <li><a href="#six-questions">3. The six questions evaluated for each option</a></li>
     <li><a href="#approaches">4. The four approaches and the answers we have</a></li>
     <li><a href="#satisfaction">5. Why question 6 splits: a claim is not a result</a></li>
-    <li><a href="#carrier">6. Rules, scripts, or both: what the OSCAL carries about the check</a></li>
+    <li><a href="#carrier">6. Code in OSCAL: three decisions</a></li>
   </ol>
 </nav>
 
@@ -252,18 +252,36 @@
 <!-- ==================================================================== 6 -->
 
 <section id="carrier" class="wide">
-<h2>6. Rules, scripts, or both: what the OSCAL carries about the check</h2>
+<h2>6. Code in OSCAL: three decisions</h2>
+
+<div class="tier2" data-decisions="thesis">
+  <p class="small muted">The thesis loads from data/decisions.json.</p>
+</div>
+
+<h3 id="carrier-kind">6.1 What the OSCAL carries about the check</h3>
 
 <div class="tier2">
   <p>Three of the four approaches carry a rule and point at a check that
      something else owns. One carries the script itself, and says what runs it.
-     This section puts that difference on one axis across the four, and then
-     shows the same rule from two corpora side by side, so what differs is the
-     carrier and not the subject.</p>
+     This is the first decision, put on one axis across the four, and then the
+     same rule from two corpora side by side, so what differs is the carrier
+     and not the subject.</p>
 </div>
 
 <div data-check-carrier>
   <p class="small muted">The axis loads from data/check-carrier.json.</p>
+</div>
+
+<h3 id="carrier-construct">6.2 Which construct carries it</h3>
+
+<div data-decisions="construct">
+  <p class="small muted">The construct decision loads from data/decisions.json.</p>
+</div>
+
+<h3 id="carrier-placement">6.3 Where it sits</h3>
+
+<div data-decisions="placement">
+  <p class="small muted">The placement decision loads from data/decisions.json.</p>
 </div>
 </section>
 
