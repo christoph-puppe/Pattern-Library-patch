@@ -35,8 +35,8 @@
       "one_line": "The rule is an assessment plan activity or step, the check is a new assembly beneath it."
     },
     {
-      "key": "profile-first",
-      "label": "Profile-first",
+      "key": "executable-first",
+      "label": "Executable-first",
       "option_letter": "D",
       "primary_model": "profile",
       "layer": "Control",
@@ -93,7 +93,7 @@
             "catalog-first": true,
             "component-first": false,
             "assessment-first": false,
-            "profile-first": false
+            "executable-first": false
           },
           "why": "mapping-item.type is closed by allOf to control and statement, and mapping-item carries no uuid and no href, so this binding time reaches a rule only where the rule is already modelled as a control or a control statement. The gap is in OSCAL rather than in any approach, and it is not an argument for the one approach it happens to suit: it rewards whichever view of a rule already matches the schema's assumption."
         }
@@ -660,7 +660,7 @@
     },
     {
       "slot": "1",
-      "approach": "profile-first",
+      "approach": "executable-first",
       "state": "filled",
       "snippet_ids": [
         "pf-cis-objective-and-param",
@@ -679,7 +679,7 @@
     },
     {
       "slot": "2",
-      "approach": "profile-first",
+      "approach": "executable-first",
       "state": "filled",
       "snippet_ids": [
         "pf-stig-import",
@@ -696,7 +696,7 @@
     },
     {
       "slot": "3",
-      "approach": "profile-first",
+      "approach": "executable-first",
       "state": "filled",
       "snippet_ids": [
         "pf-cis-method-1-1-1-1",
@@ -729,7 +729,7 @@
     },
     {
       "slot": "4",
-      "approach": "profile-first",
+      "approach": "executable-first",
       "state": "partial",
       "snippet_ids": [
         "pf-cis-platform"
@@ -752,7 +752,7 @@
     },
     {
       "slot": "5",
-      "approach": "profile-first",
+      "approach": "executable-first",
       "state": "partial",
       "snippet_ids": [
         "pf-cis-run-props",
@@ -805,7 +805,7 @@
     },
     {
       "slot": "6a",
-      "approach": "profile-first",
+      "approach": "executable-first",
       "state": "partial",
       "snippet_ids": [],
       "note": "The plan of record is untouched by design, so the claim is the ordinary response against the framework control. Nothing on it names the objective the check tests.",
@@ -820,7 +820,7 @@
     },
     {
       "slot": "6b",
-      "approach": "profile-first",
+      "approach": "executable-first",
       "state": "filled",
       "snippet_ids": [],
       "note": "A finding targeting the objective the profile added, resting on an observation that carries the raw output as evidence and names the host as its subject.",

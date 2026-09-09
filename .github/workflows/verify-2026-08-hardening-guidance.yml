@@ -103,7 +103,7 @@ jobs:
         run: |
           # A generated file that has been hand-edited is the one failure this
           # repository cannot detect by reading. Regenerate and diff.
-          python tools/profile_first_corpus.py
+          python tools/executable_first_corpus.py
           python tools/extract.py
           python tools/pattern_examples.py
           python tools/oscal_artifacts.py
@@ -112,9 +112,9 @@ jobs:
           python tools/approach_pages.py
           python tools/scenario_page.py
           python tools/bundle.py
-          git diff --exit-code -- data assets/diagrams examples/profile-first/oscal \
+          git diff --exit-code -- data assets/diagrams examples/executable-first/oscal \
             assessment-first.html catalog-first.html component-first.html \
-            profile-first.html scenario.html \
+            executable-first.html scenario.html \
             || { echo "::error::a generated file differs from its generator."\
                  "Run the generators and commit the result."; exit 1; }
 

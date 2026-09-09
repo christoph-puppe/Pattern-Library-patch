@@ -45,11 +45,11 @@ DATA = os.path.join(SITE_ROOT, "data")
 #  in a table put them in a different order from the page comparing them
 #  question by question. Ordering is the easiest way for a site like this to
 #  argue without saying anything, so two orders is worse than either.
-ORDER = ["catalog-first", "component-first", "assessment-first", "profile-first"]
+ORDER = ["catalog-first", "component-first", "assessment-first", "executable-first"]
 LABEL = {"assessment-first": "Assessment-first",
          "catalog-first": "Catalog-first",
          "component-first": "Component-first",
-         "profile-first": "Profile-first"}
+         "executable-first": "Executable-first"}
 
 #  Two sections. What the schemas force used to be a third, and what each count
 #  makes concrete on an approach page a fourth; the first is now stated on the

@@ -1,13 +1,13 @@
 {
   "id": "pf-cis-script-resource",
   "slot": "3",
-  "approach": "profile-first",
+  "approach": "executable-first",
   "title": "The SCE script the method links to, as a back-matter resource",
-  "source": "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json",
+  "source": "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json",
   "pointer": "/catalog/back-matter/resources/52",
   "section": null,
   "language": "json",
-  "content": "{\n  \"uuid\": \"bf14f673-69b2-5f47-8878-680225946402\",\n  \"title\": \"nix_module_chk_v3.sh\",\n  \"description\": \"Script Check Engine script, named by the check expression of 13 recommendations. It ships with CIS-CAT and is not held here, so this resource carries its name and no hash.\",\n  \"rlinks\": [\n    {\n      \"href\": \"nix_module_chk_v3.sh\",\n      \"media-type\": \"application/x-sh\"\n    }\n  ]\n}",
-  "sha256_of_source_file": "2a6aec5dd5045c02af783b227cf1b0110379ff99df661cf2a01ce7312a52eda9",
-  "extracted_at": "2026-09-09T14:00:26+00:00"
+  "content": "{\n  \"uuid\": \"57406427-e772-5765-9a71-89d9da9cd0b3\",\n  \"title\": \"nix_module_chk_v3.sh\",\n  \"description\": \"Script Check Engine script, named by the check expression of 13 recommendations. It ships with CIS-CAT and is not held here, so this resource carries its name and no hash.\",\n  \"rlinks\": [\n    {\n      \"href\": \"nix_module_chk_v3.sh\",\n      \"media-type\": \"application/x-sh\"\n    }\n  ]\n}",
+  "sha256_of_source_file": "d7635aa96f844e3e957ae145e05da19f4792a11878f194a43b2216de125431c2",
+  "extracted_at": "2026-09-09T20:09:56+00:00"
 }

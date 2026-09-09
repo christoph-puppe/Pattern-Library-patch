@@ -47,19 +47,19 @@ import extract as ex        # same directory
 import svgrender as sr     # same directory
 
 # The pre-read's option-letter order: Catalog-first is A, Component-first is B,
-# Assessment-first is C, and Profile-first, which arrived after the pre-read, is
+# Assessment-first is C, and Executable-first, which arrived after the pre-read, is
 # D. One list, so no tool can order the four differently from the site.
 OPTION_ORDER = ["catalog-first", "component-first", "assessment-first",
-                "profile-first"]
+                "executable-first"]
 
 # The approaches whose corpus was generated here rather than published by a
-# proponent. Profile-first arrived as a concept note and no OSCAL; the files
-# under examples/profile-first/oscal are written by tools/profile_first_corpus.py
+# proponent. Executable-first arrived as a concept note and no OSCAL; the files
+# under examples/executable-first/oscal are written by tools/executable_first_corpus.py
 # in the note's shape, from guidance held under sources/. Every check that
 # reads a proponent's corpus takes these files from the site instead, and the
 # checks that hold every approach to the same shape do not distinguish them.
-GENERATED = {"profile-first"}
-GENERATED_CORPUS = os.path.join("examples", "profile-first", "oscal")
+GENERATED = {"executable-first"}
+GENERATED_CORPUS = os.path.join("examples", "executable-first", "oscal")
 
 # Labels that named a construct rather than a question. Each one was on the site
 # and each one told a reader nothing on its own, which is what a name is for.
@@ -1483,7 +1483,7 @@ def check_a11y() -> None:
         #  no word count can see. Equal lightness costs dichromat separation,
         #  which is why every approach outline also carries a marker shape and
         #  a written label, and why --diagrams asserts that it does.
-        SHORTS = ("assessment", "catalog", "component", "profile")
+        SHORTS = ("assessment", "catalog", "component", "executable")
         ap = [t[f"--approach-{k}"] for k in SHORTS]
         for name, colour in zip(SHORTS, ap):
             check(f"{theme}: --approach-{name} meets non-text AA (3.0)",
@@ -1921,7 +1921,7 @@ def check_diagrams() -> None:
         got = [os.path.basename(p) for p in files
                if os.path.basename(p).startswith(family)
                and any(a in os.path.basename(p)
-                       for a in ("assessment", "catalog", "component", "profile"))]
+                       for a in ("assessment", "catalog", "component", "executable"))]
         check(f"{family}: one drawing per approach", len(got) == count, str(got))
 
     #  A published figure has to be shown somewhere.
@@ -1971,7 +1971,7 @@ def check_diagrams() -> None:
     #  assertion moved with them: other pages render the same states from the
     #  same data, and tools/pagecheck.js checks that table cell by cell.
     approaches = {"assessment": "assessment-first", "catalog": "catalog-first",
-                  "component": "component-first", "profile": "profile-first"}
+                  "component": "component-first", "executable": "executable-first"}
 
     #  The figure drew two joins per approach and now draws the whole chain, so
     #  what it has to match is the chain in data/joins.json rather than a count
@@ -2584,7 +2584,7 @@ def check_stakeholders() -> None:
         #  The fourth approach has no owner's run either, for its own reason:
         #  the executable methods are read by the assessment plan, and a run
         #  of them writes findings rather than responses.
-        want_runners = (["auditor"] if key in ("assessment-first", "profile-first")
+        want_runners = (["auditor"] if key in ("assessment-first", "executable-first")
                         else ["owner", "auditor"])
         check(f"{key}: the tool is run by {' and the '.join(want_runners)}",
               runners == want_runners, str(runners))
@@ -2601,7 +2601,7 @@ def check_stakeholders() -> None:
                 for k in ("owner", "auditor")}
         check(f"{key}: the auditor's run makes a result",
               made["auditor"] == ["assessment-results"], str(made["auditor"]))
-        want = ([] if key in ("assessment-first", "profile-first")
+        want = ([] if key in ("assessment-first", "executable-first")
                 else ["system-security-plan"])
         check(f"{key}: the owner's run makes {want[0] if want else 'nothing'}",
               made["owner"] == want, str(made["owner"]))
@@ -2669,7 +2669,7 @@ def check_stakeholders() -> None:
     MAPS_IN = {"catalog-first": "mapping-collection",
                "component-first": "component-definition",
                "assessment-first": "assessment-plan",
-               "profile-first": "profile"}
+               "executable-first": "profile"}
     for key in sorted(sh["approaches"]):
         per = sh["approaches"][key]
         holders = sorted(k for k in keys
@@ -2707,7 +2707,7 @@ def check_stakeholders() -> None:
     HOLDS_CHECKS = {"catalog-first": "component-definition",
                     "component-first": "component-definition",
                     "assessment-first": "assessment-plan",
-                    "profile-first": "profile"}
+                    "executable-first": "profile"}
     for key in sorted(sh["approaches"]):
         wrote = [m["model"] for m in sh["approaches"][key]["engine"].get("writes", [])]
         want = HOLDS_CHECKS[key]
@@ -3691,7 +3691,7 @@ def check_budget() -> None:
     """
     print("\n[budget] equal budget across the four approach pages")
     pages = ["assessment-first.html", "catalog-first.html", "component-first.html",
-             "profile-first.html"]
+             "executable-first.html"]
     counts = {}
     for p in pages:
         path = os.path.join(SITE_ROOT, p)
@@ -3860,7 +3860,7 @@ def check_conformance() -> None:
         #  A corpus this site generated, so it is read from the site rather than
         #  from the corpora, and its label has to say whose it is before its
         #  files are held to the same test as a proponent's.
-        "profile-first": sorted(glob.glob(os.path.join(
+        "executable-first": sorted(glob.glob(os.path.join(
             SITE_ROOT, GENERATED_CORPUS, "*.json"))),
     }
     for key, files in corpora.items():
@@ -3870,7 +3870,7 @@ def check_conformance() -> None:
             check(f"{key} is labelled a generated corpus and has files to validate",
                   "generated" in label and bool(files), f"{label!r}, {len(files)} files")
             rc = subprocess.run([sys.executable, os.path.join(
-                TOOLS_DIR, "profile_first_corpus.py"), "--check"],
+                TOOLS_DIR, "executable_first_corpus.py"), "--check"],
                 capture_output=True, text=True)
             detail = (rc.stdout + rc.stderr).strip().splitlines()
             check(f"{key}: the corpus is what its generator writes", rc.returncode == 0,
@@ -3881,7 +3881,7 @@ def check_conformance() -> None:
             #  proposed assembly and nothing else undefined. Both are asserted,
             #  so a proposed key leaking into a released-shape file is caught.
             sys.path.insert(0, TOOLS_DIR)
-            import profile_first_corpus as pfc
+            import executable_first_corpus as pfc
             rules_files = [f for f in files if os.path.basename(f) in pfc.EXPECT_INVALID]
             released = [f for f in files if os.path.basename(f) not in pfc.EXPECT_INVALID]
             used_released = set()
@@ -3936,11 +3936,11 @@ def check_conformance() -> None:
             if tool != "trestle":
                 skip(f"{key}: every generated file validates against OSCAL 1.2.1",
                      "the generator drives trestle, and another validator is on the path",
-                     f"TRESTLE=<path> {sys.executable} tools/profile_first_corpus.py --validate")
+                     f"TRESTLE=<path> {sys.executable} tools/executable_first_corpus.py --validate")
                 continue
             env = dict(os.environ, TRESTLE=shutil.which(tool) or tool)
             rc = subprocess.run([sys.executable, os.path.join(
-                TOOLS_DIR, "profile_first_corpus.py"), "--validate"],
+                TOOLS_DIR, "executable_first_corpus.py"), "--validate"],
                 capture_output=True, text=True, env=env)
             lines = [ln.strip() for ln in rc.stdout.splitlines() if ln.strip()]
             for ln in lines:
@@ -4078,7 +4078,7 @@ def check_example() -> None:
             #  there is no way to write the part down without that. So the
             #  fourth column shows control-id under question 1, as the address
             #  of the part rather than as a tie, and nothing else from the list.
-            if ap == "profile-first":
+            if ap == "executable-first":
                 check(f"q1/{ap}/{b['rule']}: names the control only as the "
                       f"address of the part, and nothing else from question 2",
                       found == ["control-id"], str(found))
@@ -4105,7 +4105,7 @@ def check_example() -> None:
     #  the description cannot drift from the encodings it describes.
     rule2 = {ap: bl[1]["content"] for ap, bl in pe["examples"]["1"].items()
              if len(bl) > 1}
-    for ap in ("catalog-first", "component-first", "profile-first"):
+    for ap in ("catalog-first", "component-first", "executable-first"):
         check(f"q1/{ap}: the rule that carries a value declares a parameter",
               '"params"' in rule2.get(ap, ""), "no params in the encoding")
     check("q1/assessment-first: has no parameter to declare",
@@ -4167,9 +4167,9 @@ def check_example() -> None:
         #  Compared on the rule that carries a value, because the run reads
         #  both rules and the union of their field paths is the second rule's:
         #  the first declares no parameter and is a subset of it.
-        ("profile-first", "3", "password-min-length", "5", "assessor-in",
+        ("executable-first", "3", "password-min-length", "5", "assessor-in",
          "the alter that carries the method"),
-        ("profile-first", "6b", "data-at-rest", "5", "assessor-out",
+        ("executable-first", "6b", "data-at-rest", "5", "assessor-out",
          "the result"),
     ]
     for ap, qa, ra, qb, rb, what in SHARED:
@@ -4180,7 +4180,7 @@ def check_example() -> None:
 
     #  And a result whose related observation resolves. A finding pointing at an
     #  observation uuid that its own document does not carry is not a result.
-    for ap in ("catalog-first", "assessment-first", "profile-first"):
+    for ap in ("catalog-first", "assessment-first", "executable-first"):
         blk = _block("6b", ap, "data-at-rest")
         res = blk["assessment-results"]["results"][0]
         have = {o["uuid"] for o in res.get("observations", [])}
@@ -5308,13 +5308,13 @@ def check_icons() -> None:
 # --------------------------------------------------------------------------- #
 
 def check_corpus() -> None:
-    """The generated profile-first corpus: what its files hold, recomputed.
+    """The generated executable-first corpus: what its files hold, recomputed.
 
     No proponent published OSCAL for the fourth approach, so the site wrote a
     corpus in the note's shape from two pieces of guidance it already held. A
     corpus the site writes is a corpus the site can get wrong, and nothing
     outside the site will catch it. So every structural claim the README under
-    examples/profile-first makes is recomputed here from the committed files:
+    examples/executable-first makes is recomputed here from the committed files:
     the routes, the parts, the props, the links, the parameters, the one place
     the group structure is not CIS's, and the identifiers the profiles and the
     mapping point at.
@@ -5322,9 +5322,9 @@ def check_corpus() -> None:
     The half that needs the NIST catalog runs when the network is there, and
     says so when it is not.
     """
-    print("\n[corpus] the generated profile-first corpus, recomputed")
+    print("\n[corpus] the generated executable-first corpus, recomputed")
     sys.path.insert(0, TOOLS_DIR)
-    import profile_first_corpus as pfc
+    import executable_first_corpus as pfc
 
     base = os.path.join(SITE_ROOT, GENERATED_CORPUS)
     names = sorted(os.listdir(base)) if os.path.isdir(base) else []
@@ -5335,7 +5335,7 @@ def check_corpus() -> None:
         return
     docs = {n: json.load(open(os.path.join(base, n), encoding="utf-8")) for n in names}
 
-    rc = subprocess.run([sys.executable, os.path.join(TOOLS_DIR, "profile_first_corpus.py"),
+    rc = subprocess.run([sys.executable, os.path.join(TOOLS_DIR, "executable_first_corpus.py"),
                          "--check"], capture_output=True, text=True)
     check("the committed files are what the generator writes", rc.returncode == 0,
           (rc.stdout + rc.stderr).strip().splitlines()[-1:] or "")
@@ -5349,7 +5349,7 @@ def check_corpus() -> None:
         said = (md.get("remarks") or "") + (d[root].get("provenance") or {}).get("remarks", "")
         check(f"{n}: declares OSCAL {pfc.OSCAL_VERSION} and says where it came from",
               md.get("oscal-version") == pfc.OSCAL_VERSION and bool(said)
-              and (own or "profile_first_corpus.py" in said),
+              and (own or "executable_first_corpus.py" in said),
               f"{md.get('oscal-version')!r}")
 
     # --- the catalog route ------------------------------------------------- #
@@ -5608,7 +5608,7 @@ def check_carrier() -> None:
     visible in the extract it cites, both sides of a pair have to hold the same
     rule, and the figures are recomputed from the CIS assessment plan under
     examples/assessment-first and the generated catalog under
-    examples/profile-first.
+    examples/executable-first.
     """
     print("\n[carrier] the check axis, recomputed")
     d = json.load(open(os.path.join(DATA, "check-carrier.json"), encoding="utf-8"))
@@ -5821,7 +5821,7 @@ def check_decisions() -> None:
     inv = json.load(open(os.path.join(DATA, "oscal-artifacts.json"), encoding="utf-8"))
     cc = json.load(open(os.path.join(DATA, "check-carrier.json"), encoding="utf-8"))
     sys.path.insert(0, TOOLS_DIR)
-    import profile_first_corpus as pfc
+    import executable_first_corpus as pfc
 
     files = {(p["key"], f["file"]): f for p in inv["publishers"] for f in p["files"]}
     kinds = {k["key"] for k in cc["kinds"]}
@@ -5865,7 +5865,7 @@ def check_decisions() -> None:
         check(f"cell {o} on {q}: names a document, and every held one is in the inventory",
               docs and all(exists(x) for x in docs if held(x)),
               str([x["label"] for x in docs if held(x) and not exists(x)]))
-        gen = [x["file"] for x in docs if held(x) and x["publisher"] == "profile-first"]
+        gen = [x["file"] for x in docs if held(x) and x["publisher"] == "executable-first"]
         if cell["status"] == "proposed":
             check(f"cell {o} on {q}: its generated file is the one expected to fail validation",
                   gen and all(f in pfc.EXPECT_INVALID for f in gen), str(gen))

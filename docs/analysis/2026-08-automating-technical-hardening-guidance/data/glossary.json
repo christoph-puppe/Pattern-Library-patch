@@ -16,7 +16,7 @@
         },
         {
           "usage": "An assessment objective on a control, with an executable assessment method beside it",
-          "who": "Profile-first, Option D"
+          "who": "Executable-first, Option D"
         },
         {
           "usage": "Colloquially, the check code itself",
@@ -412,7 +412,7 @@
     {
       "term": "assessment objective",
       "status": "settled",
-      "site_usage": "A part on a control, named assessment-objective in the NIST catalogs, stating what an assessor determines. A finding can target its id. In the profile-first approach it is the rule, added to the control by the catalog or by a profile.",
+      "site_usage": "A part on a control, named assessment-objective in the NIST catalogs, stating what an assessor determines. A finding can target its id. In the executable-first approach it is the rule, added to the control by the catalog or by a profile.",
       "other_usages": [],
       "see_also": [
         "assessment method",
@@ -423,7 +423,7 @@
     {
       "term": "assessment method",
       "status": "settled",
-      "site_usage": "A part on a control, named assessment-method, carrying a method prop of EXAMINE, INTERVIEW or TEST. Catalog-first uses it to name the check; profile-first gives the TEST method a body and the props an executor needs to run it.",
+      "site_usage": "A part on a control, named assessment-method, carrying a method prop of EXAMINE, INTERVIEW or TEST. Catalog-first uses it to name the check; executable-first gives the TEST method a body and the props an executor needs to run it.",
       "other_usages": [],
       "see_also": [
         "assessment objective",
@@ -434,7 +434,7 @@
     {
       "term": "executable assessment method",
       "status": "contested",
-      "site_usage": "The profile-first construct: an assessment-method part with method TEST, namespaced props for platform, engine, evaluation rule, pass condition and timeout, and a script body in prose or in a back-matter resource. The namespace is a placeholder and the vocabulary has no owner, which is why the term is contested rather than settled.",
+      "site_usage": "The executable-first construct: an assessment-method part with method TEST, namespaced props for platform, engine, evaluation rule, pass condition and timeout, and a script body in prose or in a back-matter resource. The namespace is a placeholder and the vocabulary has no owner, which is why the term is contested rather than settled.",
       "other_usages": [
         {
           "usage": "A namespaced automation-script assembly on an implemented requirement",

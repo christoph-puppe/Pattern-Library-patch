@@ -1,13 +1,13 @@
 {
   "profile": {
-    "uuid": "6758b8ba-b6b1-5f05-b529-08297f598f0e",
+    "uuid": "257cb52d-72d3-54e2-b2c5-40a0caffae39",
     "metadata": {
-      "title": "CIS Ubuntu Linux 24.04 LTS Benchmark v1.0.0, Level 1 - Workstation",
+      "title": "CIS Ubuntu Linux 24.04 LTS Benchmark v1.0.0, Level 1 - Server",
       "published": "2026-09-09T00:00:00Z",
       "last-modified": "2026-09-09T00:00:00Z",
       "version": "1.0.0",
       "oscal-version": "1.2.1",
-      "remarks": "The benchmark's own profile of that name, as the selection of controls it makes. Items in this profile intend to:\n\n- be practical and prudent;\n\n- provide a clear security benefit; and\n\n- not inhibit the utility of the technology beyond acceptable means.\n\nThis profile is intended for workstations."
+      "remarks": "The benchmark's own profile of that name, as the selection of controls it makes. Items in this profile intend to:\n\n- be practical and prudent;\n\n- provide a clear security benefit; and\n\n- not inhibit the utility of the technology beyond acceptable means.\n\nThis profile is intended for servers."
     },
     "imports": [
       {
@@ -20,6 +20,7 @@
               "xccdf_org.cisecurity.benchmarks_rule_1.1.1.3_Ensure_hfs_kernel_module_is_not_available",
               "xccdf_org.cisecurity.benchmarks_rule_1.1.1.4_Ensure_hfsplus_kernel_module_is_not_available",
               "xccdf_org.cisecurity.benchmarks_rule_1.1.1.5_Ensure_jffs2_kernel_module_is_not_available",
+              "xccdf_org.cisecurity.benchmarks_rule_1.1.1.9_Ensure_usb-storage_kernel_module_is_not_available",
               "xccdf_org.cisecurity.benchmarks_rule_1.1.1.10_Ensure_unused_filesystems_kernel_modules_are_not_available",
               "xccdf_org.cisecurity.benchmarks_rule_1.1.2.1.1_Ensure_tmp_is_a_separate_partition",
               "xccdf_org.cisecurity.benchmarks_rule_1.1.2.1.2_Ensure_nodev_option_set_on_tmp_partition",
@@ -65,9 +66,13 @@
               "xccdf_org.cisecurity.benchmarks_rule_1.7.3_Ensure_GDM_disable-user-list_option_is_enabled",
               "xccdf_org.cisecurity.benchmarks_rule_1.7.4_Ensure_GDM_screen_locks_when_the_user_is_idle",
               "xccdf_org.cisecurity.benchmarks_rule_1.7.5_Ensure_GDM_screen_locks_cannot_be_overridden",
+              "xccdf_org.cisecurity.benchmarks_rule_1.7.6_Ensure_GDM_automatic_mounting_of_removable_media_is_disabled",
+              "xccdf_org.cisecurity.benchmarks_rule_1.7.7_Ensure_GDM_disabling_automatic_mounting_of_removable_media_is_not_overridden",
               "xccdf_org.cisecurity.benchmarks_rule_1.7.8_Ensure_GDM_autorun-never_is_enabled",
               "xccdf_org.cisecurity.benchmarks_rule_1.7.9_Ensure_GDM_autorun-never_is_not_overridden",
               "xccdf_org.cisecurity.benchmarks_rule_1.7.10_Ensure_XDMCP_is_not_enabled",
+              "xccdf_org.cisecurity.benchmarks_rule_2.1.1_Ensure_autofs_services_are_not_in_use",
+              "xccdf_org.cisecurity.benchmarks_rule_2.1.2_Ensure_avahi_daemon_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.3_Ensure_dhcp_server_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.4_Ensure_dns_server_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.5_Ensure_dnsmasq_services_are_not_in_use",
@@ -76,6 +81,7 @@
               "xccdf_org.cisecurity.benchmarks_rule_2.1.8_Ensure_message_access_server_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.9_Ensure_network_file_system_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.10_Ensure_nis_server_services_are_not_in_use",
+              "xccdf_org.cisecurity.benchmarks_rule_2.1.11_Ensure_print_server_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.12_Ensure_rpcbind_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.13_Ensure_rsync_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.14_Ensure_samba_file_server_services_are_not_in_use",
@@ -108,6 +114,8 @@
               "xccdf_org.cisecurity.benchmarks_rule_2.4.1.8_Ensure_crontab_is_restricted_to_authorized_users",
               "xccdf_org.cisecurity.benchmarks_rule_2.4.2.1_Ensure_at_is_restricted_to_authorized_users",
               "xccdf_org.cisecurity.benchmarks_rule_3.1.1_Ensure_IPv6_status_is_identified",
+              "xccdf_org.cisecurity.benchmarks_rule_3.1.2_Ensure_wireless_interfaces_are_disabled",
+              "xccdf_org.cisecurity.benchmarks_rule_3.1.3_Ensure_bluetooth_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_3.3.1_Ensure_ip_forwarding_is_disabled",
               "xccdf_org.cisecurity.benchmarks_rule_3.3.2_Ensure_packet_redirect_sending_is_disabled",
               "xccdf_org.cisecurity.benchmarks_rule_3.3.3_Ensure_bogus_icmp_responses_are_ignored",
@@ -155,8 +163,6 @@
               "xccdf_org.cisecurity.benchmarks_rule_5.1.5_Ensure_sshd_Banner_is_configured",
               "xccdf_org.cisecurity.benchmarks_rule_5.1.6_Ensure_sshd_Ciphers_are_configured",
               "xccdf_org.cisecurity.benchmarks_rule_5.1.7_Ensure_sshd_ClientAliveInterval_and_ClientAliveCountMax_are_configured",
-              "xccdf_org.cisecurity.benchmarks_rule_5.1.8_Ensure_sshd_DisableForwarding_is_enabled",
-              "xccdf_org.cisecurity.benchmarks_rule_5.1.9_Ensure_sshd_GSSAPIAuthentication_is_disabled",
               "xccdf_org.cisecurity.benchmarks_rule_5.1.10_Ensure_sshd_HostbasedAuthentication_is_disabled",
               "xccdf_org.cisecurity.benchmarks_rule_5.1.11_Ensure_sshd_IgnoreRhosts_is_enabled",
               "xccdf_org.cisecurity.benchmarks_rule_5.1.12_Ensure_sshd_KexAlgorithms_is_configured",

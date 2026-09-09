@@ -27,7 +27,7 @@ field names.
 ```
 ## Correction <n>
 
-- approach:   catalog-first | assessment-first | component-first | profile-first
+- approach:   catalog-first | assessment-first | component-first | executable-first
 - received:   2026-09-01
 - corrected:  what they said was wrong, in their words, unedited
 - applied:    what changed on the site, and where
@@ -51,16 +51,16 @@ field names.
 
 ## The fourth approach
 
-Profile-first was added from a concept note rather than from a published body of
+Executable-first was added from a concept note rather than from a published body of
 content, so its proponent is the note's author and the request below goes to
 them in the same words. The corpus its extracts come from is the site's own,
-written by `tools/profile_first_corpus.py` from the CIS Benchmark and the DISA
+written by `tools/executable_first_corpus.py` from the CIS Benchmark and the DISA
 STIG for Ubuntu 24.04 in the shape the note proposes, so the three judgements
 the request names apply with one difference: the extracts were chosen from
 files the site wrote, and the judgement worth the most is whether the shape
 those files give the note's mechanism, the parts, the props, the links and the
 parameters, is the shape the note intends. Two publishers' guidance was
-transcribed into that corpus, and `examples/profile-first/README.md` says what
+transcribed into that corpus, and `examples/executable-first/README.md` says what
 of it is theirs and what is the generator's; a correction from either of them
 about the transcription is recorded here in the same form.
 

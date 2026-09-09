@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Profile-first | Automating Technical Hardening Guidance with OSCAL</title>
-<meta name="description" content="Executable assessment methods sit on controls as parts, in the catalog when the requirement's author owns the check and in a profile otherwise, and findings target the objective beside them.">
+<title>Executable-first | Automating Technical Hardening Guidance with OSCAL</title>
+<meta name="description" content="The check travels in the OSCAL as code: an executable assessment method on a control, in the catalog or added by a profile, or a typed assembly on a component, and findings target the objective.">
 <meta name="color-scheme" content="light dark">
-<meta property="og:title" content="Profile-first">
-<meta property="og:description" content="Executable assessment methods sit on controls as parts, in the catalog when the requirement's author owns the check and in a profile otherwise, and findings target the objective beside them.">
+<meta property="og:title" content="Executable-first">
+<meta property="og:description" content="The check travels in the OSCAL as code: an executable assessment method on a control, in the catalog or added by a profile, or a typed assembly on a component, and findings target the objective.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Automating Technical Hardening Guidance with OSCAL">
 <meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Profile-first">
-<meta name="twitter:description" content="Executable assessment methods sit on controls as parts, in the catalog when the requirement's author owns the check and in a profile otherwise, and findings target the objective beside them.">
+<meta name="twitter:title" content="Executable-first">
+<meta name="twitter:description" content="The check travels in the OSCAL as code: an executable assessment method on a control, in the catalog or added by a profile, or a typed assembly on a component, and findings target the objective.">
 <link rel="stylesheet" href="./assets/site.css">
 <script>
   /* Set the theme before first paint so the page never flashes the wrong one. */
@@ -40,7 +40,7 @@
         <li><a href="./catalog-first.html">Catalog-first</a></li>
         <li><a href="./component-first.html">Component-first</a></li>
         <li><a href="./assessment-first.html">Assessment-first</a></li>
-        <li><a href="./profile-first.html">Profile-first</a></li>
+        <li><a href="./executable-first.html">Executable-first</a></li>
         <li><a href="./questions.html">Open questions</a></li>
         <li><a href="./oscal-artifacts.html">OSCAL artifacts</a></li>
       </ul>
@@ -51,8 +51,8 @@
 
 <main id="main">
 
-<h1>Profile-first</h1>
-<p class="lede">In this approach, the <strong>rule</strong> is an assessment objective part on a control and the <strong>check</strong> is an executable assessment method part beside it, carrying a script body. Both are added by the catalog when its author supplies the check, and by a profile otherwise.</p>
+<h1>Executable-first</h1>
+<p class="lede">The <strong>rule</strong> is an assessment objective part on a control and the <strong>check</strong> is an executable assessment method part beside it, carrying a script body. The catalog adds both when its author supplies the check, a profile otherwise; a typed assembly on a component is the other construct.</p>
 <nav class="toc" aria-label="On this page">
   <span class="toc__label">On this page</span>
   <ol>
@@ -146,17 +146,17 @@
 <div class="tier2">
   <p>The chain starts where the rule is introduced and runs to the claim and the result. What a step costs is how many relationships it is made of and how each one resolves.</p>
   <ol class="joins__steps">
-    <li><strong><a href="./six-questions.html#q1-profile-first">Rule</a>, as it is introduced.</strong> The rule is an assessment objective part, added to the framework control by a profile. Every step below starts from that part id. <code>profile</code>, <code>alters[].adds[].parts[].id</code>.</li>
-    <li><strong><a href="./six-questions.html#q1-profile-first">Rule</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q3-profile-first">Check</a>.</strong> Both parts sit in one alter, and the method links to the objective by id, inside one document.</li>
-    <li><strong><a href="./six-questions.html#q1-profile-first">Rule</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q2-profile-first">Control</a>.</strong> The parts are added to the control the alter names. Placing them is the tie, and no second identifier exists.</li>
-    <li><strong><a href="./six-questions.html#q3-profile-first">Check</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q5-profile-first">Runtime</a>.</strong> The props name an engine by a token and say how to judge its result. The executor that honours them is outside OSCAL.</li>
-    <li><strong><a href="./six-questions.html#q5-profile-first">Runtime</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q6a-profile-first">Claim</a>.</strong> The run writes no response. The plan of record is untouched by design, so nothing joins the check to the owner's claim.</li>
-    <li><strong><a href="./six-questions.html#q5-profile-first">Runtime</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q6b-profile-first">Result</a>.</strong> The observation names the host and carries the raw output as evidence, so two machines behind one component can disagree.</li>
-    <li><strong><a href="./six-questions.html#q6b-profile-first">Result</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q2-profile-first">Control</a>.</strong> The finding targets the objective the profile added, so a result reads against the framework with no plan of record.</li>
+    <li><strong><a href="./six-questions.html#q1-executable-first">Rule</a>, as it is introduced.</strong> The rule is an assessment objective part, added to the framework control by a profile. Every step below starts from that part id. <code>profile</code>, <code>alters[].adds[].parts[].id</code>.</li>
+    <li><strong><a href="./six-questions.html#q1-executable-first">Rule</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q3-executable-first">Check</a>.</strong> Both parts sit in one alter, and the method links to the objective by id, inside one document.</li>
+    <li><strong><a href="./six-questions.html#q1-executable-first">Rule</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q2-executable-first">Control</a>.</strong> The parts are added to the control the alter names. Placing them is the tie, and no second identifier exists.</li>
+    <li><strong><a href="./six-questions.html#q3-executable-first">Check</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q5-executable-first">Runtime</a>.</strong> The props name an engine by a token and say how to judge its result. The executor that honours them is outside OSCAL.</li>
+    <li><strong><a href="./six-questions.html#q5-executable-first">Runtime</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q6a-executable-first">Claim</a>.</strong> The run writes no response. The plan of record is untouched by design, so nothing joins the check to the owner's claim.</li>
+    <li><strong><a href="./six-questions.html#q5-executable-first">Runtime</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q6b-executable-first">Result</a>.</strong> The observation names the host and carries the raw output as evidence, so two machines behind one component can disagree.</li>
+    <li><strong><a href="./six-questions.html#q6b-executable-first">Result</a> <span class="joins__to" aria-hidden="true">&rarr;</span><span class="visually-hidden">to</span> <a href="./six-questions.html#q2-executable-first">Control</a>.</strong> The finding targets the objective the profile added, so a result reads against the framework with no plan of record.</li>
   </ol>
 </div>
 <figure>
-  <div class="diagram" data-diagram="73-join-profile"></div>
+  <div class="diagram" data-diagram="73-join-executable"></div>
   <figcaption>The same chain with the values, which are rule 1, data at rest, exactly as the six questions page encodes it for this approach. Every step is a field a consumer has to follow, so the number of steps is the cost of the chain and the way each one resolves is how much the schema can do to help.</figcaption>
 </figure>
 </section>

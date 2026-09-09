@@ -123,7 +123,7 @@
           ]
         }
       ],
-      "profile-first": [
+      "executable-first": [
         {
           "rule": "data-at-rest",
           "label": "Rule 1, data at rest",
@@ -202,7 +202,7 @@
           ]
         }
       ],
-      "profile-first": [
+      "executable-first": [
         {
           "rule": "both",
           "label": "Both rules and their control ties",
@@ -320,7 +320,7 @@
           ]
         }
       ],
-      "profile-first": [
+      "executable-first": [
         {
           "rule": "data-at-rest",
           "label": "Rule 1, data at rest",
@@ -408,7 +408,7 @@
           ]
         }
       ],
-      "profile-first": [
+      "executable-first": [
         {
           "rule": "both",
           "label": "What the checks run against",
@@ -584,7 +584,7 @@
           ]
         }
       ],
-      "profile-first": [
+      "executable-first": [
         {
           "rule": "assessor-in",
           "label": "What the run reads: the methods on the resolved profile",
@@ -701,7 +701,7 @@
           ]
         }
       ],
-      "profile-first": [
+      "executable-first": [
         {
           "rule": "data-at-rest",
           "label": "Rule 1, data at rest",
@@ -815,7 +815,7 @@
           ]
         }
       ],
-      "profile-first": [
+      "executable-first": [
         {
           "rule": "data-at-rest",
           "label": "Rule 1, data at rest",

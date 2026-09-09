@@ -199,7 +199,7 @@ def extract_one(entry: dict, corpora_root: str) -> dict:
     src_rel = entry["source"]
     #  A source prefixed site: is held in this repository rather than in the
     #  corpora, and the path after the prefix is relative to the site root.
-    #  The generated profile-first corpus is the case: it is built here from
+    #  The generated executable-first corpus is the case: it is built here from
     #  guidance under sources/, and nothing outside this repository holds it.
     if src_rel.startswith("site:"):
         src_abs = os.path.normpath(os.path.join(SITE_ROOT, src_rel[len("site:"):]))

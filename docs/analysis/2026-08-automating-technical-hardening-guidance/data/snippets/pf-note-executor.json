@@ -1,9 +1,9 @@
 {
   "id": "pf-note-executor",
   "slot": "5",
-  "approach": "profile-first",
+  "approach": "executable-first",
   "title": "The executor, as the concept note describes it",
-  "source": "site:examples/profile-first/executable-assessment-methods.md",
+  "source": "site:examples/executable-first/executable-assessment-methods.md",
   "pointer": "$",
   "section": "The executor",
   "language": "markdown",

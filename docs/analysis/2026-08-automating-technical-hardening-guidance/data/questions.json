@@ -138,10 +138,25 @@
       ]
     },
     {
-      "key": "profile-first",
-      "label": "Profile-first",
-      "intro": "The rule and the check are parts on a control. What is unsettled is who may put code there, who owns the vocabulary that runs it, and what the executor matches against.",
+      "key": "executable-first",
+      "label": "Executable-first",
+      "intro": "The check's code travels in the OSCAL document. What is unsettled is which construct carries it, where it may sit, who may put code there, who owns the vocabulary that runs it, and what the executor matches against.",
       "questions": [
+        {
+          "id": "typed-assembly-or-props",
+          "q": "Does a future version add a typed assembly for the executable, or standardise the props on the released part?",
+          "why": "Two constructs carry code today. A typed assembly, the Rules construct, gives a validator the executor fields themselves and needs a version to ship; the released assessment-method part validates now and gives a validator nothing beyond the existence of a prop. The start page's section 6 states the trade aspect by aspect. Which side a future version takes decides whether the vocabulary lives in the schema or beside it, and neither the concept note nor the published proposal has been put to the Foundation as a schema change."
+        },
+        {
+          "id": "which-assemblies-carry-code",
+          "q": "Which assemblies may carry an executable: a part on a control, an implemented requirement, a by-component, an activity?",
+          "why": "In 1.2.1 a part sits on a control and nowhere else, so the released construct is bound to the control layer, and an implemented requirement, a by-component and an activity have props, links and a description but no parts. The Rules construct sits wherever its schema puts it, on a component in both instances so far. Each home couples the code to something different, a requirement, a platform, or one assessment. The grid in section 6 shows two of six cells occupied."
+        },
+        {
+          "id": "executable-reaches-ssp",
+          "q": "How does an executable on a control reach the system's plan of record?",
+          "why": "A check on a component reaches the system security plan through by-component, where the system's own responses live. A check on a control reaches it only through the profile the plan imports, and nothing on the by-component names the objective the check tests, which is why question 6a, how a system says it satisfies the rule in its own words, is the fourth approach's weakest cell. Whether a by-component may name an objective, or a part may sit on an implemented requirement, is the same question from the implementation layer."
+        },
         {
           "id": "executable-catalogs",
           "q": "Who may put executable code on a control, and who signs it?",

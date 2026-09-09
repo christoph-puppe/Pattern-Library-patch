@@ -43,7 +43,7 @@ def uid(seed: str) -> str:
 AWS_NS = "http://aws.amazon.com/ns/oscal"
 STIG_NS = "https://public.cyber.mil/stigs/ns"
 C0_NS = "http://comply0.com/ns/oscal"
-#  The profile-first shape comes from a concept note rather than a published
+#  The executable-first shape comes from a concept note rather than a published
 #  corpus, and the note says of its own namespace that it is a placeholder and
 #  the vocabulary is the point. It is carried here as the note wrote it, for
 #  the same reason the others are carried as their publishers wrote them: the
@@ -194,7 +194,7 @@ def in_results_observations(obs):
 
 
 def in_profile(alters):
-    """The alters of a profile, which is where profile-first writes.
+    """The alters of a profile, which is where executable-first writes.
 
     Only the modify block. The import that names the framework catalog is
     shown once, at question 2, where the tie to the control is the subject;
@@ -235,13 +235,13 @@ WRAP = {
     ("6b", "catalog-first"): in_results_finding_and_observation,
     ("6b", "component-first"): in_results_observations,
     ("6b", "assessment-first"): in_results_finding_and_observation,
-    ("1", "profile-first"): in_profile,
-    ("2", "profile-first"): lambda body: {"profile": body},
-    ("3", "profile-first"): in_profile,
-    ("4", "profile-first"): in_profile,
-    ("5", "profile-first"): in_profile,
-    ("6a", "profile-first"): in_ssp,
-    ("6b", "profile-first"): in_results_finding_and_observation,
+    ("1", "executable-first"): in_profile,
+    ("2", "executable-first"): lambda body: {"profile": body},
+    ("3", "executable-first"): in_profile,
+    ("4", "executable-first"): in_profile,
+    ("5", "executable-first"): in_profile,
+    ("6a", "executable-first"): in_ssp,
+    ("6b", "executable-first"): in_results_finding_and_observation,
 }
 
 
@@ -988,7 +988,7 @@ def assessment_q6b(r):
 
 
 # --------------------------------------------------------------------------- #
-# Profile-first: the rule and the check as parts on the control                #
+# Executable-first: the rule and the check as parts on the control                #
 #                                                                              #
 # The shape comes from a concept note, not a corpus. The note's own example    #
 # tailors NIST SP 800-53 SI-2 for Ubuntu in a profile: an assessment-objective #
@@ -1222,19 +1222,19 @@ def assessment_q3_bulk(rules):
 #  entry is a question the approach encodes nothing for, and the page says so.
 BUILDERS = {
     "1": {"catalog-first": catalog_q1, "component-first": component_q1,
-          "assessment-first": assessment_q1, "profile-first": profile_q1},
+          "assessment-first": assessment_q1, "executable-first": profile_q1},
     "2": {"catalog-first": catalog_q2, "component-first": component_q2,
-          "assessment-first": assessment_q2, "profile-first": profile_q2},
+          "assessment-first": assessment_q2, "executable-first": profile_q2},
     "3": {"catalog-first": catalog_q3, "component-first": component_q3,
-          "assessment-first": assessment_q3, "profile-first": profile_q3},
+          "assessment-first": assessment_q3, "executable-first": profile_q3},
     "4": {"catalog-first": catalog_q4, "component-first": component_q4,
-          "assessment-first": assessment_q4, "profile-first": profile_q4},
+          "assessment-first": assessment_q4, "executable-first": profile_q4},
     "5": {"catalog-first": catalog_q5, "component-first": component_q5,
-          "assessment-first": assessment_q5, "profile-first": profile_q5},
+          "assessment-first": assessment_q5, "executable-first": profile_q5},
     "6a": {"catalog-first": catalog_q6a, "component-first": component_q6a,
-           "assessment-first": assessment_q6a, "profile-first": profile_q6a},
+           "assessment-first": assessment_q6a, "executable-first": profile_q6a},
     "6b": {"catalog-first": catalog_q6b, "component-first": component_q6b,
-           "assessment-first": assessment_q6b, "profile-first": profile_q6b},
+           "assessment-first": assessment_q6b, "executable-first": profile_q6b},
 }
 
 
@@ -1258,7 +1258,7 @@ RULE_KEY = {
     ("5", "catalog-first"): "implementor-in",
     ("5", "component-first"): "implementor-in",
     ("5", "assessment-first"): "assessor-in",
-    ("5", "profile-first"): "assessor-in",
+    ("5", "executable-first"): "assessor-in",
 }
 
 
@@ -1281,7 +1281,7 @@ SHARED_CELLS = {
     #  the note says the methods are read by the assessment plan and not by
     #  the system owner, so a run of them ends in a result and never in the
     #  plan of record.
-    ("5", "profile-first"): "What the run reads: the methods on the resolved profile",
+    ("5", "executable-first"): "What the run reads: the methods on the resolved profile",
 }
 
 
@@ -1360,7 +1360,7 @@ EXTRA = {
          "focus": "name=check",
          "build": assessment_q3_bulk},
     ],
-    ("4", "profile-first"): [
+    ("4", "executable-first"): [
         #  The other side of the platform match. The cell's block is the
         #  method, lit at the prop that names the platform; this is the plan
         #  of record it is matched against, and what it does not carry is the
@@ -1374,7 +1374,7 @@ EXTRA = {
          "wrap": in_ssp_system,
          "build": profile_q4_subject},
     ],
-    ("5", "profile-first"): [
+    ("5", "executable-first"): [
         {"rule": "assessor-out",
          "label": "What the run produces: the finding and its observation",
          "shows": ("The finding targets the objective the profile added, and "
@@ -1393,25 +1393,25 @@ SHOWS = {
         "catalog-first": "A control. The requirement is the control's statement, the check is named in an assessment-method part, and a value, where there is one, is a control parameter.",
         "component-first": "A rules entry on the component the rule applies to. The rule is first-class rather than a prop, and a value is a rule param set by the control implementation.",
         "assessment-first": "An activity. The requirement is the activity title, the work is in its steps, and the identifiers stay in the publisher's own namespace.",
-        "profile-first": "An assessment objective part, added to the framework control by a profile. The requirement is the part's prose, and a value is a parameter the same add declares and sets.",
+        "executable-first": "An assessment objective part, added to the framework control by a profile. The requirement is the part's prose, and a value is a parameter the same add declares and sets.",
     },
     "2": {
         "catalog-first": "A whole document of its own. Metadata and a four-field provenance block come before the first map, and both ends of a map must be a control or a statement.",
         "component-first": "No second document, and two ties in one place. The implemented requirement ties the component to the control, which OSCAL already does; implementing-rules ties the rule to it, which it does not.",
         "assessment-first": "Named on the activity itself. No second document and no second identifier, so nothing can fall out of step, and nothing else can reuse the tie.",
-        "profile-first": "The placement is the tie. The profile imports the framework catalog and alters the control by id, and the parts go inside the alter, so the only identifier in play is the control's own.",
+        "executable-first": "The placement is the tie. The profile imports the framework catalog and alters the control by id, and the parts go inside the alter, so the only identifier in play is the control's own.",
     },
     "3": {
         "catalog-first": "The check is a software component whose title is the identifier the control's assessment-method part named.",
         "component-first": "Two components, not one. The rule sits on the product; the check sits on a second component of type validation, one per engine, and reaches back by rule id and the uuid of the component the rule belongs to.",
         "assessment-first": "The steps are the check, and a check prop names it. Put that prop on the step and the plan can ask for one item; put it on the activity and one invocation covers every step beneath. The runner decides which.",
-        "profile-first": "An assessment method part beside the objective, with method TEST, a script body in its prose, five namespaced props saying how to run and judge it, and a link to the objective it tests.",
+        "executable-first": "An assessment method part beside the objective, with method TEST, a script body in its prose, five namespaced props saying how to run and judge it, and a link to the objective it tests.",
     },
     "4": {
         "catalog-first": "Every component the catalog applies to, taken together.",
         "component-first": "The components carrying the rules, named by uuid.",
         "assessment-first": "One host, named explicitly as an inventory item.",
-        "profile-first": "Whatever component the platform prop matches, by convention.",
+        "executable-first": "Whatever component the platform prop matches, by convention.",
     },
     "5": {
         "catalog-first": ("The check components the run is handed. What runs "
@@ -1420,20 +1420,20 @@ SHOWS = {
                             "rule and its subject."),
         "assessment-first": ("The checks and what runs them, in one plan the "
                              "assessor owns."),
-        "profile-first": ("The methods the run is handed, each saying which "
+        "executable-first": ("The methods the run is handed, each saying which "
                           "engine runs it and how to judge the result."),
     },
     "6a": {
         "catalog-first": "A by-component response in the SSP, against the product control.",
         "component-first": "The same shape, against the framework control, and carrying implementing-rules so the claim names the rule it rests on.",
         "assessment-first": "Not the claim, but where it lives. import-ssp resolves to a back-matter resource naming the system security plan, and a second resource covers the case where no OSCAL one exists.",
-        "profile-first": "A by-component response in the SSP, against the framework control, exactly as it would be without the approach. Nothing on it names the objective the check tested.",
+        "executable-first": "A by-component response in the SSP, against the framework control, exactly as it would be without the approach. Nothing on it names the objective the check tested.",
     },
     "6b": {
         "catalog-first": "A finding, targeting the product control's statement.",
         "component-first": "An observation carrying the check id and its result.",
         "assessment-first": "A finding, targeting the framework control's statement.",
-        "profile-first": "A finding, targeting the objective the profile added, over an observation that names the host and carries the output.",
+        "executable-first": "A finding, targeting the objective the profile added, over an observation that names the host and carries the output.",
     },
 }
 
@@ -1499,13 +1499,13 @@ FOCUS = {
     #  objective under question 1, the method under question 3, and the single
     #  prop that names the platform under question 4. Question 2 lights the
     #  control-id, which is the whole of the tie.
-    ("1", "profile-first"): "name=assessment-objective",
-    ("2", "profile-first"): "control-id",
-    ("3", "profile-first"): "name=assessment-method",
-    ("4", "profile-first"): "name=platform",
-    ("5", "profile-first"): "props",
-    ("6a", "profile-first"): "by-components",
-    ("6b", "profile-first"): "findings",
+    ("1", "executable-first"): "name=assessment-objective",
+    ("2", "executable-first"): "control-id",
+    ("3", "executable-first"): "name=assessment-method",
+    ("4", "executable-first"): "name=platform",
+    ("5", "executable-first"): "props",
+    ("6a", "executable-first"): "by-components",
+    ("6b", "executable-first"): "findings",
 }
 
 CLOSERS = {"{": "}", "[": "]"}

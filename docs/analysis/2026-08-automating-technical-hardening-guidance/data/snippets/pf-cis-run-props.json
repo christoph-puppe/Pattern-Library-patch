@@ -1,13 +1,13 @@
 {
   "id": "pf-cis-run-props",
   "slot": "5",
-  "approach": "profile-first",
+  "approach": "executable-first",
   "title": "What an executor reads: the method's props",
-  "source": "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json",
+  "source": "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json",
   "pointer": "/catalog/groups/0/groups/0/groups/0/controls/0/parts/3/props",
   "section": null,
   "language": "json",
   "content": "[\n  {\n    \"name\": \"method\",\n    \"value\": \"TEST\"\n  },\n  {\n    \"name\": \"platform\",\n    \"value\": \"cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:lts:*:*:*\",\n    \"ns\": \"https://example.org/ns/oscal-automation\"\n  },\n  {\n    \"name\": \"language\",\n    \"value\": \"bash\",\n    \"ns\": \"https://example.org/ns/oscal-automation\"\n  },\n  {\n    \"name\": \"evaluation\",\n    \"value\": \"stdout-regex\",\n    \"ns\": \"https://example.org/ns/oscal-automation\"\n  },\n  {\n    \"name\": \"pass-condition\",\n    \"value\": \"\\\\*\\\\* PASS \\\\*\\\\*\",\n    \"ns\": \"https://example.org/ns/oscal-automation\"\n  }\n]",
-  "sha256_of_source_file": "2a6aec5dd5045c02af783b227cf1b0110379ff99df661cf2a01ce7312a52eda9",
-  "extracted_at": "2026-09-09T14:00:26+00:00"
+  "sha256_of_source_file": "d7635aa96f844e3e957ae145e05da19f4792a11878f194a43b2216de125431c2",
+  "extracted_at": "2026-09-09T20:09:56+00:00"
 }

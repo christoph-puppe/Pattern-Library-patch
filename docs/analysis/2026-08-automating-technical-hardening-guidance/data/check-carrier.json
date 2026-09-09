@@ -59,7 +59,7 @@
       "snippet_ids": ["ez-cis-step-props", "ez-cisa-context-step"]
     },
     {
-      "approach": "profile-first",
+      "approach": "executable-first",
       "kind": "executable",
       "construct": "An assessment-method part beside the objective, with the script in its prose or linked as a resource, and props for platform, language, evaluation and pass condition.",
       "owner": "The publisher of the guidance on the catalog route; the party writing the profile otherwise.",
@@ -77,7 +77,7 @@
     {
       "key": "cis-1-1-1-1",
       "title": "One CIS recommendation, in two corpora",
-      "what": "Recommendation 1.1.1.1 of the Ubuntu benchmark, the cramfs kernel module, as the assessment-first corpus publishes it and as the generated profile-first corpus carries it. The audit script is the same text in both. What differs is what the OSCAL says about it.",
+      "what": "Recommendation 1.1.1.1 of the Ubuntu benchmark, the cramfs kernel module, as the assessment-first corpus publishes it and as the generated executable-first corpus carries it. The audit script is the same text in both. What differs is what the OSCAL says about it.",
       "shared_token": "cramfs",
       "left": {
         "approach": "assessment-first",
@@ -85,7 +85,7 @@
         "says": "A step. The script is inside the description, after the audit text, and the prop beside it says automated. Nothing says what runs it or what its output means."
       },
       "right": {
-        "approach": "profile-first",
+        "approach": "executable-first",
         "snippet_id": "pf-cis-method-1-1-1-1",
         "says": "A method. The same script is the body, and four props say the platform, the language, that the output is matched against a pattern, and the pattern."
       }
@@ -101,14 +101,14 @@
         "says": "An activity carrying the rule, with a check step holding DISA's text and a prop naming the method TEST."
       },
       "right": {
-        "approach": "profile-first",
+        "approach": "executable-first",
         "snippet_id": "pf-stig-method-sc-28",
         "says": "A method beside an objective the profile added to SC-28, holding the same text. With no script to declare, no language, evaluation or pass condition can be set, and the construct carries a description."
       }
     }
   ],
   "figures": {
-    "note": "Recomputed by tools/verify.py --carrier from the CIS assessment plan under examples/assessment-first and the generated catalog under examples/profile-first. A fenced bash block whose first line is a shebang counts as a script.",
+    "note": "Recomputed by tools/verify.py --carrier from the CIS assessment plan under examples/assessment-first and the generated catalog under examples/executable-first. A fenced bash block whose first line is a shebang counts as a script.",
     "cis_plan_audit_steps": 308,
     "cis_plan_rules_with_script": 85,
     "cis_catalog_methods_with_script": 84,

@@ -369,7 +369,7 @@
       ],
       "plan_of_record": "The plan of record answers 370 controls, and none of the three guides enters it"
     },
-    "profile-first": {
+    "executable-first": {
       "rule": "Each guide is published as a catalog whose controls carry their own executable methods, each component references a profile selecting from it, and each guide's own framework references become a mapping collection. The plan of record's control set does not move.",
       "files": [
         {

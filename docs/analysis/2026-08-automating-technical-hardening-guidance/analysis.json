@@ -11,7 +11,7 @@
     { "id": "a", "name": "Catalog-first",    "path": "catalog-first.html" },
     { "id": "b", "name": "Component-first",  "path": "component-first.html" },
     { "id": "c", "name": "Assessment-first", "path": "assessment-first.html" },
-    { "id": "d", "name": "Profile-first",    "path": "profile-first.html" }
+    { "id": "d", "name": "Executable-first",    "path": "executable-first.html" }
   ],
 
   "recommendation": null,

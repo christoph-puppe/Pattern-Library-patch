@@ -649,7 +649,7 @@
         }
       ]
     },
-    "profile-first": {
+    "executable-first": {
       "introduced": {
         "model": "profile",
         "field": "alters[].adds[].parts[].id",

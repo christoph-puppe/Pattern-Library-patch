@@ -306,87 +306,87 @@ snippets:
     pointer: "/assessment-results/results/0/observations/0"
 
   # ---------------------------------------------------------------- #
-  # Profile-first  (Option D, a corpus the site generated)             #
+  # Executable-first  (Option D, a corpus the site generated)             #
   #                                                                    #
   # No proponent has published OSCAL for this approach. The files      #
-  # under examples/profile-first/oscal are written by                  #
-  # tools/profile_first_corpus.py from the CIS Benchmark and the STIG  #
+  # under examples/executable-first/oscal are written by                  #
+  # tools/executable_first_corpus.py from the CIS Benchmark and the STIG  #
   # for Ubuntu 24.04 held under sources/, in the shape the concept     #
   # note proposes, and every extract below says so by its source.      #
   # ---------------------------------------------------------------- #
 
   - id: pf-cis-objective-and-param
     slot: "1"
-    approach: profile-first
+    approach: executable-first
     title: "CIS 1.1.1.1 as a control: the objective, and the exported value as a parameter"
-    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
+    source: "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
     pointer: "/catalog/groups/0/groups/0/groups/0/controls/0"
     trim: ["/parts/0/prose", "/parts/1/prose", "/parts/3/prose", "/parts/4/prose"]
 
   - id: pf-stig-objective-sc-28
     slot: "1"
-    approach: profile-first
+    approach: executable-first
     title: "STIG V-270747 as an objective a profile adds to SC-28"
-    source: "site:examples/profile-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json"
+    source: "site:examples/executable-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json"
     pointer: "/profile/modify/alters/63/adds/0/parts/0"
     max_prose: 300
 
   - id: pf-stig-import
     slot: "2"
-    approach: profile-first
+    approach: executable-first
     title: "The profile imports the framework catalog and names the controls it alters"
-    source: "site:examples/profile-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json"
+    source: "site:examples/executable-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json"
     pointer: "/profile/imports/0"
 
   - id: pf-cis-map-1-1-1-1
     slot: "2"
-    approach: profile-first
+    approach: executable-first
     title: "CIS 1.1.1.1 mapped to CM-7, from the benchmark's own reference"
-    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-to-nist-sp-800-53-rev5-mapping.json"
+    source: "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-to-nist-sp-800-53-rev5-mapping.json"
     pointer: "/mapping-collection/mappings/0/maps/0"
 
   - id: pf-cis-method-1-1-1-1
     slot: "3"
-    approach: profile-first
+    approach: executable-first
     title: "CIS 1.1.1.1 assessment method, carrying the published audit script"
-    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
+    source: "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
     pointer: "/catalog/groups/0/groups/0/groups/0/controls/0/parts/3"
     max_prose: 700
 
   - id: pf-cis-script-resource
     slot: "3"
-    approach: profile-first
+    approach: executable-first
     title: "The SCE script the method links to, as a back-matter resource"
-    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
+    source: "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
     pointer: "/catalog/back-matter/resources/52"
 
   - id: pf-stig-method-sc-28
     slot: "3"
-    approach: profile-first
+    approach: executable-first
     title: "STIG V-270747 check text as a method beside its objective"
-    source: "site:examples/profile-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json"
+    source: "site:examples/executable-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json"
     pointer: "/profile/modify/alters/63/adds/0/parts/1"
     max_prose: 500
 
   - id: pf-cis-platform
     slot: "4"
-    approach: profile-first
+    approach: executable-first
     title: "The platform a method applies to"
-    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
+    source: "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
     pointer: "/catalog/groups/0/groups/0/groups/0/controls/0/parts/3/props/1"
 
   - id: pf-cis-run-props
     slot: "5"
-    approach: profile-first
+    approach: executable-first
     title: "What an executor reads: the method's props"
-    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
+    source: "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-catalog.json"
     pointer: "/catalog/groups/0/groups/0/groups/0/controls/0/parts/3/props"
 
   - id: pf-note-executor
     slot: "5"
-    approach: profile-first
+    approach: executable-first
     title: "The executor, as the concept note describes it"
-    source: "site:examples/profile-first/executable-assessment-methods.md"
+    source: "site:examples/executable-first/executable-assessment-methods.md"
     pointer: "$"
     language: markdown
     section: "The executor"
@@ -396,17 +396,17 @@ snippets:
   # the site can put the two constructs side by side on one recommendation.
   - id: pf-rules-requirement
     slot: "3"
-    approach: profile-first
+    approach: executable-first
     title: "CIS Control 8.9 as an implemented requirement carrying an audit and a remediation script, the Rules shape"
-    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json"
+    source: "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json"
     pointer: "/component-definition/components/0/control-implementations/0/implemented-requirements/18"
     trim: ["/props"]
     max_prose: 500
 
   - id: pf-rules-script-1-1-1-1
     slot: "3"
-    approach: profile-first
+    approach: executable-first
     title: "CIS 1.1.1.1 audit script as an automation-scripts object, the Rules shape"
-    source: "site:examples/profile-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json"
+    source: "site:examples/executable-first/oscal/cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json"
     pointer: "/component-definition/components/0/control-implementations/0/implemented-requirements/8/automation-scripts/0"
     max_prose: 700

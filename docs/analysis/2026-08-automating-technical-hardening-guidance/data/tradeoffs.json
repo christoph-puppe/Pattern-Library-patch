@@ -114,7 +114,7 @@
         }
       ]
     },
-    "profile-first": {
+    "executable-first": {
       "intro": "Considerations when attaching executable assessment methods to controls in a catalog or a profile have been captured",
       "pros": [
         {

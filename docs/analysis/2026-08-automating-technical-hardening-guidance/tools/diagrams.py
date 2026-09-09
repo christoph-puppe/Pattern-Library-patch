@@ -308,7 +308,7 @@ APPROACHES = [
     ("assessment-first", "Assessment-first", "C", "assessment", "circle"),
     #  The fourth arrived later, with a fourth hue at the same lightness and a
     #  fourth marker shape, so nothing the first three carried had to move.
-    ("profile-first",    "Profile-first",    "D", "profile",    "diamond"),
+    ("executable-first", "Executable-first", "D", "executable", "diamond"),
 ]
 
 STATE_GEOM = {
@@ -1596,7 +1596,7 @@ def diagram_77(c: Corpus) -> dict[str, str]:
         "ties rule to control after publication, and it can be authored by anyone, "
         "including a third party. Under each route, three lines run down to the socket, "
         "one per approach in option-letter order: Catalog-first, Component-first, "
-        "Assessment-first, Profile-first. Every line under the inline route and under "
+        "Assessment-first, Executable-first. Every line under the inline route and under "
         "the by-pointer route is unbroken, because both are available to all four "
         "approaches. Under the late route, only the Catalog-first line is unbroken; "
         "the other three lines are struck through, and the schema constraint that "
@@ -2035,10 +2035,10 @@ BUILDERS = (diagram_72, diagram_73, diagram_75,
 #  now has to be referenced by a page.
 PUBLISHED = {
     "73-join-assessment.svg", "73-join-catalog.svg", "73-join-component.svg",
-    "73-join-profile.svg",
+    "73-join-executable.svg",
     "75-stakeholders.svg", "76-satisfaction-6a-6b.svg",
     "710-scenario-catalog.svg", "710-scenario-component.svg",
-    "710-scenario-assessment.svg", "710-scenario-profile.svg",
+    "710-scenario-assessment.svg", "710-scenario-executable.svg",
 }
 
 

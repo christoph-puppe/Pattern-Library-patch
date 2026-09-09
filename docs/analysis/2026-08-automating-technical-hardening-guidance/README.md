@@ -24,21 +24,21 @@ document with its contents counted from the file rather than described. Extracts
 at declared pointers into the published files are still carried where a claim
 rests on one, and they are still re-derived on every build.
 
-**The fourth approach's corpus is the site's.** Profile-first comes from a
+**The fourth approach's corpus is the site's.** Executable-first comes from a
 concept note, *Executable Assessment Methods*, held at
-`examples/profile-first/executable-assessment-methods.md` and linked from the
+`examples/executable-first/executable-assessment-methods.md` and linked from the
 artifacts page, and its proponent has published no OSCAL. So the site wrote a
 corpus in the note's shape from two pieces of guidance it already held: the CIS
 Benchmark for Ubuntu 24.04 becomes a catalog whose every recommendation carries
 an objective and an executable method, with the benchmark's four profiles and
 its own SP 800-53 references as a mapping collection; the DISA STIG for the same
 system becomes a profile that imports the NIST catalog and adds an objective and
-a method to each control a rule serves. `tools/profile_first_corpus.py` writes
-the eight files under `examples/profile-first/oscal/`, seven in the
+a method to each control a rule serves. `tools/executable_first_corpus.py` writes
+the eight files under `examples/executable-first/oscal/`, seven in the
 assessment-method shape and one, the same benchmark as a validation component
 carrying an `automation-scripts` assembly, in the Rules shape, which is a
 proposed assembly and fails validation as it must. `--corpus` recomputes what they hold, and the status annotation on every card, the inventory page and
-`examples/profile-first/README.md` say whose they are. The column on the six
+`examples/executable-first/README.md` say whose they are. The column on the six
 questions page draws its extracts from those files, and the namespace on its
 props is the note's own placeholder, carried as the note wrote it.
 
@@ -183,7 +183,7 @@ python tools/verify.py --bundle        the offline fallback matches data/
 python tools/verify.py --questions     the reproduced material matches its source
 python tools/verify.py --data          internal consistency of data/
 python tools/verify.py --pages         run each page and inspect what it rendered
-python tools/verify.py --corpus        the generated profile-first corpus, recomputed
+python tools/verify.py --corpus        the generated executable-first corpus, recomputed
 python tools/verify.py --carrier       the check axis: rows, pairs and figures, recomputed
 python tools/verify.py --decisions     construct and placement: cells, documents and figures
 ```
@@ -217,7 +217,7 @@ every build so it cannot be hand-edited. Every figure, in either case, is
 recomputed from the corpora rather than stated.
 
 ```
-python tools/profile_first_corpus.py  # write the profile-first corpus from sources/
+python tools/executable_first_corpus.py  # write the executable-first corpus from sources/
 python tools/extract.py          # rebuild data/snippets and data/provenance.json
 python tools/pattern_examples.py # write the two rules in all four shapes
 python tools/oscal_artifacts.py  # inventory what each approach has published
@@ -232,7 +232,7 @@ python tools/verify.py --all     # prove the site says what the files say
 That is the order the workflow runs them in, and it is the order they depend on
 each other in: the bundle mirrors everything upstream of it, so it goes last.
 Five of them take `--check`, which compares instead of writing and exits non-zero
-if the committed file is stale: `profile_first_corpus.py`, `pattern_examples.py`,
+if the committed file is stale: `executable_first_corpus.py`, `pattern_examples.py`,
 `oscal_artifacts.py`, `sources_files.py` and `bundle.py`. `approach_pages.py` does the same job the
 other way round: it records the hash of every page it writes and refuses to
 overwrite one that has been hand-edited since, so an edit made in the page rather
@@ -295,12 +295,12 @@ data/
   corpus-stats.json  every figure cited, each with its derivation
   provenance.json    generated
 examples/
-  profile-first/     the concept note, and under oscal/ the seven files
-                     tools/profile_first_corpus.py writes in its shape
+  executable-first/     the concept note, and under oscal/ the seven files
+                     tools/executable_first_corpus.py writes in its shape
 tools/
   manifest.yaml      the declarative extract manifest; a source prefixed site:
                      is read from this repository rather than the corpora
-  profile_first_corpus.py  builds examples/profile-first/oscal from sources/
+  executable_first_corpus.py  builds examples/executable-first/oscal from sources/
   extract.py         builds data/snippets and data/provenance.json
   pattern_examples.py  builds data/pattern-examples.json, the site's own encodings
   oscal_artifacts.py   builds data/oscal-artifacts.json from the four corpora
@@ -316,7 +316,7 @@ tools/
 ```
 
 Nine of those are generators and the files they produce must not be edited by
-hand: `examples/profile-first/oscal/*.json`, `data/snippets/*.json` and
+hand: `examples/executable-first/oscal/*.json`, `data/snippets/*.json` and
 `data/provenance.json`,
 `data/pattern-examples.json`, `data/oscal-artifacts.json`,
 `data/source-files.json`, `assets/diagrams/*.svg`, `data/criteria-fill.json`, the
@@ -415,7 +415,7 @@ and the checks that counted to three.
 1. **Add the corpus.** Put the published files where `corpora_root` in
    `tools/manifest.yaml` can reach them. An approach with no published corpus,
    one that exists as a proposal, can have one written in its shape from the
-   guidance under `sources/`, as profile-first has: the generator goes under
+   guidance under `sources/`, as executable-first has: the generator goes under
    `tools/`, its output under `examples/<approach>/oscal/`, the approach's key
    into `GENERATED` in `tools/verify.py` and `SITE_CORPORA` in
    `tools/oscal_artifacts.py`, its status annotation says the corpus is

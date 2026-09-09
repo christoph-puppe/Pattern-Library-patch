@@ -1,13 +1,13 @@
 {
   "profile": {
-    "uuid": "fad01758-bb01-598b-8bfe-261643d52efa",
+    "uuid": "f050d8b7-d0f8-5fd7-9b6c-67f05dbe1e68",
     "metadata": {
-      "title": "CIS Ubuntu Linux 24.04 LTS Benchmark v1.0.0, Level 2 - Server",
+      "title": "CIS Ubuntu Linux 24.04 LTS Benchmark v1.0.0, Level 2 - Workstation",
       "published": "2026-09-09T00:00:00Z",
       "last-modified": "2026-09-09T00:00:00Z",
       "version": "1.0.0",
       "oscal-version": "1.2.1",
-      "remarks": "The benchmark's own profile of that name, as the selection of controls it makes. This profile extends the \"Level 1 - Server\" profile. Items in this profile exhibit one or more of the following characteristics:\n\n- are intended for environments or use cases where security is paramount.\n\n- acts as defense in depth measure.\n\n- may negatively inhibit the utility or performance of the technology.\n\nThis profile is intended for servers."
+      "remarks": "The benchmark's own profile of that name, as the selection of controls it makes. This profile extends the \"Level 1 - Workstation\" profile. Items in this profile exhibit one or more of the following characteristics:\n\n- are intended for environments or use cases where security is paramount.\n\n- acts as defense in depth measure.\n\n- may negatively inhibit the utility or performance of the technology.\n\nThis profile is intended for workstations."
     },
     "imports": [
       {
@@ -71,7 +71,6 @@
               "xccdf_org.cisecurity.benchmarks_rule_1.6.4_Ensure_access_to_etcmotd_is_configured",
               "xccdf_org.cisecurity.benchmarks_rule_1.6.5_Ensure_access_to_etcissue_is_configured",
               "xccdf_org.cisecurity.benchmarks_rule_1.6.6_Ensure_access_to_etcissue.net_is_configured",
-              "xccdf_org.cisecurity.benchmarks_rule_1.7.1_Ensure_GDM_is_removed",
               "xccdf_org.cisecurity.benchmarks_rule_1.7.2_Ensure_GDM_login_banner_is_configured",
               "xccdf_org.cisecurity.benchmarks_rule_1.7.3_Ensure_GDM_disable-user-list_option_is_enabled",
               "xccdf_org.cisecurity.benchmarks_rule_1.7.4_Ensure_GDM_screen_locks_when_the_user_is_idle",
@@ -100,7 +99,6 @@
               "xccdf_org.cisecurity.benchmarks_rule_2.1.17_Ensure_web_proxy_server_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.18_Ensure_web_server_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.19_Ensure_xinetd_services_are_not_in_use",
-              "xccdf_org.cisecurity.benchmarks_rule_2.1.20_Ensure_X_window_server_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.21_Ensure_mail_transfer_agent_is_configured_for_local-only_mode",
               "xccdf_org.cisecurity.benchmarks_rule_2.1.22_Ensure_only_approved_services_are_listening_on_a_network_interface",
               "xccdf_org.cisecurity.benchmarks_rule_2.2.1_Ensure_NIS_Client_is_not_installed",
@@ -125,7 +123,6 @@
               "xccdf_org.cisecurity.benchmarks_rule_2.4.1.8_Ensure_crontab_is_restricted_to_authorized_users",
               "xccdf_org.cisecurity.benchmarks_rule_2.4.2.1_Ensure_at_is_restricted_to_authorized_users",
               "xccdf_org.cisecurity.benchmarks_rule_3.1.1_Ensure_IPv6_status_is_identified",
-              "xccdf_org.cisecurity.benchmarks_rule_3.1.2_Ensure_wireless_interfaces_are_disabled",
               "xccdf_org.cisecurity.benchmarks_rule_3.1.3_Ensure_bluetooth_services_are_not_in_use",
               "xccdf_org.cisecurity.benchmarks_rule_3.2.1_Ensure_dccp_kernel_module_is_not_available",
               "xccdf_org.cisecurity.benchmarks_rule_3.2.2_Ensure_tipc_kernel_module_is_not_available",

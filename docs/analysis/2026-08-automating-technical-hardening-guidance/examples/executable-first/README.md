@@ -1,9 +1,9 @@
-# Profile-first: the concept note, and a corpus generated in its shape
+# Executable-first: the concept note, and a corpus generated in its shape
 
-No proponent has published OSCAL for the profile-first approach. What its
+No proponent has published OSCAL for the executable-first approach. What its
 proponent has published is the concept note in this directory,
 `executable-assessment-methods.md`. Everything under `oscal/` was written by
-`tools/profile_first_corpus.py`, from two pieces of published hardening
+`tools/executable_first_corpus.py`, from two pieces of published hardening
 guidance this repository already holds, in the shape the note proposes. The
 files are the site's, and the site says so wherever it counts them.
 
@@ -82,8 +82,8 @@ before reading the files as if a publisher had shipped them.
 ## Checking it
 
 ```
-python tools/profile_first_corpus.py --check      the committed files are what the generator writes
-python tools/profile_first_corpus.py --validate   every file against OSCAL 1.2.1, if trestle is on the path
+python tools/executable_first_corpus.py --check      the committed files are what the generator writes
+python tools/executable_first_corpus.py --validate   every file against OSCAL 1.2.1, if trestle is on the path
 python tools/verify.py --corpus                   the counts, the links and the structure, recomputed
 ```
 

@@ -9009,3 +9009,40 @@ Rules row and in the grid cell is gone, the thesis states the idea without a
 history, and the generator's remarks, the harness comments and the READMEs no
 longer name a document that is not here. The name of the fourth option and
 the open questions for the Foundation remain open.
+
+## Session: Executable-first, and the questions for the Foundation
+
+**Date:** 2026-09-09
+**Scope:** the fourth option renamed from Profile-first to Executable-first on
+every page, data file, generator, check, diagram and path; three open
+questions added
+**Result:** complete. The offline phases pass with the sixteen failures that
+need the corpora or the network, and the page check passes.
+
+### Decisions
+
+1. **Named by what it carries.** The other three are named by the model the
+   rule first appears in. The fourth says the model is secondary, so its name
+   says what it carries: the check's code, in the OSCAL. The start page's
+   section 4 states the exception; the page's lede names the three homes the
+   code can take, a catalog, a profile, or a typed assembly on a component.
+2. **The primary model stays the profile.** The mechanism the concept note
+   turns on is still a profile adding parts to a control it does not own, and
+   the joins, the stakeholder flows and the scenario were built on that. The
+   rename changed the name, the key, the colour token, the marker's owner and
+   every path, and nothing about the modelling.
+3. **Three questions, first in the section.** Whether a future version adds a
+   typed assembly or standardises the props on the released part; which
+   assemblies may carry an executable; and how an executable on a control
+   reaches the plan of record. Each points at the section 6 decision it comes
+   from, and each stays inside the length the questions page holds every
+   question to.
+
+### What changed, by file
+
+`executable-first.html`, `examples/executable-first/`,
+`tools/executable_first_corpus.py` and the two diagrams, renamed. The key,
+the label and the colour token in every data file, generator, check and
+stylesheet. The uuid seed in the corpus generator, so every generated file
+was rewritten and re-extracted. `data/questions.json`, three questions and a
+new introduction. The workflow's regeneration list and diff paths.

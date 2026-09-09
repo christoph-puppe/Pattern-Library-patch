@@ -292,7 +292,7 @@
         "note": "The only run here. There is no path from a check to a claim, so what comes out is a result and never the plan of record."
       }
     },
-    "profile-first": {
+    "executable-first": {
       "regulatory": {
         "writes": [
           {
@@ -377,7 +377,7 @@
   ],
   "runtime": "A tool reads OSCAL, executes, and writes OSCAL. The party in this row builds it; the party on each flow runs it.",
   "shared_profile": {
-    "profile-first": {
+    "executable-first": {
       "parties": [
         "mapper",
         "engine"

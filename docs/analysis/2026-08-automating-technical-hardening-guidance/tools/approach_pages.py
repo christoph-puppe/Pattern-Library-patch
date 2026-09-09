@@ -45,7 +45,7 @@ SITE_ROOT = os.path.dirname(TOOLS_DIR)
 DATA = os.path.join(SITE_ROOT, "data")
 
 #  Alphabetical by structural name, everywhere, stated on the page.
-ORDER = ["assessment-first", "catalog-first", "component-first", "profile-first"]
+ORDER = ["assessment-first", "catalog-first", "component-first", "executable-first"]
 
 #  Plan section 3 rule 6: consequences, not verdicts. An approach page describes
 #  one approach; a comparative on it reads as a verdict delivered out of the
@@ -133,16 +133,16 @@ CONTENT = {
 
 },
 
-# ============================================================== profile-first
+# ============================================================== executable-first
 #  The fourth approach has published no OSCAL content. It exists as a concept
 #  note, and the page describes the shape the note proposes in the same three
 #  sections the other pages have, held to the same budget.
-"profile-first": {
-"title": "Profile-first",
-"lede": "In this approach, the <strong>rule</strong> is an assessment objective part on a control and the <strong>check</strong> is an executable assessment method part beside it, carrying a script body. Both are added by the catalog when its author supplies the check, and by a profile otherwise.",
-"description": "Executable assessment methods sit on controls as parts, in the "
-               "catalog when the requirement's author owns the check and in a "
-               "profile otherwise, and findings target the objective beside them.",
+"executable-first": {
+"title": "Executable-first",
+"lede": "The <strong>rule</strong> is an assessment objective part on a control and the <strong>check</strong> is an executable assessment method part beside it, carrying a script body. The catalog adds both when its author supplies the check, a profile otherwise; a typed assembly on a component is the other construct.",
+"description": "The check travels in the OSCAL as code: an executable assessment "
+               "method on a control, in the catalog or added by a profile, or a "
+               "typed assembly on a component, and findings target the objective.",
 
 #  The stakeholder section opens by naming which of the three readings of a
 #  rule the approach holds. This approach holds the catalog approach's reading
@@ -170,7 +170,7 @@ NAV = [("index.html", "Start here"),
        ("catalog-first.html", "Catalog-first"),
        ("component-first.html", "Component-first"),
        ("assessment-first.html", "Assessment-first"),
-       ("profile-first.html", "Profile-first"),
+       ("executable-first.html", "Executable-first"),
        ("questions.html", "Open questions"),
        ("oscal-artifacts.html", "OSCAL artifacts")]
 

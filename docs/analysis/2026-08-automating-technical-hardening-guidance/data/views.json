@@ -16,9 +16,9 @@
         "fritz-catalogs-for-requirements"
       ],
       "also_aligned": [
-        "profile-first"
+        "executable-first"
       ],
-      "also_aligned_note": "Profile-first reads the rule the same way and puts it in the same layer. What differs is the construct: the rule is an assessment objective part on the control rather than a control of its own, so the check can sit beside it and a profile can add both."
+      "also_aligned_note": "Executable-first reads the rule the same way and puts it in the same layer. What differs is the construct: the rule is an assessment objective part on the control rather than a control of its own, so the check can sit beside it and a profile can add both."
     },
     {
       "key": "capability",

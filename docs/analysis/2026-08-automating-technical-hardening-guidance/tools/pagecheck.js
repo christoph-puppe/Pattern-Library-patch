@@ -451,7 +451,7 @@ function textOf(n) { return (n.textContent || "").replace(/\s+/g, " ").trim(); }
 
 /* The pre-read's option-letter order: A, B, C. */
 const OPTION_ORDER = ["Catalog-first", "Component-first", "Assessment-first",
-                      "Profile-first"];
+                      "Executable-first"];
 
 const RENDERED = {};
 
@@ -920,7 +920,7 @@ async function checkPage(file) {
      change: two hard-coded lists inside renderers, three sets of cards written
      into markup, and one page map. */
   const ORDER_KEYS = ["catalog-first", "component-first", "assessment-first",
-                      "profile-first"];
+                      "executable-first"];
   const N = ORDER_KEYS.length;
   [["[data-strip]", "data-strip", "strips"],
    ["[data-appendix]", "data-appendix", "appendix sections"]].forEach(
@@ -1467,7 +1467,7 @@ async function checkSixQuestions(name, doc) {
      it was the pre-read's shorthand, and on a page that shows the three side by
      side the name is the thing a reader needs. */
   check(`${name}: each tab names its approach`,
-        tabs.every((t) => /^(Catalog|Component|Assessment|Profile)-first$/.test(textOf(t))),
+        tabs.every((t) => /^(Catalog|Component|Assessment|Executable)-first$/.test(textOf(t))),
         JSON.stringify(tabs.map((t) => textOf(t)).slice(0, 4)));
   check(`${name}: each states an answer state`,
         blocks.every((b) => textOf(b.querySelectorAll(".qacc__state")[0] || {}).length > 3));
@@ -1828,7 +1828,7 @@ function checkEncodingsComplete() {
         want.every((id) => drawn.has(id)));
 
   ["assessment-first.html", "catalog-first.html", "component-first.html",
-   "profile-first.html", "index.html", "questions.html", "scenario.html",
+   "executable-first.html", "index.html", "questions.html", "scenario.html",
    "oscal-artifacts.html"]
     .forEach((page) => {
       const doc = RENDERED[page];

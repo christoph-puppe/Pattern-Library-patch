@@ -22,7 +22,7 @@
           },
           {
             "label": "the same assembly written from the CIS benchmark by the generator",
-            "publisher": "profile-first",
+            "publisher": "executable-first",
             "file": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json",
             "carries": "executable",
             "status": "generated"
@@ -49,14 +49,14 @@
           },
           {
             "label": "executable assessment methods on every recommendation, generated from the CIS benchmark",
-            "publisher": "profile-first",
+            "publisher": "executable-first",
             "file": "cis-ubuntu-24-04-lts-benchmark-catalog.json",
             "carries": "executable",
             "status": "generated"
           },
           {
             "label": "executable assessment methods added to SP 800-53 controls by a profile, generated from the STIG",
-            "publisher": "profile-first",
+            "publisher": "executable-first",
             "file": "nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json",
             "carries": "description",
             "status": "generated"
@@ -122,7 +122,7 @@
        "note": "Both instances put the assembly on a validation component, one carrying a reference and one the script.",
        "documents": [
          {"publisher": "component-first", "file": "oscap-validation-component-definition.json", "label": "rules and checks, published"},
-         {"publisher": "profile-first", "file": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json", "label": "automation-scripts, generated from the CIS benchmark"}
+         {"publisher": "executable-first", "file": "cis-ubuntu-24-04-lts-benchmark-automation-scripts-component-definition.json", "label": "automation-scripts, generated from the CIS benchmark"}
        ]},
       {"construct": "rules", "placement": "activity", "status": "empty",
        "note": "No document places a typed rule assembly on an activity.", "documents": []},
@@ -130,8 +130,8 @@
        "note": "The part is released here. The published catalog names a check by identifier; the generated files carry the script and the check text.",
        "documents": [
          {"publisher": "catalog-first", "file": "catalogs/aws_security-hub.oscal.json", "label": "naming the check, published"},
-         {"publisher": "profile-first", "file": "cis-ubuntu-24-04-lts-benchmark-catalog.json", "label": "carrying the script, generated"},
-         {"publisher": "profile-first", "file": "nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json", "label": "added by a profile, generated"}
+         {"publisher": "executable-first", "file": "cis-ubuntu-24-04-lts-benchmark-catalog.json", "label": "carrying the script, generated"},
+         {"publisher": "executable-first", "file": "nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json", "label": "added by a profile, generated"}
        ]},
       {"construct": "assessment-method", "placement": "component", "status": "needs-schema",
        "note": "An implemented requirement has a description, props, links, set-parameters and statements, and no parts. A part can be carried here only in a later version.",

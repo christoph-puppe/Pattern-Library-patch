@@ -303,7 +303,7 @@
      the same checks to produce a result, from a plan they own. Two paths, one
      file in and one file out each, and the difference between the approaches is
      which of the two they have: catalog-first has the implementer's,
-     assessment-first and profile-first have the assessor's, component-first
+     assessment-first and executable-first have the assessor's, component-first
      has both.
 
      The tiles are anchors into the questions that hold the documents, because
@@ -928,7 +928,7 @@
      is the point. One list, read by every renderer, so no component can order
      the four differently from another. */
   var OPTION_ORDER = ["catalog-first", "component-first", "assessment-first",
-                      "profile-first"];
+                      "executable-first"];
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -2054,7 +2054,7 @@
         fu.appendChild(fh);
         fu.appendChild(el("p", null, d.fusion.text));
         (d.fusion.snippet_ids || []).forEach(function (id) {
-          fu.appendChild(statusSnippet(id, "profile-first"));
+          fu.appendChild(statusSnippet(id, "executable-first"));
         });
         node.appendChild(fu);
       }

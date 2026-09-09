@@ -175,7 +175,7 @@
      three had left widest open: 100, an olive, at the same L* 47 and the same
      chroma, so the equal-weight rule holds for four as it held for three and
      nothing the first three carried had to move. */
-  --approach-profile:    #777139;   /* hue 100, 4.99:1 on --bg */
+  --approach-executable:    #777139;   /* hue 100, 4.99:1 on --bg */
 
   /* --- the three OSCAL layers ---------------------------------------------
      The model icons are coloured by layer, not by approach. A model belongs to
@@ -302,7 +302,7 @@
   --approach-assessment: #00C3B3;
   --approach-catalog:    #60B4FD;
   --approach-component:  #EA91CA;
-  --approach-profile:    #BAAF5D;
+  --approach-executable:    #BAAF5D;
 
   /* The layers keep their hue and invert their lightness: the chip becomes a
      dark tint of the same hue and the ink lifts off it. Same three-way coding,
