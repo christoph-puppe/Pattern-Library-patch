@@ -1,0 +1,13 @@
+{
+  "id": "pf-stig-objective-sc-28",
+  "slot": "1",
+  "approach": "profile-first",
+  "title": "STIG V-270747 as an objective a profile adds to SC-28",
+  "source": "site:examples/profile-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json",
+  "pointer": "/profile/modify/alters/63/adds/0/parts/0",
+  "section": null,
+  "language": "json",
+  "content": "{\n  \"id\": \"sc-28_obj-ubtu-24-600090\",\n  \"name\": \"assessment-objective\",\n  \"props\": [\n    {\n      \"name\": \"stig-group-id\",\n      \"value\": \"V-270747\",\n      \"ns\": \"https://public.cyber.mil/stigs/ns\"\n    },\n    {\n      \"name\": \"stig-rule-id\",\n      \"value\": \"SV-270747r1066730_rule\",\n      \"ns\": \"https://public.cyber.mil/stigs/ns\"\n    },\n    {\n      \"name\": \"stig-id\",\n      \"value\": \"UBTU-24-600090\",\n      \"ns\": \"https://public.cyber.mil/stigs/ns\"\n    },\n    {\n      \"name\": \"severity\",\n      \"value\": \"medium\",\n      \"ns\": \"https://public.cyber.mil/stigs/ns\"\n    },\n    {\n      \"name\": \"cci\",\n      \"value\": \"CCI-001199\",\n      \"ns\": \"https://public.cyber.mil/stigs/ns\"\n    },\n    {\n      \"name\": \"cci\",\n      \"value\": \"CCI-002475\",\n      \"ns\": \"https://public.cyber.mil/stigs/ns\"\n    },\n    {\n      \"name\": \"cci\",\n      \"value\": \"CCI-002476\",\n      \"ns\": \"https://public.cyber.mil/stigs/ns\"\n    },\n    {\n      \"name\": \"cci\",\n      \"value\": \"CCI-004910\",\n      \"ns\": \"https://public.cyber.mil/stigs/ns\"\n    }\n  ],\n  \"prose\": \"Ubuntu 24.04 LTS handling data requiring \\\"data at rest\\\" protections must employ cryptographic mechanisms to prevent unauthorized disclosure and modification of the information at rest.\",\n  \"parts\": [\n    {\n      \"id\": \"sc-28_dsc-ubtu-24-600090\",\n      \"name\": \"guidance\",\n      \"prose\": \"Information at rest refers to the state of information when it is located on a secondary storage device (e.g., disk drive and tape drive, when used for backups) within an operating system. \\n \\nThis requirement addresses protection of user-generated data, as well as operating system-specific configura [truncated]\"\n    }\n  ]\n}",
+  "sha256_of_source_file": "c154f80544b6eed9069a94b2c355956e78221cb18892960c8c7849d7510b1a0b",
+  "extracted_at": "2026-09-09T14:00:26+00:00"
+}

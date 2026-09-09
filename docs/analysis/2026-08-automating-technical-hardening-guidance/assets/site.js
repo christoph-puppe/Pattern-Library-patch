@@ -1321,20 +1321,21 @@
         h.appendChild(el("span", "criteria-table__who", p.option));
         sec.appendChild(h);
 
-        /* An approach that has published nothing has no rows to count, and
-           a section with no rows has to say why rather than end after its
-           heading. The data carries the note and the one document that does
-           exist, and the section shows both and nothing else. */
+        /* An approach whose proponent has published nothing says so before
+           its rows, and links the one document the proponent does have. The
+           rows beneath are then the corpus the site generated in that
+           approach's shape, counted like any other and labelled here as the
+           site's. A section with no rows at all ends after the note. */
+        if (p.note) sec.appendChild(el("p", null, p.note));
+        if (p.document) {
+          var pd = el("p", "small");
+          var da = el("a", null, p.document.label);
+          da.href = BASE + "/" + p.document.href;
+          da.className = "artifact__link";
+          pd.appendChild(da);
+          sec.appendChild(pd);
+        }
         if (!p.files.length) {
-          sec.appendChild(el("p", null, p.note || "Nothing published."));
-          if (p.document) {
-            var pd = el("p", "small");
-            var da = el("a", null, p.document.label);
-            da.href = BASE + "/" + p.document.href;
-            da.className = "artifact__link";
-            pd.appendChild(da);
-            sec.appendChild(pd);
-          }
           node.appendChild(sec);
           return;
         }

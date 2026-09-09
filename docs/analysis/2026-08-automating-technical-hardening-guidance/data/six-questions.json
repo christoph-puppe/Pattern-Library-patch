@@ -42,7 +42,7 @@
       "layer": "Control",
       "serves_stakeholder_first": "assessor",
       "repo": null,
-      "status_annotation": "concept note, no published content",
+      "status_annotation": "generated corpus, not a proponent's publication",
       "one_line": "The rule is an assessment objective on the control, the check an executable assessment method beside it, in a catalog or added by a profile."
     }
   ],
@@ -662,7 +662,10 @@
       "slot": "1",
       "approach": "profile-first",
       "state": "filled",
-      "snippet_ids": [],
+      "snippet_ids": [
+        "pf-cis-objective-and-param",
+        "pf-stig-objective-sc-28"
+      ],
       "note": "An assessment objective part, added to the framework control by the profile. Naming the control is the address of the part rather than a tie made later.",
       "mechanisms": [
         "assembly"
@@ -678,8 +681,11 @@
       "slot": "2",
       "approach": "profile-first",
       "state": "filled",
-      "snippet_ids": [],
-      "note": "Containment. The parts are added to the control the alter names, so placing the check is the tie and no second document or identifier carries it.",
+      "snippet_ids": [
+        "pf-stig-import",
+        "pf-cis-map-1-1-1-1"
+      ],
+      "note": "Placement where a profile adds the check to the framework control; a mapping collection where the guide is its own catalog and publishes its framework references.",
       "mechanisms": [
         "assembly"
       ],
@@ -692,7 +698,11 @@
       "slot": "3",
       "approach": "profile-first",
       "state": "filled",
-      "snippet_ids": [],
+      "snippet_ids": [
+        "pf-cis-method-1-1-1-1",
+        "pf-cis-script-resource",
+        "pf-stig-method-sc-28"
+      ],
       "note": "An assessment method part with method TEST and a body in prose. Namespaced props say which engine runs the body and how its result is judged.",
       "mechanisms": [
         "assembly",
@@ -721,7 +731,9 @@
       "slot": "4",
       "approach": "profile-first",
       "state": "partial",
-      "snippet_ids": [],
+      "snippet_ids": [
+        "pf-cis-platform"
+      ],
       "note": "The method names its platform as a CPE and the executor matches it to an SSP component. No component field carries a CPE, so the match is a convention.",
       "mechanisms": [
         "assembly",
@@ -742,7 +754,10 @@
       "slot": "5",
       "approach": "profile-first",
       "state": "partial",
-      "snippet_ids": [],
+      "snippet_ids": [
+        "pf-cis-run-props",
+        "pf-note-executor"
+      ],
       "note": "Four props tell an executor how to run the body and judge what comes back. The executor is a resolver outside OSCAL, and the vocabulary has no owner yet.",
       "mechanisms": [
         "assembly",

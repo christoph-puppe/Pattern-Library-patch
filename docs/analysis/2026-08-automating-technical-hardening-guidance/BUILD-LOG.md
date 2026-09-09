@@ -8743,3 +8743,116 @@ option on the start page, and the workflow's list of generated pages.
 - Proponent review now includes the note's author, and the request in
   `CORRECTIONS.md` says what the one judgement is that only they can check:
   whether the site's encoding is the shape the note intends.
+
+## Session: a corpus for the fourth approach
+
+**Date:** 2026-09-09
+**Scope:** an OSCAL corpus for profile-first, generated in the concept note's
+shape from guidance this repository holds, and the site's checks, extracts,
+inventory and prose brought onto it
+**Result:** complete. 3175 of 3191 verification checks and 792 of 792 page
+checks pass locally. The sixteen that fail are the sixteen that failed before
+the previous session began, and every one of them needs the corpora or the
+network. All seven generated files validate under compliance-trestle 5.1.0,
+which carries the OSCAL 1.2.1 schemas, and under the published JSON schemas
+for the catalog, profile and mapping models.
+
+### What was asked
+
+The previous session added profile-first as Option D from a concept note and
+nothing else, because its proponent had published no OSCAL. The three other
+approaches are described from published corpora, and the fourth was described
+from a note's worked example. The user asked whether the corpus could be
+created. It could, from two things the repository already held under
+`sources/`: the CIS Benchmark for Ubuntu 24.04 LTS as CIS-CAT's JSON, which
+carries every audit procedure, the names of the Script Check Engine scripts and
+the values exported to them, the benchmark's four profiles, and SP 800-53
+references in its own identifiers; and the DISA STIG for the same system as
+XCCDF, whose CCI to control mapping the assessment-first corpus had already
+published.
+
+### Decisions
+
+1. **Both routes, one per source.** The note names two routes. On the catalog
+   route the author of the requirement is the author of the check, which is
+   CIS's case: every recommendation becomes a control carrying `statement`,
+   `rationale`, `assessment-objective`, `assessment-method` and `remediation`
+   parts, the method carrying the note's props. On the profile route someone
+   else supplies the check, which is DISA's case against NIST: the STIG becomes
+   a profile importing the Revision 5 catalog by its published URL and adding,
+   to each of the 79 controls a rule's CCIs map to, an objective and a method
+   per rule. A rule serving more than one control puts its parts on the first
+   and links the others to the objective, so a finding has one target.
+2. **Nothing is invented.** Every control, part, identifier, value and script
+   body is taken from the source file. Where the source does not say something
+   the corpus does not say it: the STIG carries no engine and no evaluation rule
+   because DISA publishes its checks as text, and the SCE scripts are resources
+   with a name and no hash because their bodies ship with CIS-CAT and are not
+   held. The README beside the corpus lists what is real, what is derived and
+   what is missing, and the missing hash is the gap the note's security
+   section says an executor must refuse.
+3. **The one structural liberty is named.** One benchmark section holds
+   recommendations and a sub-section together, and an OSCAL group holds groups
+   or controls, never both. Its own recommendations sit in a sub-group whose
+   id ends in `_recommendations`. `--corpus` asserts there is exactly one.
+4. **Provenance on the mapping is CIS's, not the site's.** The mapping
+   collection's method is `hybrid`, its rationale `semantic` and its status
+   `draft`, because CIS made the references and the generator transcribed
+   them; nothing was reviewed.
+5. **The corpus is the site's and says so everywhere it is counted.** The
+   status annotation reads *generated corpus, not a proponent's publication*;
+   the inventory page keeps its note and now lists the seven files under it;
+   `examples/profile-first/README.md` explains the files; and the harness key
+   that used to say the approach was unpublished now says its corpus is
+   generated, which is the fact the checks turn on.
+6. **The extracts come from the corpus.** The ten profile-first cells that
+   declared no extracts now declare them, at pointers into the generated files,
+   with a `site:` prefix on the source that `extract.py` resolves against this
+   repository rather than the corpora. The pointers are as fixed as any other:
+   the STIG rule for SC-28 is alter 63, the script resource is number 52.
+7. **A generated corpus gets its own phase.** Nothing outside the site will
+   catch an error in a corpus the site wrote, so `--corpus` recomputes every
+   structural claim the README makes from the committed files, and its second
+   half fetches the NIST catalog to confirm that every control the profile
+   imports and every control the mapping targets exists there. `--conformance`
+   now drives trestle over all seven files rather than one, since each is a
+   claim of the site's.
+
+### Counts, recomputed by the generator
+
+| | |
+|---|---|
+| CIS controls | 312 |
+| of which TEST / EXAMINE | 291 / 21 |
+| methods carrying a bash body or script | 219 |
+| methods carrying an evaluation rule and pass condition | 62 |
+| parameters, one per exported value | 82 |
+| SCE script resources | 90 |
+| maps to SP 800-53 | 286, from 286 recommendations |
+| STIG rules, as objectives | 194 |
+| controls imported and altered | 79 |
+
+### What changed, by file
+
+`tools/profile_first_corpus.py`, new, and the seven files it writes under
+`examples/profile-first/oscal/` with a README beside them. `tools/extract.py`
+reads a `site:` source; `tools/manifest.yaml` gains ten entries and
+`data/snippets/` ten files. `tools/oscal_artifacts.py` scans a site corpus,
+summarises profiles and mapping collections, and counts controls at any depth.
+`tools/verify.py` gains `--corpus`, and `--conformance` holds the generated
+corpus to validation. `data/six-questions.json`, `data/scenario.json` and
+`data/questions.json` say the corpus exists; `data/oscal-artifacts.json` and
+`data/provenance.json` carry it. `assets/site.js` renders a note and a table
+together. The workflow regenerates and diffs the corpus.
+
+### Open items
+
+- The mapping collection transcribes CIS's references and has been reviewed
+  by nobody, which its provenance says. The STIG's CCI mapping is DISA's as
+  published in the assessment-first corpus. Neither publisher has seen the
+  transcription, and `CORRECTIONS.md` says a correction from either is
+  recorded in the same form as the proponents'.
+- The SCE script bodies and DISA's SCAP content are not held, so no method in
+  the corpus can be run end to end as the note describes. The corpus shows the
+  shape; whether an executor built to the note can consume it is still the
+  question only the note's author can answer.

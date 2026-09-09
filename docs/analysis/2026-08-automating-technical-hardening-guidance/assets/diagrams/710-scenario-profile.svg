@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1042" id="dg-710-scenario-profile" class="tfg-diagram" role="img" aria-labelledby="dg-710-scenario-profile-t dg-710-scenario-profile-d" preserveAspectRatio="xMidYMid meet">
   <title id="dg-710-scenario-profile-t">One system, three hardening guides: the file set for the profile first approach</title>
-  <desc id="dg-710-scenario-profile-d">A count of the OSCAL files this approach needs for the scenario, drawn as one tile per file. 11 files in total, across 5 of the seven models. 4 catalog files, one for the framework, one per guide, carrying its checks, named NIST 800-53, CIS Ubuntu, DISA PgSQL, CISA SCuBA. 4 profile files, the High baseline, and one selection per guide, named 800-53 High, CIS Ubuntu, DISA PgSQL, CISA SCuBA. 0 mapping-collection files, none, the finding targets the guide's own objective. 0 component-definition files, none, the checks are parts on the controls. 1 system-security-plan file, one, answering 370 controls, named System SSP. 1 assessment-plan file, one, reading 547 methods through the components' profiles, named System AP. 1 assessment-results file, one, with a finding per objective, named System AR. A model this approach does not use is drawn hollow and labelled none, so the absence is as visible as the presence. The tile is the same size in all four figures, so the area of ink is the comparison. The plan of record answers 370 controls, and the 547 executable methods are read by the assessment plan through the components' profiles.</desc>
+  <desc id="dg-710-scenario-profile-d">A count of the OSCAL files this approach needs for the scenario, drawn as one tile per file. 14 files in total, across 6 of the seven models. 4 catalog files, one for the framework, one per guide, carrying its checks, named NIST 800-53, CIS Ubuntu, DISA PgSQL, CISA SCuBA. 4 profile files, the High baseline, and one selection per guide, named 800-53 High, CIS Ubuntu, DISA PgSQL, CISA SCuBA. 3 mapping-collection files, one per guide, from the guide's own framework references, named CIS to 800-53, STIG to 800-53, SCuBA to 800-53. 0 component-definition files, none, the checks are parts on the controls. 1 system-security-plan file, one, answering 370 controls, named System SSP. 1 assessment-plan file, one, reading 547 methods through the components' profiles, named System AP. 1 assessment-results file, one, with a finding per objective, named System AR. A model this approach does not use is drawn hollow and labelled none, so the absence is as visible as the presence. The tile is the same size in all four figures, so the area of ink is the comparison. The plan of record answers 370 controls, and the 547 executable methods are read by the assessment plan through the components' profiles.</desc>
   <style>
   #dg-710-scenario-profile text { font-family: var(--font-sans); fill: var(--text); }
   #dg-710-scenario-profile .h { font-size: 20px; font-weight: 650; }
@@ -44,10 +44,10 @@
                         --mi-chip: var(--layer-assess-bg); }
   </style>
   <defs><marker id="dg-710-scenario-profile-ref" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0.5,0.8 L9.5,5 L0.5,9.2 z" class="mk-ref"/></marker><marker id="dg-710-scenario-profile-join" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0.5,0.8 L9.5,5 L0.5,9.2 z" class="mk-join"/></marker><marker id="dg-710-scenario-profile-weak" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0.5,0.8 L9.5,5 L0.5,9.2 z" class="mk-weak"/></marker></defs>
-<text x="24" y="34" class="h">11 files, across 5 of the seven models</text>
-<text x="24" y="60" class="s mu">Each guide is published as a catalog whose controls carry their own executable methods, and each</text>
-<text x="24" y="82" class="s mu">component references a profile selecting from it. The framework side is unchanged and the plan of</text>
-<text x="24" y="104" class="s mu">record's control set does not move.</text>
+<text x="24" y="34" class="h">14 files, across 6 of the seven models</text>
+<text x="24" y="60" class="s mu">Each guide is published as a catalog whose controls carry their own executable methods, each component</text>
+<text x="24" y="82" class="s mu">references a profile selecting from it, and each guide's own framework references become a mapping</text>
+<text x="24" y="104" class="s mu">collection. The plan of record's control set does not move.</text>
 <rect x="16" y="150" width="928" height="314" rx="10" class="band"/>
 <text x="32" y="176" class="n mu">CONTROL LAYER</text>
 <g class="mi mi--control" transform="translate(32,186) scale(0.5548) translate(-13.0728,-14.0728)"><path d="M18 18H30L34 22V48L27 45H18V18Z" stroke-width="2.08" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M46 18H34L30 22V48L37 45H46V18Z" stroke-width="2.08" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M22 26L28 26" class="mi__soft" stroke-width="2.08" stroke-linecap="round" fill="none"/><path d="M22 32L28 32" class="mi__soft" stroke-width="2.08" stroke-linecap="round" fill="none"/><path d="M36 26L42 26" class="mi__soft" stroke-width="2.08" stroke-linecap="round" fill="none"/><path d="M36 32L42 32" class="mi__soft" stroke-width="2.08" stroke-linecap="round" fill="none"/></g>
@@ -88,10 +88,21 @@
 <text x="325" y="430" class="s mu">selection per guide</text>
 <g class="mi mi--control" transform="translate(618,186) scale(0.5548) translate(-13.0728,-13.0728)"><circle cx="22" cy="22" r="5" stroke-width="2.08" fill="none"/><circle cx="42" cy="22" r="5" stroke-width="2.08" fill="none"/><circle cx="32" cy="42" r="5" stroke-width="2.08" fill="none"/><path d="M26 24L38 24" class="mi__soft" stroke-width="2.08" stroke-dasharray="2 2" fill="none"/><path d="M25 26L29 38" class="mi__soft" stroke-width="2.08" fill="none"/><path d="M39 26L35 38" class="mi__soft" stroke-width="2.08" fill="none"/></g>
 <text x="647" y="202" class="m">mapping-collection</text>
-<path d="M618,251 h122" class="weak"/>
-<text x="618" y="306" class="n">0 files</text>
-<text x="618" y="330" class="s mu">none, the finding targets the</text>
-<text x="618" y="350" class="s mu">guide's own objective</text>
+<rect x="618" y="216" width="122" height="70" rx="3" class="model"/>
+<path d="M731,216 v9 h9" class="contain"/>
+<text x="679.0" y="246.0" class="tl" text-anchor="middle">CIS to</text>
+<text x="679.0" y="267.0" class="tl" text-anchor="middle">800-53</text>
+<rect x="750" y="216" width="122" height="70" rx="3" class="model"/>
+<path d="M863,216 v9 h9" class="contain"/>
+<text x="811.0" y="246.0" class="tl" text-anchor="middle">STIG to</text>
+<text x="811.0" y="267.0" class="tl" text-anchor="middle">800-53</text>
+<rect x="618" y="296" width="122" height="70" rx="3" class="model"/>
+<path d="M731,296 v9 h9" class="contain"/>
+<text x="679.0" y="326.0" class="tl" text-anchor="middle">SCuBA to</text>
+<text x="679.0" y="347.0" class="tl" text-anchor="middle">800-53</text>
+<text x="618" y="386" class="n">3 files</text>
+<text x="618" y="410" class="s mu">one per guide, from the</text>
+<text x="618" y="430" class="s mu">guide's own framework</text>
 <rect x="16" y="478" width="928" height="214" rx="10" class="band"/>
 <text x="32" y="504" class="n mu">IMPLEMENTATION LAYER</text>
 <g class="mi mi--impl" transform="translate(32,514) scale(0.5202) translate(-11.8161,-11.8161)"><path d="M32 16L46 24V40L32 48L18 40V24L32 16Z" stroke-width="2.21" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M32 16V32M32 32L46 24M32 32L18 24" class="mi__soft" stroke-width="2.21" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M18 32L32 40L46 32" stroke-width="2.21" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>

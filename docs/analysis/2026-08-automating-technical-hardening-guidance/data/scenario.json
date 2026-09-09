@@ -370,7 +370,7 @@
       "plan_of_record": "The plan of record answers 370 controls, and none of the three guides enters it"
     },
     "profile-first": {
-      "rule": "Each guide is published as a catalog whose controls carry their own executable methods, and each component references a profile selecting from it. The framework side is unchanged and the plan of record's control set does not move.",
+      "rule": "Each guide is published as a catalog whose controls carry their own executable methods, each component references a profile selecting from it, and each guide's own framework references become a mapping collection. The plan of record's control set does not move.",
       "files": [
         {
           "model": "catalog",
@@ -414,9 +414,20 @@
         },
         {
           "model": "mapping-collection",
-          "count": 0,
-          "what": "none, the finding targets the guide's own objective",
-          "detail": "where a profile adds a method to a framework control the placement is the tie; where the guide is its own catalog the note supplies no tie, and that is an open question on the questions page"
+          "count": 3,
+          "what": "one per guide, from the guide's own framework references",
+          "detail": "CIS names SP 800-53 controls in its recommendations' identifiers, the STIG names CCIs, and SCuBA names controls on every step, so each guide's own references become a mapping collection from its objectives' controls to the framework; where a profile adds the check to the framework control instead, the placement is the tie and nothing is mapped",
+          "items": [
+            {
+              "name": "CIS to 800-53"
+            },
+            {
+              "name": "STIG to 800-53"
+            },
+            {
+              "name": "SCuBA to 800-53"
+            }
+          ]
         },
         {
           "model": "component-definition",

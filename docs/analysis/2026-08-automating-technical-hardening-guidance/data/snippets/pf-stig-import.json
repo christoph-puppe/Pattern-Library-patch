@@ -1,0 +1,13 @@
+{
+  "id": "pf-stig-import",
+  "slot": "2",
+  "approach": "profile-first",
+  "title": "The profile imports the framework catalog and names the controls it alters",
+  "source": "site:examples/profile-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json",
+  "pointer": "/profile/imports/0",
+  "section": null,
+  "language": "json",
+  "content": "{\n  \"href\": \"https://raw.githubusercontent.com/usnistgov/oscal-content/main/nist.gov/SP800-53/rev5/json/NIST_SP-800-53_rev5_catalog.json\",\n  \"include-controls\": [\n    {\n      \"with-ids\": [\n        \"ac-10\",\n        \"ac-11\",\n        \"ac-11.1\",\n        \"ac-12\",\n        \"ac-17.1\",\n        \"ac-17.2\",\n        \"ac-2.2\",\n        \"ac-2.3\",\n        \"ac-2.4\",\n        \"ac-3\",\n        \"ac-3.4\",\n        \"ac-6.10\",\n        \"ac-6.8\",\n        \"ac-6.9\",\n        \"ac-7\",\n        \"ac-8\",\n        \"au-12\",\n        \"au-12.3\",\n        \"au-14.1\",\n        \"au-3\",\n        \"au-3.1\",\n        \"au-4\",\n        \"au-4.1\",\n        \"au-5\",\n        \"au-5.1\",\n        \"au-6.4\",\n        \"au-7\",\n        \"au-7.1\",\n        \"au-8\",\n        \"au-9\",\n        \"au-9.3\",\n        \"cm-14\",\n        \"cm-3.5\",\n        \"cm-5.1\",\n        \"cm-5.6\",\n        \"cm-6\",\n        \"cm-7\",\n        \"cm-7.2\",\n        \"cm-7.5\",\n        \"cm-7.9\",\n        \"ia-11\",\n        \"ia-2\",\n        \"ia-2.1\",\n        \"ia-2.12\",\n        \"ia-2.2\",\n        \"ia-2.5\",\n        \"ia-2.6\",\n        \"ia-3\",\n        \"ia-5.1\",\n        \"ia-5.13\",\n        \"ia-5.2\",\n        \"ia-7\",\n        \"ia-8\",\n        \"ma-3.5\",\n        \"ma-4\",\n        \"ma-4.1\",\n        \"ma-4.6\",\n        \"sc-10\",\n        \"sc-11\",\n        \"sc-13\",\n        \"sc-17\",\n        \"sc-23.5\",\n        \"sc-24\",\n        \"sc-28\",\n        \"sc-28.1\",\n        \"sc-28.3\",\n        \"sc-3\",\n        \"sc-4\",\n        \"sc-45\",\n        \"sc-45.1\",\n        \"sc-5\",\n        \"sc-5.2\",\n        \"sc-8\",\n        \"sc-8.1\",\n        \"sc-8.2\",\n        \"si-11\",\n        \"si-16\",\n        \"si-2.6\",\n        \"si-6\"\n      ]\n    }\n  ]\n}",
+  "sha256_of_source_file": "c154f80544b6eed9069a94b2c355956e78221cb18892960c8c7849d7510b1a0b",
+  "extracted_at": "2026-09-09T14:00:26+00:00"
+}

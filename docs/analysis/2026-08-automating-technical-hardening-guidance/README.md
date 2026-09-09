@@ -24,16 +24,21 @@ document with its contents counted from the file rather than described. Extracts
 at declared pointers into the published files are still carried where a claim
 rests on one, and they are still re-derived on every build.
 
-**The fourth approach has no corpus.** Profile-first comes from a concept note,
-*Executable Assessment Methods*, held at
+**The fourth approach's corpus is the site's.** Profile-first comes from a
+concept note, *Executable Assessment Methods*, held at
 `examples/profile-first/executable-assessment-methods.md` and linked from the
-artifacts page, which is the one document that approach has. Its column on the
-six questions page is the site's own encoding of the shape the note proposes,
-written from the note's worked example; its cells declare no extracts, because
-there is nothing to extract from; and its status annotation says so on every
-card. Every check that reads a corpus skips it by name, and every check that
-holds the approaches to one shape holds it to the same shape. The namespace on
-its props is the note's own placeholder, carried as the note wrote it.
+artifacts page, and its proponent has published no OSCAL. So the site wrote a
+corpus in the note's shape from two pieces of guidance it already held: the CIS
+Benchmark for Ubuntu 24.04 becomes a catalog whose every recommendation carries
+an objective and an executable method, with the benchmark's four profiles and
+its own SP 800-53 references as a mapping collection; the DISA STIG for the same
+system becomes a profile that imports the NIST catalog and adds an objective and
+a method to each control a rule serves. `tools/profile_first_corpus.py` writes
+the seven files under `examples/profile-first/oscal/`, `--corpus` recomputes
+what they hold, and the status annotation on every card, the inventory page and
+`examples/profile-first/README.md` say whose they are. The column on the six
+questions page draws its extracts from those files, and the namespace on its
+props is the note's own placeholder, carried as the note wrote it.
 
 Published hardening guidance from four publishers was read as input: CIS, DISA,
 CISA and AWS. The introduction tabulates it one row per benchmark or guide, in a
@@ -152,7 +157,7 @@ The corpora are read from `TFG_CORPORA` when it is set, and from the
 export TFG_CORPORA=/path/to/tfg-automated-assessments
 ```
 
-Eighteen checks. Each prints `PASS` or `FAIL` with detail. A check that cannot run
+Nineteen checks. Each prints `PASS` or `FAIL` with detail. A check that cannot run
 in the current environment prints `SKIP` with the reason and the exact command it
 would have run, and is reported separately from the checks that passed. **A skip is
 never counted as a pass.**
@@ -176,6 +181,7 @@ python tools/verify.py --bundle        the offline fallback matches data/
 python tools/verify.py --questions     the reproduced material matches its source
 python tools/verify.py --data          internal consistency of data/
 python tools/verify.py --pages         run each page and inspect what it rendered
+python tools/verify.py --corpus        the generated profile-first corpus, recomputed
 ```
 
 `node tools/pagecheck.js` runs behind `--pages` and can be run alone, including
@@ -192,6 +198,7 @@ root of this repository.
 |---|---|---|
 | `--schema`, second half | The published NIST 1.2.1 schemas | `curl` the schema, compare each stored fragment |
 | `--conformance` | An OSCAL validator | `pip install compliance-trestle` |
+| `--corpus`, second half | The published NIST Revision 5 catalog | `curl` the catalog, compare every identifier the profile and the mapping name |
 | `--a11y`, second half | axe-core and a headless browser | `npm install --no-save axe-core puppeteer` |
 | `--links`, external half | The links themselves | `curl -o /dev/null -w '%{http_code}'` per link |
 
@@ -206,6 +213,7 @@ every build so it cannot be hand-edited. Every figure, in either case, is
 recomputed from the corpora rather than stated.
 
 ```
+python tools/profile_first_corpus.py  # write the profile-first corpus from sources/
 python tools/extract.py          # rebuild data/snippets and data/provenance.json
 python tools/pattern_examples.py # write the two rules in all four shapes
 python tools/oscal_artifacts.py  # inventory what each approach has published
@@ -219,15 +227,15 @@ python tools/verify.py --all     # prove the site says what the files say
 
 That is the order the workflow runs them in, and it is the order they depend on
 each other in: the bundle mirrors everything upstream of it, so it goes last.
-Four of them take `--check`, which compares instead of writing and exits non-zero
-if the committed file is stale: `pattern_examples.py`, `oscal_artifacts.py`,
-`sources_files.py` and `bundle.py`. `approach_pages.py` does the same job the
+Five of them take `--check`, which compares instead of writing and exits non-zero
+if the committed file is stale: `profile_first_corpus.py`, `pattern_examples.py`,
+`oscal_artifacts.py`, `sources_files.py` and `bundle.py`. `approach_pages.py` does the same job the
 other way round: it records the hash of every page it writes and refuses to
 overwrite one that has been hand-edited since, so an edit made in the page rather
 than in the data stops the build instead of disappearing into it.
 
 `tools/manifest.yaml` is the declarative source of truth for the extracts. Each
-of its 29 entries names a source file, an RFC 6901 pointer, the question the
+of its 44 entries names a source file, an RFC 6901 pointer, the question the
 extract illustrates, and any trimming applied. Trimming is always declared and is
 marked in the rendered output; there is no silent truncation.
 `data/provenance.json` records the SHA-256 of both the source file and the
@@ -258,12 +266,12 @@ removed; they are no longer machine-checked.
 
 ```
 data/
-  snippets/          29 files, one per extract, never edited by hand
+  snippets/          44 files, one per extract, never edited by hand
   schema-evidence/   8 verbatim OSCAL 1.2.1 schema fragments with their constraints
   six-questions.json the six questions and the answer matrix, the central claim set
   pattern-examples.json  the two rules, written in all four shapes. Ours
   oscal-artifacts.json   what each approach has published, counted, and a note
-                         for the one that has published nothing
+                         for the one whose corpus the site generated
   criteria.json      the fifteen evaluation criteria, verbatim from the pre-read
   criteria-fill.json the forty-five cells, answered from the files
   sources.json       the guidance read as input, one row per benchmark
@@ -277,11 +285,16 @@ data/
   quotes.json        the record of what was said. Retained, and never rendered
   corpus-stats.json  every figure cited, each with its derivation
   provenance.json    generated
+examples/
+  profile-first/     the concept note, and under oscal/ the seven files
+                     tools/profile_first_corpus.py writes in its shape
 tools/
-  manifest.yaml      the declarative extract manifest
+  manifest.yaml      the declarative extract manifest; a source prefixed site:
+                     is read from this repository rather than the corpora
+  profile_first_corpus.py  builds examples/profile-first/oscal from sources/
   extract.py         builds data/snippets and data/provenance.json
   pattern_examples.py  builds data/pattern-examples.json, the site's own encodings
-  oscal_artifacts.py   builds data/oscal-artifacts.json from the three corpora
+  oscal_artifacts.py   builds data/oscal-artifacts.json from the four corpora
   sources_files.py   builds data/source-files.json from sources/
   diagrams.py        builds the published SVGs in assets/diagrams from data/
   approach_pages.py  builds the four approach pages from one template
@@ -293,8 +306,9 @@ tools/
   axe_run.mjs        serves the site and runs axe-core over every page
 ```
 
-Eight of those are generators and the files they produce must not be edited by
-hand: `data/snippets/*.json` and `data/provenance.json`,
+Nine of those are generators and the files they produce must not be edited by
+hand: `examples/profile-first/oscal/*.json`, `data/snippets/*.json` and
+`data/provenance.json`,
 `data/pattern-examples.json`, `data/oscal-artifacts.json`,
 `data/source-files.json`, `assets/diagrams/*.svg`, `data/criteria-fill.json`, the
 four approach pages, and `assets/bundle.js`. The workflow regenerates all of
@@ -390,12 +404,15 @@ encoding generator, a fourth hue at the same lightness, a fourth marker shape,
 and the checks that counted to three.
 
 1. **Add the corpus.** Put the published files where `corpora_root` in
-   `tools/manifest.yaml` can reach them. An approach with no corpus, one that
-   exists as a proposal, skips this step and the next: its cells declare no
-   extracts, its status annotation says what it is, its `tools/verify.py`
-   entry goes into `UNPUBLISHED`, and the one document it does have goes under
-   `examples/<approach>/` and is named in `UNPUBLISHED` in
-   `tools/oscal_artifacts.py` so the inventory page links it.
+   `tools/manifest.yaml` can reach them. An approach with no published corpus,
+   one that exists as a proposal, can have one written in its shape from the
+   guidance under `sources/`, as profile-first has: the generator goes under
+   `tools/`, its output under `examples/<approach>/oscal/`, the approach's key
+   into `GENERATED` in `tools/verify.py` and `SITE_CORPORA` in
+   `tools/oscal_artifacts.py`, its status annotation says the corpus is
+   generated, and manifest sources prefixed `site:` read from it. The one
+   document it does have goes under `examples/<approach>/` and is named in
+   `UNPUBLISHED` in `tools/oscal_artifacts.py` so the inventory page links it.
 2. **Declare the extracts.** Add manifest entries with a source file, an RFC 6901
    pointer, and the question each one illustrates. Run `python tools/extract.py`.
 3. **Add the approach to `data/six-questions.json`.** One entry under `approaches` with

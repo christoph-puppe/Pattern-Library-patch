@@ -1,0 +1,13 @@
+{
+  "id": "pf-note-executor",
+  "slot": "5",
+  "approach": "profile-first",
+  "title": "The executor, as the concept note describes it",
+  "source": "site:examples/profile-first/executable-assessment-methods.md",
+  "pointer": "$",
+  "section": "The executor",
+  "language": "markdown",
+  "content": "## The executor\n\nThe tooling side is a resolver with six steps. a) Resolve the profile the SSP imports, and for each component, the profile the component references, if any. b) For each control and each component, select the `assessment-method` parts with `method=TEST` whose `platform` matches the component. c) Bind the control's params from the resolved profile to environment variables. d) Fetch the body from prose or back-matter, verify the hash, execute with the engine named in `language`, enforce the timeout. e) Apply the evaluation rule to the result. f) Write an observation with the raw output as `relevant-evidence` and a finding targeting the objective id.\n\nNothing in the SSP changes. The 304-to-867 growth that discredited \"benchmark as catalog\" in the hardening discussion came from importing benchmark profiles into the SSP's own profile. Executable methods on controls do not touch the SSP's control set. They are read by the assessment plan, not by the system owner.",
+  "sha256_of_source_file": "e0fface935e7e54ab0daf36955658cb8005a702669e976a1a8da8756eb8c73f9",
+  "extracted_at": "2026-09-09T14:00:26+00:00"
+}

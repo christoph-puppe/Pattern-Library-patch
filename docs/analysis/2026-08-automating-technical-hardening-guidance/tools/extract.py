@@ -197,7 +197,14 @@ def corpora_root() -> str:
 def extract_one(entry: dict, corpora_root: str) -> dict:
     sid = entry["id"]
     src_rel = entry["source"]
-    src_abs = os.path.normpath(os.path.join(corpora_root, src_rel))
+    #  A source prefixed site: is held in this repository rather than in the
+    #  corpora, and the path after the prefix is relative to the site root.
+    #  The generated profile-first corpus is the case: it is built here from
+    #  guidance under sources/, and nothing outside this repository holds it.
+    if src_rel.startswith("site:"):
+        src_abs = os.path.normpath(os.path.join(SITE_ROOT, src_rel[len("site:"):]))
+    else:
+        src_abs = os.path.normpath(os.path.join(corpora_root, src_rel))
     if not os.path.isfile(src_abs):
         raise ExtractionError(f"{sid}: source not found: {src_abs}")
 

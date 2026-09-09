@@ -1,0 +1,13 @@
+{
+  "id": "pf-stig-method-sc-28",
+  "slot": "3",
+  "approach": "profile-first",
+  "title": "STIG V-270747 check text as a method beside its objective",
+  "source": "site:examples/profile-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json",
+  "pointer": "/profile/modify/alters/63/adds/0/parts/1",
+  "section": null,
+  "language": "json",
+  "content": "{\n  \"id\": \"sc-28_asm-ubtu-24-600090\",\n  \"name\": \"assessment-method\",\n  \"props\": [\n    {\n      \"name\": \"method\",\n      \"value\": \"TEST\"\n    },\n    {\n      \"name\": \"platform\",\n      \"value\": \"cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:lts:*:*:*\",\n      \"ns\": \"https://example.org/ns/oscal-automation\"\n    }\n  ],\n  \"links\": [\n    {\n      \"rel\": \"assessment-objective\",\n      \"href\": \"#sc-28_obj-ubtu-24-600090\"\n    }\n  ],\n  \"prose\": \"Note: If there is a documented and approved mission requirement for data-at-rest to not be encrypted, this requirement is not applicable. \\n \\nVerify Ubuntu 24.04 LTS prevents unauthorized disclosure or modification of all information requiring at-rest protection by using disk encryption.  \\n\\nDetermine the partition layout for the system with the following command: \\n \\n$ sudo fdisk -l \\n(..) \\nDisk /dev/vda: 15 GiB, 16106127360 bytes, 31457280 sectors \\nUnits: sectors of 1 * 512 = 512 bytes \\nSector siz [truncated]\"\n}",
+  "sha256_of_source_file": "c154f80544b6eed9069a94b2c355956e78221cb18892960c8c7849d7510b1a0b",
+  "extracted_at": "2026-09-09T14:00:26+00:00"
+}

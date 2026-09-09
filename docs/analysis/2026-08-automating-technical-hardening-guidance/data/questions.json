@@ -164,13 +164,18 @@
         },
         {
           "id": "catalog-route-tie",
-          "q": "When a guide ships as a catalog with its own checks, what ties its objectives to the framework?",
-          "why": "The note answers the framework case by placement: a profile adds the check to the framework control, and the placement is the tie. Where the guide is its own catalog, as a benchmark with its own scripts would be, the finding targets the guide's objective and nothing in the note reaches the framework. A mapping collection reaches controls and statements, not parts, so that route is the one catalog-first already has and no wider."
+          "q": "When a guide ships as a catalog with its own checks, does a mapping collection carry its tie to the framework?",
+          "why": "The note answers the framework case by placement: a profile adds the check to the framework control, and the placement is the tie. Where the guide is its own catalog the note supplies no tie. The generated corpus turns the benchmark's own SP 800-53 references into a mapping collection, which reaches controls and statements and not parts, so it ties the recommendation and not the objective beside it. Whether that is the route the note intends is open."
         },
         {
           "id": "check-versions",
           "q": "Is a changed check a new version of the catalog it sits in?",
           "why": "The note accepts the coupling: a changed check is a new profile version, and a catalog that ships checks changes whenever one of them does. A benchmark already carries that coupling in its source material. A framework catalog does not, and the approach keeps it out of one by putting the checks in a profile, so the question is only open for the catalog route."
+        },
+        {
+          "id": "param-names",
+          "q": "How does a parameter reach a script that expects a fixed variable name?",
+          "why": "The note exports every param on a control as an environment variable named after the param id. CIS-CAT's scripts read one variable, XCCDF_VALUE_REGEX, and OSCAL parameter ids are unique across a document, so the 82 controls that export a value cannot each declare a parameter of that name. The generated corpus carries the variable's name as the parameter's class, and the note's convention has no answer for it yet."
         }
       ]
     }

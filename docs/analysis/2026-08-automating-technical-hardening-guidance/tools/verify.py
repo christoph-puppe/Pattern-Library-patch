@@ -18,6 +18,7 @@ Usage:
     python tools/verify.py --appendix   equal counts and every denominator
     python tools/verify.py --links      every internal href and anchor resolves
     python tools/verify.py --pages      run each page and inspect the result
+    python tools/verify.py --corpus     the generated corpus, recomputed and checked
 
 A later build phase adds --budget. The flag is registered here so the harness
 grows without restructuring.
@@ -49,10 +50,14 @@ import svgrender as sr     # same directory
 OPTION_ORDER = ["catalog-first", "component-first", "assessment-first",
                 "profile-first"]
 
-# The approaches that exist as a concept note rather than as a published corpus.
-# Every check that reads a corpus skips them by name, and the checks that hold
-# every approach to the same shape do not.
-UNPUBLISHED = {"profile-first"}
+# The approaches whose corpus was generated here rather than published by a
+# proponent. Profile-first arrived as a concept note and no OSCAL; the files
+# under examples/profile-first/oscal are written by tools/profile_first_corpus.py
+# in the note's shape, from guidance held under sources/. Every check that
+# reads a proponent's corpus takes these files from the site instead, and the
+# checks that hold every approach to the same shape do not distinguish them.
+GENERATED = {"profile-first"}
+GENERATED_CORPUS = os.path.join("examples", "profile-first", "oscal")
 
 # Labels that named a construct rather than a question. Each one was on the site
 # and each one told a reader nothing on its own, which is what a name is for.
@@ -3847,18 +3852,24 @@ def check_conformance() -> None:
             root, "AWS", "oscal-content-for-aws-services-main", "**", "*.json"),
             recursive=True),
         "assessment-first": ez_plans(),
-        #  A concept note and no corpus. There is nothing to validate, and the
-        #  label has to say so rather than let an empty file list read as a
-        #  corpus that happens to use no undefined assembly.
-        "profile-first": [],
+        #  A corpus this site generated, so it is read from the site rather than
+        #  from the corpora, and its label has to say whose it is before its
+        #  files are held to the same test as a proponent's.
+        "profile-first": sorted(glob.glob(os.path.join(
+            SITE_ROOT, GENERATED_CORPUS, "*.json"))),
     }
     for key, files in corpora.items():
         label = [a["status_annotation"] for a in anat["approaches"]
                  if a["key"] == key][0]
-        if key in UNPUBLISHED:
-            check(f"{key} is labelled a concept note and has no file to validate",
-                  "concept note" in label and not files, f"{label!r}, {len(files)} files")
-            continue
+        if key in GENERATED:
+            check(f"{key} is labelled a generated corpus and has files to validate",
+                  "generated" in label and bool(files), f"{label!r}, {len(files)} files")
+            rc = subprocess.run([sys.executable, os.path.join(
+                TOOLS_DIR, "profile_first_corpus.py"), "--check"],
+                capture_output=True, text=True)
+            detail = (rc.stdout + rc.stderr).strip().splitlines()
+            check(f"{key}: the corpus is what its generator writes", rc.returncode == 0,
+                  detail[-1] if detail else "")
         used = set()
         for f in files:
             used |= keys_in(f)
@@ -3890,12 +3901,32 @@ def check_conformance() -> None:
              CONFORMANCE_TOOLS[1][1].format(file="<corpus file>", schema="<schema>"))
         return
 
-    # A validator is present, so run it over one file per corpus.
+    # A validator is present, so run it over one file per corpus, and over
+    # every file of the generated one, since the generator is the site's own
+    # and each of its files is a claim the site makes.
     for key, files in corpora.items():
-        if key in UNPUBLISHED:
-            continue
         label = [a["status_annotation"] for a in anat["approaches"]
                  if a["key"] == key][0]
+        if key in GENERATED:
+            if tool != "trestle":
+                skip(f"{key}: every generated file validates against OSCAL 1.2.1",
+                     "the generator drives trestle, and another validator is on the path",
+                     f"TRESTLE=<path> {sys.executable} tools/profile_first_corpus.py --validate")
+                continue
+            env = dict(os.environ, TRESTLE=shutil.which(tool) or tool)
+            rc = subprocess.run([sys.executable, os.path.join(
+                TOOLS_DIR, "profile_first_corpus.py"), "--validate"],
+                capture_output=True, text=True, env=env)
+            lines = [ln.strip() for ln in rc.stdout.splitlines() if ln.strip()]
+            for ln in lines:
+                print(f"        {ln}")
+            check(f"{key} is labelled generated and every file validates",
+                  rc.returncode == 0 and any(ln.startswith("VALID") for ln in lines),
+                  f"exit {rc.returncode}: {(rc.stdout + rc.stderr)[-200:]}")
+            continue
+        if not files:
+            check(f"{key}: a file to validate was found", False, "no files")
+            continue
         target = sorted(files)[0]
         cmd = CONFORMANCE_TOOLS[0][1].format(
             model="", file=target, schema="") if tool == "oscal-cli" \
@@ -5244,7 +5275,249 @@ def check_icons() -> None:
           str(twice[:2]))
 
 
+
+# --------------------------------------------------------------------------- #
+# --corpus                                                                     #
+# --------------------------------------------------------------------------- #
+
+def check_corpus() -> None:
+    """The generated profile-first corpus: what its files hold, recomputed.
+
+    No proponent published OSCAL for the fourth approach, so the site wrote a
+    corpus in the note's shape from two pieces of guidance it already held. A
+    corpus the site writes is a corpus the site can get wrong, and nothing
+    outside the site will catch it. So every structural claim the README under
+    examples/profile-first makes is recomputed here from the committed files:
+    the routes, the parts, the props, the links, the parameters, the one place
+    the group structure is not CIS's, and the identifiers the profiles and the
+    mapping point at.
+
+    The half that needs the NIST catalog runs when the network is there, and
+    says so when it is not.
+    """
+    print("\n[corpus] the generated profile-first corpus, recomputed")
+    sys.path.insert(0, TOOLS_DIR)
+    import profile_first_corpus as pfc
+
+    base = os.path.join(SITE_ROOT, GENERATED_CORPUS)
+    names = sorted(os.listdir(base)) if os.path.isdir(base) else []
+    expected = sorted(list(pfc.FILES.values()) + list(pfc.CIS_PROFILE_FILES.values()))
+    check("the corpus holds exactly the files the generator names",
+          names == expected, str(sorted(set(names) ^ set(expected))))
+    if names != expected:
+        return
+    docs = {n: json.load(open(os.path.join(base, n), encoding="utf-8")) for n in names}
+
+    rc = subprocess.run([sys.executable, os.path.join(TOOLS_DIR, "profile_first_corpus.py"),
+                         "--check"], capture_output=True, text=True)
+    check("the committed files are what the generator writes", rc.returncode == 0,
+          (rc.stdout + rc.stderr).strip().splitlines()[-1:] or "")
+
+    for n, d in docs.items():
+        root = next(iter(d))
+        md = d[root]["metadata"]
+        #  The benchmark's own profiles carry the benchmark's description of
+        #  themselves; the three documents whose shape is the generator's say so.
+        own = n in pfc.CIS_PROFILE_FILES.values()
+        said = (md.get("remarks") or "") + (d[root].get("provenance") or {}).get("remarks", "")
+        check(f"{n}: declares OSCAL {pfc.OSCAL_VERSION} and says where it came from",
+              md.get("oscal-version") == pfc.OSCAL_VERSION and bool(said)
+              and (own or "profile_first_corpus.py" in said),
+              f"{md.get('oscal-version')!r}")
+
+    # --- the catalog route ------------------------------------------------- #
+    cat = docs[pfc.FILES["catalog"]]["catalog"]
+    ctls, groups = [], []
+
+    def walk(gs):
+        for g in gs:
+            groups.append(g)
+            check(f"group {g['id']}: holds groups or controls, never both",
+                  not (g.get("groups") and g.get("controls")))
+            ctls.extend(g.get("controls", []))
+            walk(g.get("groups", []))
+
+    walk(cat["groups"])
+    ids = {c["id"] for c in ctls}
+    n = pfc.counts(docs)
+    check("every recommendation in the benchmark is a control",
+          len(ctls) == n["cis_controls"] and len(ctls) == len(ids), str(len(ctls)))
+    mixed = [g["id"] for g in groups if g["id"].endswith(pfc.MIXED_SUFFIX)]
+    check("exactly one sub-group exists to hold a mixed section's own recommendations",
+          len(mixed) == 1, str(mixed))
+
+    part_ids, res_ids = set(), {r["uuid"] for r in cat["back-matter"]["resources"]}
+    for c in ctls:
+        part_ids |= {p["id"] for p in c["parts"] if "id" in p}
+    order = ["statement", "rationale", "assessment-objective", "assessment-method",
+             "remediation"]
+    bad_order = [c["id"] for c in ctls if [p["name"] for p in c["parts"]] != order]
+    check("every control carries statement, rationale, objective, method and "
+          "remediation, in that order", not bad_order, str(bad_order[:3]))
+
+    methods = {c["id"]: next(p for p in c["parts"] if p["name"] == "assessment-method")
+               for c in ctls}
+    props = {cid: {p["name"]: p for p in m.get("props", [])} for cid, m in methods.items()}
+    check("every method says TEST or EXAMINE, as the benchmark does",
+          all(props[c]["method"]["value"] in ("TEST", "EXAMINE") for c in props)
+          and n["cis_test"] + n["cis_examine"] == len(ctls),
+          f"TEST {n['cis_test']}, EXAMINE {n['cis_examine']}")
+    check("every method names the platform the benchmark publishes, in the note's namespace",
+          all(props[c]["platform"]["value"].startswith("cpe:2.3:o:canonical:ubuntu_linux:24.04")
+              and props[c]["platform"].get("ns") == pfc.AUTO_NS for c in props))
+    check("no method carries an evaluation rule without a language",
+          all("language" in pr for pr in props.values() if "evaluation" in pr),
+          f"{n['cis_evaluated']} evaluated, {n['cis_bash']} bash")
+    check("every evaluation rule comes with the pass condition it evaluates",
+          all(("pass-condition" in pr) == ("evaluation" in pr) for pr in props.values()))
+    check("the only evaluation rule used is the one the CIS scripts' output supports",
+          {pr["evaluation"]["value"] for pr in props.values() if "evaluation" in pr}
+          <= {"stdout-regex"})
+
+    dangling_obj, dangling_res, script_links = [], [], 0
+    for cid, m in methods.items():
+        own = {p["id"] for p in next(c for c in ctls if c["id"] == cid)["parts"] if "id" in p}
+        for ln in m.get("links", []):
+            if ln["rel"] == "assessment-objective" and ln["href"][1:] not in own:
+                dangling_obj.append(cid)
+            if ln["rel"] == "script":
+                script_links += 1
+                if ln["href"][1:] not in res_ids:
+                    dangling_res.append(cid)
+    check("every method links to the objective beside it", not dangling_obj,
+          str(dangling_obj[:3]))
+    check("every script a method links to is a back-matter resource", not dangling_res,
+          str(dangling_res[:3]))
+    check("the scripts named are resources with no hash, which is the gap the note names",
+          n["cis_scripts"] > 0 and all(
+              "hashes" not in rl for r in cat["back-matter"]["resources"]
+              for rl in r.get("rlinks", []) if rl.get("media-type") == "application/x-sh"),
+          str(n["cis_scripts"]))
+    check("the two source files are resources carrying a SHA-256",
+          sum(1 for r in cat["back-matter"]["resources"]
+              if any(h.get("algorithm") == "SHA-256" for rl in r.get("rlinks", [])
+                     for h in rl.get("hashes", []))) == 2)
+    params = [p for c in ctls for p in c.get("params", [])]
+    check("every value CIS-CAT exports to a script is a parameter with a value",
+          len(params) == n["cis_params"] and all(p.get("values") for p in params)
+          and all(p["class"] == "XCCDF_VALUE_REGEX" for p in params), str(len(params)))
+    check("a parameter sits on a control whose method links to a script",
+          all(any(ln["rel"] == "script" for ln in methods[c["id"]].get("links", []))
+              for c in ctls if c.get("params")))
+
+    # --- the benchmark's own profiles --------------------------------------- #
+    for key, fname in sorted(pfc.CIS_PROFILE_FILES.items()):
+        prof = docs[fname]["profile"]
+        imp = prof["imports"][0]
+        sel = set(imp["include-controls"][0]["with-ids"])
+        check(f"{key}: imports the catalog beside it and selects only its controls",
+              imp["href"].endswith(pfc.FILES["catalog"]) and sel <= ids,
+              str(sorted(sel - ids)[:3]))
+        check(f"{key}: selects a non-empty, duplicate-free set, in the benchmark's order",
+              sel and len(sel) == len(imp["include-controls"][0]["with-ids"]), str(len(sel)))
+    lvl = {k: set(docs[f]["profile"]["imports"][0]["include-controls"][0]["with-ids"])
+           for k, f in pfc.CIS_PROFILE_FILES.items()}
+    check("each level 2 profile contains its level 1 profile",
+          all(lvl[k.replace("level-1", "level-2")] >= lvl[k] for k in lvl if "level-1" in k))
+
+    # --- the mapping the benchmark's references support --------------------- #
+    mc = docs[pfc.FILES["mapping"]]["mapping-collection"]
+    maps = mc["mappings"][0]["maps"]
+    check("the mapping collection has one mapping, from the catalog to the framework",
+          len(mc["mappings"]) == 1
+          and mc["mappings"][0]["source-resource"]["href"].endswith(pfc.FILES["catalog"])
+          and mc["mappings"][0]["target-resource"]["href"] == pfc.NIST_CATALOG_URL)
+    srcs = {s["id-ref"] for m in maps for s in m["sources"]}
+    check("every mapping source is a control of the catalog", srcs <= ids,
+          str(sorted(srcs - ids)[:3]))
+    check("every map is subset-of, from one recommendation to the controls it names",
+          all(m["relationship"] == "subset-of" and len(m["sources"]) == 1
+              and m["targets"] for m in maps) and len(srcs) == len(maps), str(len(maps)))
+    prov = mc.get("provenance", {})
+    check("the mapping declares its provenance as the benchmark's own references, unreviewed",
+          prov.get("method") == "hybrid" and prov.get("status") == "draft", str(prov))
+    targets = {t["id-ref"] for m in maps for t in m["targets"]}
+
+    # --- the profile route --------------------------------------------------- #
+    stig = docs[pfc.FILES["stig"]]["profile"]
+    imp = stig["imports"][0]
+    with_ids = imp["include-controls"][0]["with-ids"]
+    altered = [a["control-id"] for a in stig["modify"]["alters"]]
+    check("the STIG profile imports the NIST Revision 5 catalog by its published URL",
+          imp["href"] == pfc.NIST_CATALOG_URL)
+    check("the profile alters exactly the controls it imports, in order",
+          altered == with_ids and with_ids == sorted(with_ids),
+          f"{len(altered)} altered, {len(with_ids)} imported")
+    objs, meths, links_to_obj = {}, 0, []
+    not_ending, bad_obj, bad_meth = [], [], []
+    for a in stig["modify"]["alters"]:
+        for ad in a["adds"]:
+            if ad.get("position", "ending") != "ending":
+                not_ending.append(a["control-id"])
+            for p in ad.get("parts", []):
+                pr = {x["name"]: x for x in p.get("props", [])}
+                if p["name"] == "assessment-objective":
+                    objs[p["id"]] = a["control-id"]
+                    if not (all(pr[k].get("ns") == pfc.STIG_NS for k in pr)
+                            and "stig-rule-id" in pr and "cci" in pr and "severity" in pr):
+                        bad_obj.append(p["id"])
+                if p["name"] == "assessment-method":
+                    meths += 1
+                    if not (pr["method"]["value"] == "TEST" and "platform" in pr
+                            and "language" not in pr and "evaluation" not in pr):
+                        bad_meth.append(p["id"])
+            for ln in ad.get("links", []):
+                if ln["rel"] == "assessment-objective":
+                    links_to_obj.append((a["control-id"], ln["href"][1:]))
+    check("every add ends the control rather than replacing anything in it",
+          not not_ending, str(not_ending[:3]))
+    check("every objective carries the rule's identifiers and severity in the STIG's namespace",
+          not bad_obj, str(bad_obj[:3]))
+    check("every STIG method says TEST, names the platform, and names no engine",
+          not bad_meth, str(bad_meth[:3]))
+    check("the STIG adds one objective per rule, and a method beside each",
+          len(objs) == n["stig_objectives"] and meths == len(objs),
+          f"{len(objs)} objectives, {meths} methods")
+    check("a rule serving more than one control links the others to its one objective",
+          links_to_obj and all(h in objs and objs[h] != c for c, h in links_to_obj),
+          str([x for x in links_to_obj if x[1] not in objs][:3]))
+    bm = {r["uuid"]: r for r in stig.get("back-matter", {}).get("resources", [])}
+    check("the STIG profile names the XCCDF it was read from, with its hash",
+          any(any(h.get("algorithm") == "SHA-256" for rl in r.get("rlinks", [])
+                  for h in rl.get("hashes", [])) for r in bm.values()))
+
+    # --- the half that needs the framework catalog ---------------------------- #
+    if not have_network():
+        skip("every control the STIG profile imports and the mapping targets exists "
+             "in the NIST Revision 5 catalog", "no network to fetch the catalog",
+             f"curl -sSL {pfc.NIST_CATALOG_URL}")
+        return
+    import urllib.request
+    try:
+        with urllib.request.urlopen(pfc.NIST_CATALOG_URL, timeout=60) as r:
+            nist = json.load(r)["catalog"]
+    except Exception as exc:  # noqa: BLE001
+        skip("every control the STIG profile imports and the mapping targets exists "
+             "in the NIST Revision 5 catalog", f"fetch failed: {exc}",
+             f"curl -sSL {pfc.NIST_CATALOG_URL}")
+        return
+    nist_ids = set()
+
+    def walk_nist(node):
+        for c in node.get("controls", []):
+            nist_ids.add(c["id"])
+            walk_nist(c)
+        for g in node.get("groups", []):
+            walk_nist(g)
+
+    walk_nist(nist)
+    check("every control the STIG profile imports exists in the NIST Revision 5 catalog",
+          set(with_ids) <= nist_ids, str(sorted(set(with_ids) - nist_ids)[:5]))
+    check("every control the mapping targets exists in the NIST Revision 5 catalog",
+          targets <= nist_ids, str(sorted(targets - nist_ids)[:5]))
+
 PHASES = {
+    "corpus": check_corpus,
     "snippets": check_snippets,
     "schema": check_schema,
     "stats": check_stats,
