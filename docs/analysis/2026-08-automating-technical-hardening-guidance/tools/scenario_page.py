@@ -35,7 +35,7 @@ TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
 SITE_ROOT = os.path.dirname(TOOLS_DIR)
 DATA = os.path.join(SITE_ROOT, "data")
 
-#  The pre-read's option-letter order, A then B then C, which is the order the
+#  The option-letter order, A then B then C, which is the order the
 #  rest of the site uses: assets/site.js orders every JS-rendered block by it
 #  and tools/pagecheck.js asserts it.
 #
@@ -56,8 +56,8 @@ LABEL = {"assessment-first": "Assessment-first",
 #  file rows it explains, and the second is argued on the approach pages
 #  themselves, where the strengths and risks are.
 HEADINGS = [
-    ("inputs", "1. The system, and what it is held to"),
-    ("files", "2. What each approach would produce"),
+    ("inputs", "1. System and requirements"),
+    ("files", "2. Files produced by each approach"),
 ]
 
 
@@ -83,9 +83,9 @@ def build(sc) -> str:
     # ---- 1. the inputs ---------------------------------------------------
     o.append(f'<section id="inputs">\n<h2>{HEADINGS[0][1]}</h2>')
     o.append('<div class="tier2">')
-    o.append('  <p>One scenario, described once. Every figure on this site is on '
-             'this page, so a count read anywhere is a count of the same system. '
-             'None of them is typed: each says below where it was counted from.</p>')
+    o.append('  <p>The comparison holds the system, baseline and hardening '
+             'guides constant. Counts derive from the published source files '
+             'and OSCAL schema constraints.</p>')
     o.append('  <dl class="scenario__inputs">')
     o.append(f'    <dt>Framework</dt><dd>{sc["framework"]["label"]}. '
              f'<strong>{reg}</strong> controls: {sc["framework"]["base"]} base and '
@@ -95,9 +95,9 @@ def build(sc) -> str:
         o.append(f'    <dt>{h["technology"]}</dt><dd>{h["label"]}. '
                  f'<strong>{h["requirements"]}</strong> requirements in '
                  f'{h["grouping"]} {h["grouping_label"]}.</dd>')
-    o.append(f'    <dt>Together</dt><dd><strong>{hard}</strong> hardening '
+    o.append(f'    <dt>Total requirements</dt><dd><strong>{hard}</strong> hardening '
              f'requirements alongside <strong>{reg}</strong> regulatory controls, '
-             f'which is <strong>{reg + hard}</strong> requirements in total for one '
+             f'for <strong>{reg + hard}</strong> requirements across one '
              f'system.</dd>')
     o.append('  </dl>')
     #  The excluded model is not named here either. It said that the scenario
@@ -126,16 +126,14 @@ def build(sc) -> str:
 
     # ---- 2. the file sets ------------------------------------------------
     o.append(f'<section id="files" class="wide">\n<h2>{HEADINGS[1][1]}</h2>')
-    o.append('<div class="tier2">\n  <p>One tile is one file, and the tile is the '
-             'same size in all four figures, which are drawn on one grid. So the '
-             'four can be compared by eye, and the comparison is area rather than '
-             'a number to be taken on trust. A model an approach does not use is '
-             'drawn as a dashed rule and labelled none, because an absence is half '
-             'of what separates the four.</p>\n</div>')
+    o.append('<div class="tier2">\n  <p>Each tile represents one file. All four '
+             'diagrams use the same tile size and grid to compare file counts. '
+             'An unused model appears as a dashed line labelled none. File '
+             'counts do not measure overall implementation effort.</p>\n</div>')
 
     o.append('<table class="criteria-table">')
-    o.append('  <caption class="small muted">Files by model. The row order is the '
-             'OSCAL layers, from controls down to assessment.</caption>')
+    o.append('  <caption class="small muted">Files by model, ordered by OSCAL '
+             'layer from controls to assessment.</caption>')
     o.append('  <thead><tr><th scope="col">Model</th>'
              + "".join(f'<th scope="col">{LABEL[k]}</th>' for k in ORDER)
              + '</tr></thead>\n  <tbody>')
@@ -174,8 +172,8 @@ def build(sc) -> str:
         o.append('<figure>')
         o.append(f'  <div class="diagram" data-diagram="710-scenario-{short}"></div>')
         o.append(f'  <figcaption>{a["plan_of_record"]}. '
-                 f'<a href="./{k}.html">{LABEL[k]}</a> sets out the approach in '
-                 f'full.</figcaption>')
+                 f'See <a href="./{k}.html">{LABEL[k]}</a> for roles, '
+                 f'tradeoffs and references.</figcaption>')
         o.append('</figure>')
         #  The file list is not printed under the figure. It was every model
         #  again as a term, with its count, what it is for, a further sentence
@@ -212,8 +210,8 @@ def run(outdir: str, quiet: bool = False) -> str:
             .replace("{{TITLE}}", "A worked scenario")
             .replace("{{DESCRIPTION}}",
                      "One system under 800-53 High with three hardening guides, "
-                     "modelled in all four approaches, with the file each one "
-                     "would produce.")
+                     "comparing the files and system security plan content "
+                     "produced by four OSCAL approaches.")
             .replace("{{SLUG}}", "scenario.html")
             .replace("{{BASE}}", ".")
             .replace("{{MAIN}}", main))

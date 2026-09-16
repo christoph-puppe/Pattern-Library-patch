@@ -22,6 +22,8 @@ import json
 import os
 import sys
 
+import source_inputs
+
 try:
     import yaml
 except ImportError:  # pragma: no cover
@@ -175,36 +177,22 @@ def load_manifest(path: str = MANIFEST) -> dict:
     return manifest
 
 
-DEFAULT_CORPORA = "../../tfg-automated-assessments"
+def source_path(*parts: str) -> str:
+    """Resolve original source names using the repository's verified source map."""
+    return source_inputs.source_path(*parts)
 
 
-def corpora_root() -> str:
-    """The corpora directory, which lives outside this repository.
-
-    TFG_CORPORA wins when it is set. The site now sits under docs/analysis/ in
-    a repository the corpora are not a sibling of, so no fixed relative path
-    reaches every caller's checkout; the manifest value is the fallback for a
-    layout where one still does.
-    """
-    env = os.environ.get("TFG_CORPORA")
-    if env:
-        return os.path.abspath(os.path.expanduser(env))
-    return os.path.normpath(
-        os.path.join(TOOLS_DIR, load_manifest().get("corpora_root", DEFAULT_CORPORA))
-    )
-
-
-def extract_one(entry: dict, corpora_root: str) -> dict:
+def extract_one(entry: dict) -> dict:
     sid = entry["id"]
     src_rel = entry["source"]
-    #  A source prefixed site: is held in this repository rather than in the
-    #  corpora, and the path after the prefix is relative to the site root.
-    #  The generated executable-first corpus is the case: it is built here from
-    #  guidance under sources/, and nothing outside this repository holds it.
+    #  A source prefixed site: is held in this repository rather than among
+    #  the locked source inputs, and the path after the prefix is relative to
+    #  the site root. The generated executable-first corpus is the case: it is
+    #  built here from guidance under sources/, and no source lock holds it.
     if src_rel.startswith("site:"):
         src_abs = os.path.normpath(os.path.join(SITE_ROOT, src_rel[len("site:"):]))
     else:
-        src_abs = os.path.normpath(os.path.join(corpora_root, src_rel))
+        src_abs = source_path(src_rel)
     if not os.path.isfile(src_abs):
         raise ExtractionError(f"{sid}: source not found: {src_abs}")
 
@@ -250,9 +238,7 @@ def extract_one(entry: dict, corpora_root: str) -> dict:
 
 def run(out_dir: str, quiet: bool = False) -> int:
     manifest = load_manifest()
-    root = corpora_root()
-    if not os.path.isdir(root):
-        raise ExtractionError(f"corpora root not found: {root}")
+    source_inputs.prepare()
 
     snippet_dir = os.path.join(out_dir, "snippets")
     os.makedirs(snippet_dir, exist_ok=True)
@@ -262,7 +248,7 @@ def run(out_dir: str, quiet: bool = False) -> int:
     for entry in manifest["snippets"]:
         sid = entry["id"]
         try:
-            record = extract_one(entry, root)
+            record = extract_one(entry)
         except ExtractionError as exc:
             failures.append(str(exc))
             rows.append((sid, entry.get("slot", "?"), entry.get("approach", "?"), 0, "NO"))
@@ -321,7 +307,8 @@ def run(out_dir: str, quiet: bool = False) -> int:
         "generated_at": _dt.datetime.now(_dt.timezone.utc)
         .replace(microsecond=0)
         .isoformat(),
-        "corpora_root": manifest.get("corpora_root"),
+        "source_lock": "tools/source-lock.json",
+        "source_inputs": source_inputs.source_metadata(),
         "snippet_count": len(provenance),
         "snippets": provenance,
     }
@@ -365,7 +352,7 @@ def main() -> None:
     args = parser.parse_args()
     try:
         run(args.out, quiet=args.quiet)
-    except ExtractionError as exc:
+    except (ExtractionError, source_inputs.SourceInputError) as exc:
         sys.exit(f"\nEXTRACTION FAILED: {exc}")
 
 

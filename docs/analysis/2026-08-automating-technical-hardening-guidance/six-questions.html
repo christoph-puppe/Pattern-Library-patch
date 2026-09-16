@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The six questions considered for every approach | Automating Technical Hardening Guidance with OSCAL</title>
-<meta name="description" content="Six questions you can ask of any hardening guidance in OSCAL, the constructs available for each, and what each of the four approaches answers.">
+<meta name="description" content="Six questions about hardening guidance in OSCAL, available constructs, and answers from four approaches.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="The six questions">
-<meta property="og:description" content="Six questions you can ask of any hardening guidance in OSCAL, the constructs available for each, and what each of the four approaches answers.">
+<meta property="og:description" content="Six questions about hardening guidance in OSCAL, available constructs, and answers from four approaches.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Automating Technical Hardening Guidance with OSCAL">
 <meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="The six questions">
-<meta name="twitter:description" content="Six questions you can ask of any hardening guidance in OSCAL, the constructs available for each, and what each of the four approaches answers.">
+<meta name="twitter:description" content="Six questions about hardening guidance in OSCAL, available constructs, and answers from four approaches.">
 <link rel="stylesheet" href="./assets/site.css">
 <script>
   /* Set the theme before first paint so the page never flashes the wrong one. */
@@ -28,6 +28,11 @@
 <body>
 
 <a class="skip-link" href="#main">Skip to content</a>
+
+<aside class="wip-banner" aria-label="Analysis status" hidden>
+  <span>Work in progress</span>
+  <button type="button" class="wip-banner__dismiss" aria-label="Dismiss work in progress notice" hidden><span aria-hidden="true">×</span></button>
+</aside>
 
 <header class="site-header">
   <div class="site-header__inner">
@@ -52,23 +57,26 @@
 <main id="main">
 
 <h1>The six questions considered for every approach</h1>
-<p class="lede">Whatever model holds a benchmark recommendation, six questions
-   have to be answered. These questions factor capturing the rule, the bridge to execute a runtime (check) and how flexible answers can be scoped and provided.</p>
+<p class="lede">Each approach must address six questions, regardless of the
+  model holding the benchmark recommendation. The questions cover rule
+  representation, links to check execution, and options for scoping and
+  recording responses.</p>
 
 <section id="slots" class="wide">
 <h2>1. The six questions, one at a time</h2>
 
 <div class="tier2">
-  <p>Two example rules are used across each option. One is protection of <strong>data at rest</strong>, a
-     condition that is either met or not. The other is a <strong>minimum password length</strong>,
-     the same shape but carrying a value, which is what makes it the rule that
-     shows where each approach puts a parameter. </p>
+  <p>Two rules illustrate each approach. Protection of <strong>data at
+    rest</strong> is a condition either met or not. <strong>Minimum password
+    length</strong> adds a value to the same rule structure, showing parameter
+    placement in each approach.</p>
 
-  <p>Every question below is then put to all four approaches using those same
-     two rules. Three of the four have published OSCAL content; the fourth is a
-     concept note, its column is the site's encoding of the shape the note
-     proposes, and its extracts come from a corpus the site generated in that
-     shape from the CIS Benchmark and the DISA STIG for Ubuntu 24.04.</p>
+  <p>Each question compares all four approaches using the same two rules.
+    The questions and encodings are maintained as analysis content; published
+    OSCAL examples provide separate evidence for the illustrated structures.
+    Three of the four have published OSCAL content; the fourth is a concept
+    note, and its extracts come from a corpus the site generated in that shape
+    from the CIS Benchmark and the DISA STIG for Ubuntu 24.04.</p>
 
 </div>
 
@@ -81,14 +89,14 @@
 </div>
 
 <div class="tier2">
-  <p><a href="./scenario.html">A worked scenario</a> puts one real system to all
-     four and counts what each would produce. Each approach then has a page of
-     its own, carrying its strengths and risks:
+  <p><a href="./scenario.html">A worked scenario</a> applies all four approaches
+     to one system and counts the artifacts each approach would produce.
+     Separate pages describe strengths and risks:
      <a href="./catalog-first.html">Catalog-first</a>,
      <a href="./component-first.html">Component-first</a>,
      <a href="./assessment-first.html">Assessment-first</a> and
      <a href="./executable-first.html">Executable-first</a>.
-     <a href="./questions.html">Open questions</a> carries what is unresolved.
+     <a href="./questions.html">Open questions</a> lists unresolved issues.
      Question 3 is put across the four on one axis, a reference, a description
      or a declared executable, in
      <a href="./index.html#carrier">section 6 of the start page</a>.</p>
@@ -98,8 +106,8 @@
 
 <footer class="site-footer">
   <div class="site-footer__inner">
-    <p><strong>This site makes no recommendation.</strong> It states four approaches in the
-       terms their proponents use and shows what each one has published.</p>
+    <p><strong>No recommendation is made.</strong> The analysis compares four
+       approaches and the published OSCAL content.</p>
   </div>
 </footer>
 
