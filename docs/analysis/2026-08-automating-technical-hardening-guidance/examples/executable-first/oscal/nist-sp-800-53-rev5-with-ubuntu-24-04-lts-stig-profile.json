@@ -14755,7 +14755,7 @@
           "title": "The STIG's published OSCAL conversion, source of the CCI to control mapping",
           "rlinks": [
             {
-              "href": "../../assessment-first/DISA/STIG_XCCDF to OSCAL Assessment Plans/ubuntu24.json",
+              "href": "../../assessment-first/DISA/STIG_XCCDF%20to%20OSCAL%20Assessment%20Plans/ubuntu24.json",
               "media-type": "application/oscal.assessment-plan+json",
               "hashes": [
                 {

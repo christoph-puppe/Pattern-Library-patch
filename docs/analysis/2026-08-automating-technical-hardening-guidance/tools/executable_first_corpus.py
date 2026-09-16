@@ -53,6 +53,7 @@ import re
 import shutil
 import subprocess
 import sys
+import urllib.parse
 import uuid
 import xml.etree.ElementTree as ET
 
@@ -122,7 +123,10 @@ def sha256(path: str) -> str:
 
 
 def rel_from_out(path: str) -> str:
-    return os.path.relpath(path, OUT_DIR).replace(os.sep, "/")
+    #  A URI reference, so a space in a directory name is percent-encoded:
+    #  the published schema types every rlink href as uri-reference.
+    rel = os.path.relpath(path, OUT_DIR).replace(os.sep, "/")
+    return urllib.parse.quote(rel)
 
 
 # --------------------------------------------------------------------------- #

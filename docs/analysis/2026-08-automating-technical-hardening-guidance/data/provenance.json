@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-16T16:03:11+00:00",
+  "generated_at": "2026-09-16T16:07:24+00:00",
   "source_lock": "tools/source-lock.json",
   "source_inputs": {
     "version": 1,
@@ -473,9 +473,9 @@
       "pointer": "/profile/modify/alters/63/adds/0/parts/0",
       "language": "json",
       "bytes": 1644,
-      "sha256_of_source_file": "d0f5e06139bda87cffd317ff123964ae8bccc2f7ce6a9fa610abee3a10f9da31",
+      "sha256_of_source_file": "ab9a524515cc43bd1a4a2798dd09782f9d962802c89ed661ffa10887c1e8a697",
       "sha256_of_content": "f10c8fd914a74654b6c3042dd642e7ee9d893857edaf19096677e82f53be56eb",
-      "extracted_at": "2026-09-09T20:09:56+00:00"
+      "extracted_at": "2026-09-16T16:07:24+00:00"
     },
     {
       "id": "pf-stig-import",
@@ -486,9 +486,9 @@
       "pointer": "/profile/imports/0",
       "language": "json",
       "bytes": 1584,
-      "sha256_of_source_file": "d0f5e06139bda87cffd317ff123964ae8bccc2f7ce6a9fa610abee3a10f9da31",
+      "sha256_of_source_file": "ab9a524515cc43bd1a4a2798dd09782f9d962802c89ed661ffa10887c1e8a697",
       "sha256_of_content": "35e6ca62136b9af1bc1fdb3afc5e499b32115cb4c65ec727cce05d23d46c95f0",
-      "extracted_at": "2026-09-09T20:09:56+00:00"
+      "extracted_at": "2026-09-16T16:07:24+00:00"
     },
     {
       "id": "pf-cis-map-1-1-1-1",
@@ -538,9 +538,9 @@
       "pointer": "/profile/modify/alters/63/adds/0/parts/1",
       "language": "json",
       "bytes": 957,
-      "sha256_of_source_file": "d0f5e06139bda87cffd317ff123964ae8bccc2f7ce6a9fa610abee3a10f9da31",
+      "sha256_of_source_file": "ab9a524515cc43bd1a4a2798dd09782f9d962802c89ed661ffa10887c1e8a697",
       "sha256_of_content": "a0be2fa7f915335f745e451621b93bfcac31a2e3ca269db5861dc88c8ea1b264",
-      "extracted_at": "2026-09-09T20:09:56+00:00"
+      "extracted_at": "2026-09-16T16:07:24+00:00"
     },
     {
       "id": "pf-cis-platform",

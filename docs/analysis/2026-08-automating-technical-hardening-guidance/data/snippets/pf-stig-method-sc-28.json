@@ -8,6 +8,6 @@
   "section": null,
   "language": "json",
   "content": "{\n  \"id\": \"sc-28_asm-ubtu-24-600090\",\n  \"name\": \"assessment-method\",\n  \"props\": [\n    {\n      \"name\": \"method\",\n      \"value\": \"TEST\"\n    },\n    {\n      \"name\": \"platform\",\n      \"value\": \"cpe:2.3:o:canonical:ubuntu_linux:24.04:*:*:*:lts:*:*:*\",\n      \"ns\": \"https://example.org/ns/oscal-automation\"\n    }\n  ],\n  \"links\": [\n    {\n      \"rel\": \"assessment-objective\",\n      \"href\": \"#sc-28_obj-ubtu-24-600090\"\n    }\n  ],\n  \"prose\": \"Note: If there is a documented and approved mission requirement for data-at-rest to not be encrypted, this requirement is not applicable. \\n \\nVerify Ubuntu 24.04 LTS prevents unauthorized disclosure or modification of all information requiring at-rest protection by using disk encryption.  \\n\\nDetermine the partition layout for the system with the following command: \\n \\n$ sudo fdisk -l \\n(..) \\nDisk /dev/vda: 15 GiB, 16106127360 bytes, 31457280 sectors \\nUnits: sectors of 1 * 512 = 512 bytes \\nSector siz [truncated]\"\n}",
-  "sha256_of_source_file": "d0f5e06139bda87cffd317ff123964ae8bccc2f7ce6a9fa610abee3a10f9da31",
-  "extracted_at": "2026-09-09T20:09:56+00:00"
+  "sha256_of_source_file": "ab9a524515cc43bd1a4a2798dd09782f9d962802c89ed661ffa10887c1e8a697",
+  "extracted_at": "2026-09-16T16:07:24+00:00"
 }

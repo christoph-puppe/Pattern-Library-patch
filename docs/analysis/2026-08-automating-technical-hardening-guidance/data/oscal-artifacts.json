@@ -560,7 +560,7 @@
             "controls altered": 79,
             "parts added": 582
           },
-          "bytes": 849302,
+          "bytes": 849310,
           "href": "examples/executable-first/oscal/nist-sp-800-53-rev5-with-ubuntu-24-04-lts-stig-profile.json",
           "href_external": false
         }
